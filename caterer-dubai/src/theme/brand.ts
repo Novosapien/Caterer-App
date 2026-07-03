@@ -1,0 +1,84 @@
+// Brand design tokens — a PLAIN module (no "use client") so both server and client
+// components read real values (server components importing a "use client" module get
+// undefined for every property across the client boundary).
+//
+// LANGUAGE: premium SaaS, coloured from the real Caterer.com logo — a charcoal tile
+// with ORANGE (the ".com"), PURPLE and YELLOW pictograms. Charcoal is the structural
+// ink/dark surface; orange is the primary accent; purple is the secondary accent;
+// yellow/gold is a tertiary highlight; a distinct red is the URGENT signal.
+//
+// NOTE: the token NAMES are legacy (navy/teal/electric/flame) but their VALUES now carry
+// the Caterer palette — `navy`=charcoal ink, `teal`=orange (primary), `electric`=purple
+// (secondary), `flame`=urgent red. Kept the names so ~all call sites stay valid.
+export const brand = {
+  // --- Charcoal / ink scale (structure) --------------------------------------
+  midnight: "#232325", // darkest charcoal — dark panels / hero
+  navy: "#2A2A2D", // charcoal ink — primary text + anchors
+  navy800: "#37373A", // raised charcoal surface
+  navySheen: "#454548", // lifted charcoal for gradient sheens
+  ink: "#242426",
+
+  // --- Primary accent: Caterer orange ----------------------------------------
+  teal: "#EF7D00", // PRIMARY accent (Caterer orange) — CTAs, active states
+  tealDeep: "#C25F00", // darker end / hover
+  tealBright: "#FFA23A", // light orange — gradient light-end + highlights
+  tealSoft: "#FDEEDC", // pale orange tint for soft fills
+  // --- Secondary accent: Caterer purple --------------------------------------
+  electric: "#8A2A8C", // purple — secondary accent, depth, AI/premium touches
+  electricDeep: "#6C2170",
+  electricSoft: "#F0E1F1", // pale purple tint
+  aqua: "#EBD8ED", // legacy alias -> soft purple
+
+  // --- Yellow / gold (tertiary highlight) ------------------------------------
+  amber: "#F6A623", // Caterer yellow — highlights / warnings
+  gold: "#E7A81C",
+
+  // --- Urgent signal (distinct red so it never blurs with brand orange) ------
+  flame: "#EE3B2E",
+  flameDeep: "#C42A20",
+  flameBright: "#EE3B2E",
+  flameBrightSoft: "#FBE0DD",
+  flameGlow: "#FF6A52",
+
+  // --- Success (functional) --------------------------------------------------
+  herb: "#2E9E67", // "applied!" / available success green
+
+  // --- Surfaces / neutrals (DARK: shiny-black language from the search page) --
+  base: "#0C0C0E", // page background — near-black
+  paper: "#FFFFFF", // pure white — kept ONLY for the white search pills
+  card: "#17171A", // dark card / raised surface (theme paper)
+  cardHover: "#1E1E22", // dark card hover
+  surfaceAlt: "#1F1F22", // tinted dark panel / inset
+  cream: "rgba(255,255,255,0.06)", // soft dark chip / inset fill
+  line: "rgba(255,255,255,0.10)", // hairline border on dark
+  muted: "rgba(255,255,255,0.60)", // secondary text on dark
+
+  // legacy alias kept so older references resolve
+  pink: "#F0E1F1",
+};
+
+// Reusable gradients, glows and glass — the premium surface language.
+export const surfaces = {
+  // Dark: charcoal with a diagonal sheen (app bar, dark panels, hero).
+  navyGradient: `linear-gradient(135deg, ${brand.midnight} 0%, #2E2E31 55%, ${brand.navy800} 100%)`,
+  // Primary accent gradient: Caterer orange (CTAs, brand mark).
+  accentGradient: `linear-gradient(135deg, ${brand.teal} 0%, ${brand.tealBright} 100%)`,
+  // Back-compat alias used by existing call sites.
+  tealGradient: `linear-gradient(135deg, ${brand.teal} 0%, ${brand.tealBright} 100%)`,
+  // Purple secondary gradient.
+  purpleGradient: `linear-gradient(135deg, ${brand.electric} 0%, #B24AB4 100%)`,
+  // Urgent red gradient.
+  flameGradient: `linear-gradient(135deg, ${brand.flame} 0%, ${brand.flameGlow} 100%)`,
+  // Translucent glass panel.
+  glass: "rgba(255,255,255,0.72)",
+  // Ambient warm depth for backdrops (orange + purple radial lighting).
+  aurora: `radial-gradient(115% 85% at 8% -10%, rgba(239,125,0,0.14) 0%, rgba(239,125,0,0) 55%), radial-gradient(110% 80% at 100% -8%, rgba(138,42,140,0.12) 0%, rgba(138,42,140,0) 55%)`,
+  // Glow shadows.
+  accentGlowShadow: "0 16px 40px -16px rgba(239,125,0,0.5)",
+  tealGlowShadow: "0 16px 40px -16px rgba(239,125,0,0.5)",
+  flameGlowShadow: "0 14px 34px -14px rgba(238,59,46,0.5)",
+  navyGlowShadow: "0 22px 50px -24px rgba(35,35,37,0.5)",
+  // Layered card shadows for dark surfaces (depth without a visible halo).
+  cardShadow: "0 1px 2px rgba(0,0,0,0.4), 0 10px 26px -14px rgba(0,0,0,0.6)",
+  cardShadowHover: "0 2px 6px rgba(0,0,0,0.5), 0 26px 56px -22px rgba(0,0,0,0.72)",
+};

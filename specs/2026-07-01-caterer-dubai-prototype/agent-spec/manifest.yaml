@@ -1,0 +1,121 @@
+# System Manifest — WhatsApp Gig Agent (component C11 of Caterer Dubai prototype)
+# impl-builder reads this first. All paths relative to agent-spec/.
+
+system:
+  name: whatsapp-gig-agent
+  type: single-agent
+  description: |
+    A FastAPI + LangGraph service hosting a single conversational agent (Claude Sonnet 5)
+    that WhatsApp-notifies matched available chefs about an urgent catering gig and
+    handles their accept/decline conversationally. Component C11 of the Caterer Dubai
+    pitch prototype; the app/API/frontend live in ../spec.md.
+
+hierarchy:
+  root:
+    type: agent
+    file: whatsapp-gig-agent.md
+    config: agent-config.yaml
+
+files:
+  root:
+    - manifest.yaml
+    - overview.md
+    - whatsapp-gig-agent.md
+    - agent-config.yaml
+  # Progress tracked centrally at ../progress.md (spec-folder root)
+
+# =============================================================================
+# EXECUTION PLAN
+# Phases sequential; chunks within a phase parallel. Streams = context continuity.
+# Python service: FastAPI wrapper (main.py) + LangGraph agent + custom tools.
+# =============================================================================
+
+execution-plan:
+  streams:
+    - name: scaffold
+      responsibility: FastAPI service wrapper, config, Supabase + Twilio clients, endpoints, deploy
+      owns: [main.py, src/config.py, src/clients/, .env.example, Dockerfile]
+      skills: []
+    - name: agent
+      responsibility: LangGraph message-tool agent (graph, state, prompt) + custom tools
+      owns: [src/agent/, src/tools/]
+      skills: [individual-agents, prompt-engineering, tools-and-utilities]
+
+  phases:
+    - phase: 1
+      name: Foundation
+      chunks:
+        - name: scaffold-service
+          stream: scaffold
+          description: |
+            FastAPI app skeleton with /health; config loader (pydantic-settings);
+            Supabase (service-role) client; Twilio client; .env.example (Twilio
+            SID/token/sandbox number, Anthropic key, Supabase URL/service-role key,
+            NOTIFY_SHARED_SECRET).
+            Dependencies: fastapi, uvicorn[standard], pydantic, pydantic-settings,
+            twilio, supabase, psycopg[binary]. (Agent deps in the agent stream.)
+          spec-files:
+            - overview.md
+            - whatsapp-gig-agent.md   # Framework, Packages & Scalability section
+            - manifest.yaml
+        - name: tools
+          stream: agent
+          description: |
+            Implement custom-function tools: get_gig_details, accept_gig, decline_gig
+            (Supabase reads/writes; idempotent accept/decline; error handling per spec).
+          spec-files:
+            - whatsapp-gig-agent.md
+
+    - phase: 2
+      name: Agent + Endpoints
+      chunks:
+        - name: langgraph-agent
+          stream: agent
+          description: |
+            Build the agent with langgraph.prebuilt.create_react_agent + a Postgres
+            checkpointer (langgraph-checkpoint-postgres) on Supabase, keyed by
+            thread_id = thread_key ("{candidate_profile_id}:{job_id}"). System prompt
+            (hospitality voice, grounded, concise); bind tools with gig_id/candidate_id
+            INJECTED from thread state (LLM emits no IDs); off-topic redirect;
+            accept/decline detection. Claude Sonnet 5 via langchain-anthropic.
+            Dependencies: langgraph, langgraph-checkpoint-postgres, langchain-core,
+            langchain-anthropic (+ optional langsmith).
+          spec-files:
+            - whatsapp-gig-agent.md
+            - agent-config.yaml
+          depends_on: [tools]
+        - name: endpoints
+          stream: scaffold
+          description: |
+            POST /notify (validate shared secret; per candidate: create thread, send
+            outbound WhatsApp, mark pending on blocked send; return sent/pending).
+            POST /webhook/whatsapp (parse Twilio inbound; load gig+candidate+thread from
+            Supabase; run agent; reply via Twilio; log messages).
+          spec-files:
+            - overview.md
+            - whatsapp-gig-agent.md
+          depends_on: [scaffold-service]
+
+    - phase: 3
+      name: Integration & Deploy
+      chunks:
+        - name: runbook-and-deploy
+          stream: scaffold
+          description: |
+            Cloud Run deploy (min-instances=1); wire Twilio sandbox webhook to
+            /webhook/whatsapp; document the run-book (sandbox join + 24h window);
+            verify end-to-end with the Next.js /notify call.
+          spec-files:
+            - whatsapp-gig-agent.md
+            - overview.md
+          skills: [cloudrun-deploy]
+
+  communication:
+    - from: scaffold
+      to: agent
+      after: phase-1
+      what: Supabase + Twilio client interfaces; config/env var names
+    - from: agent
+      to: scaffold
+      after: phase-1
+      what: Tool signatures + return types; agent entry function signature for the webhook handler

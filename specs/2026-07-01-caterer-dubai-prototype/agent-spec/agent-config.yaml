@@ -1,0 +1,23 @@
+# Agent Configuration — WhatsApp Gig Agent (single agent)
+# Component C11 of the Caterer Dubai prototype. See ../spec.md for app-side contracts.
+
+agent:
+  name: whatsapp-gig-agent
+  type: message-tool-agent
+  framework: langgraph
+  reference: agent-patterns/individual-agents/langgraph/message-tool-agent.md
+  prompt:
+    framework: conversational
+    role: conversational-assistant
+    modifiers: [tools, memory]
+  model:
+    provider: anthropic
+    name: claude-sonnet-5
+    reasoning: false
+    temperature: 0.4
+  notes: |
+    Single conversational agent per (candidate, gig) thread.
+    Tools: get_gig_details, accept_gig, decline_gig (all custom-function, Supabase-backed).
+    Memory: per-thread conversation history persisted in Supabase whatsapp_messages.
+    Hospitality voice; concise WhatsApp-length replies; grounded ONLY in provided gig context.
+    v1 scope: gig Q&A + accept/decline only. No other-gig browsing / availability changes.

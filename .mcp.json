@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "caterer-dubai": {
+      "command": "node",
+      "args": ["/Users/MaxKingaby/Programming/Total Jobs/caterer-mcp/dist/index.js"]
+    }
+  }
+}

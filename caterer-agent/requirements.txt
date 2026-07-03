@@ -1,0 +1,20 @@
+# --- Agent (LangGraph + Claude Sonnet 5) ---
+langgraph
+langgraph-checkpoint-postgres
+langchain-core
+langchain-anthropic
+
+# --- Service ---
+fastapi
+python-multipart          # required by FastAPI to parse the Twilio webhook form fields
+uvicorn[standard]
+pydantic
+pydantic-settings
+
+# --- Integrations ---
+twilio
+supabase
+psycopg[binary]
+
+# --- Optional observability ---
+langsmith
