@@ -49,9 +49,15 @@ export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[
   const matches = useMemo(() => rankGigs(value, suggestions), [value, suggestions]);
   const showDropdown = open && value.trim().length > 0 && matches.length > 0;
 
-  function go(id: string) {
+  // Committing a search narrows the feed below (never opens a single gig).
+  function commitSearch(query: string) {
     setOpen(false);
-    router.push(`/jobs/${id}`);
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    if (query.trim()) params.set("q", query.trim());
+    else params.delete("q");
+    startTransition(() => {
+      router.replace(params.toString() ? `/jobs?${params.toString()}` : "/jobs", { scroll: false });
+    });
   }
 
   function toggleUrgent() {
@@ -71,9 +77,9 @@ export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setActiveIdx((i) => Math.max(i - 1, 0));
-    } else if (e.key === "Enter" && activeIdx >= 0) {
+    } else if (e.key === "Enter") {
       e.preventDefault();
-      go(matches[activeIdx].id);
+      commitSearch(value);
     } else if (e.key === "Escape") {
       setOpen(false);
     }
@@ -156,7 +162,7 @@ export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[
           query={value}
           activeIdx={activeIdx}
           onHover={setActiveIdx}
-          onSelect={go}
+          onSelect={() => commitSearch(value)}
         />
       )}
     </Box>

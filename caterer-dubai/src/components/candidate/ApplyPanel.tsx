@@ -15,6 +15,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import PhoneField from "@/components/PhoneField";
 import { applyToGig, autoApply } from "@/app/(candidate)/actions";
 import { brand } from "@/theme/brand";
@@ -148,7 +149,17 @@ export default function ApplyPanel({
             We&rsquo;ll WhatsApp you if it&rsquo;s a match. Turn on availability in your profile to
             get pinged for urgent gigs first.
           </Typography>
-          <Button variant="outlined" color="inherit" onClick={reset} sx={{ mt: 1 }}>
+          <Button
+            component="a"
+            href="/whatsapp"
+            variant="text"
+            size="small"
+            startIcon={<WhatsAppIcon sx={{ fontSize: "1.05rem", color: "#25D366" }} />}
+            sx={{ color: "#25D366", fontWeight: 700 }}
+          >
+            How WhatsApp alerts work
+          </Button>
+          <Button variant="outlined" color="inherit" onClick={reset} sx={{ mt: 0.5 }}>
             Keep browsing
           </Button>
         </Stack>

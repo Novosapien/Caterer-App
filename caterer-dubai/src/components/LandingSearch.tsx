@@ -25,19 +25,18 @@ export default function LandingSearch({ suggestions }: { suggestions: JobSuggest
   const matches = useMemo(() => rankGigs(value, suggestions), [value, suggestions]);
   const showDropdown = open && value.trim().length > 0 && matches.length > 0;
 
-  function go(id: string) {
+  // Searching always lands on the filtered results list (never a single gig), so
+  // "chef de partie" shows every matching gig. Selecting a type-ahead suggestion
+  // runs the same search with what was typed.
+  function goToResults(query: string) {
     setOpen(false);
-    router.push(`/jobs/${id}`);
+    const q = query.trim();
+    router.push(q ? `/jobs?q=${encodeURIComponent(q)}` : "/jobs");
   }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (activeIdx >= 0 && matches[activeIdx]) {
-      go(matches[activeIdx].id);
-      return;
-    }
-    const q = value.trim();
-    router.push(q ? `/jobs?q=${encodeURIComponent(q)}` : "/jobs");
+    goToResults(value);
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
@@ -106,7 +105,7 @@ export default function LandingSearch({ suggestions }: { suggestions: JobSuggest
           query={value}
           activeIdx={activeIdx}
           onHover={setActiveIdx}
-          onSelect={go}
+          onSelect={() => goToResults(value)}
         />
       )}
     </Box>

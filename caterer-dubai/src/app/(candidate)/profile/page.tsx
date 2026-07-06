@@ -11,6 +11,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import StarIcon from "@mui/icons-material/Star";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import EmptyState from "@/components/EmptyState";
 import { loginAsChef } from "@/app/actions/auth";
 import { getSession } from "@/lib/session";
@@ -232,6 +233,48 @@ export default async function ProfilePage() {
               </Stack>
             </>
           )}
+        </Box>
+
+        {/* WhatsApp alerts explainer — links to the step-by-step walkthrough */}
+        <Box
+          component="a"
+          href="/whatsapp"
+          sx={{
+            textDecoration: "none",
+            ...cardSx,
+            p: 1.75,
+            mb: 2,
+            display: "flex",
+            alignItems: "center",
+            gap: 1.5,
+            transition: "border-color 120ms, background-color 120ms",
+            "&:hover": { borderColor: "rgba(37,211,102,0.4)", bgcolor: "#1E1E22" },
+          }}
+        >
+          <Box
+            sx={{
+              width: 34,
+              height: 34,
+              borderRadius: "9px",
+              bgcolor: "rgba(37,211,102,0.14)",
+              color: "#25D366",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <WhatsAppIcon sx={{ fontSize: "1.15rem" }} />
+          </Box>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography sx={{ fontWeight: 800, fontSize: "0.95rem", color: "#fff", lineHeight: 1.2 }}>
+              Get gigs on WhatsApp
+            </Typography>
+            <Typography variant="caption" sx={{ color: MUTED }}>
+              See how alerts work and connect your number
+            </Typography>
+          </Box>
+          <ChevronRightIcon sx={{ color: MUTED, fontSize: "1.2rem", flexShrink: 0 }} />
         </Box>
 
         {/* Compact section hub — each card opens its own detail page */}
