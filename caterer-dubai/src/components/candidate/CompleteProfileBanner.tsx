@@ -12,27 +12,28 @@ export default function CompleteProfileBanner({ sx }: { sx?: object }) {
       sx={{
         position: "relative",
         overflow: "hidden",
-        p: 2.75,
-        borderRadius: 5,
+        px: { xs: 1.75, sm: 2 },
+        py: 1.5,
+        borderRadius: "16px",
         background: surfaces.navyGradient,
         color: "#fff",
         display: "flex",
         alignItems: "center",
-        gap: 2,
+        gap: 1.5,
         boxShadow: surfaces.navyGlowShadow,
         ...sx,
       }}
     >
-      {/* faint cyan glow in the corner for depth */}
+      {/* faint warm glow in the corner for depth */}
       <Box
         sx={{
           position: "absolute",
-          top: -50,
-          right: -30,
-          width: 180,
-          height: 180,
+          top: -40,
+          right: -20,
+          width: 120,
+          height: 120,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(239,125,0,0.28) 0%, rgba(239,125,0,0) 70%)",
+          background: "radial-gradient(circle, rgba(239,125,0,0.24) 0%, rgba(239,125,0,0) 70%)",
           pointerEvents: "none",
         }}
       />
@@ -40,9 +41,9 @@ export default function CompleteProfileBanner({ sx }: { sx?: object }) {
         sx={{
           position: "relative",
           flexShrink: 0,
-          width: 52,
-          height: 52,
-          borderRadius: "14px",
+          width: 38,
+          height: 38,
+          borderRadius: "10px",
           background: surfaces.accentGradient,
           boxShadow: surfaces.accentGlowShadow,
           color: "#fff",
@@ -51,12 +52,16 @@ export default function CompleteProfileBanner({ sx }: { sx?: object }) {
           justifyContent: "center",
         }}
       >
-        <StarBorderIcon />
+        <StarBorderIcon sx={{ fontSize: "1.15rem" }} />
       </Box>
       <Box sx={{ position: "relative", flex: 1, minWidth: 0 }}>
-        <Typography sx={{ fontWeight: 800, lineHeight: 1.2 }}>Stand out. Get more gigs.</Typography>
-        <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.75)", mt: 0.25 }}>
-          Complete your profile and get recommended for top events.
+        <Typography sx={{ fontWeight: 800, fontSize: "0.9rem", lineHeight: 1.25 }}>
+          Stand out. Get more gigs.
+        </Typography>
+        <Typography
+          sx={{ color: "rgba(255,255,255,0.65)", fontSize: "0.78rem", lineHeight: 1.35, mt: 0.25 }}
+        >
+          Complete your profile to get recommended for top events.
         </Typography>
       </Box>
       <Button
@@ -64,8 +69,18 @@ export default function CompleteProfileBanner({ sx }: { sx?: object }) {
         href="/profile/edit"
         variant="contained"
         color="teal"
-        endIcon={<ArrowForwardIcon sx={{ display: { xs: "none", sm: "inline-flex" } }} />}
-        sx={{ position: "relative", flexShrink: 0, fontWeight: 800, px: { xs: 1.75, sm: 2.5 } }}
+        size="small"
+        endIcon={<ArrowForwardIcon sx={{ display: { xs: "none", sm: "inline-flex" }, fontSize: "1rem" }} />}
+        sx={{
+          position: "relative",
+          flexShrink: 0,
+          fontWeight: 800,
+          fontSize: "0.8rem",
+          borderRadius: "10px",
+          px: { xs: 1.5, sm: 2 },
+          py: 0.75,
+          whiteSpace: "nowrap",
+        }}
       >
         Complete Profile
       </Button>

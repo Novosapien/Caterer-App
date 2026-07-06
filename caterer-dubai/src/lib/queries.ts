@@ -42,6 +42,35 @@ export async function countOpenGigs(): Promise<number> {
   return count ?? 0;
 }
 
+// Real engagement metrics for the candidate's own "dashboard" strip (private to them).
+// profile_viewed notifications are written when a recruiter opens their profile.
+export async function getCandidateInsights(
+  profileId: string
+): Promise<{ profileViews: number; applications: number; gigsWon: number }> {
+  const db = createServiceClient();
+  const [views, apps, won] = await Promise.all([
+    db
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("profile_id", profileId)
+      .eq("type", "profile_viewed"),
+    db
+      .from("applications")
+      .select("id", { count: "exact", head: true })
+      .eq("candidate_profile_id", profileId),
+    db
+      .from("applications")
+      .select("id", { count: "exact", head: true })
+      .eq("candidate_profile_id", profileId)
+      .eq("status", "accepted"),
+  ]);
+  return {
+    profileViews: views.count ?? 0,
+    applications: apps.count ?? 0,
+    gigsWon: won.count ?? 0,
+  };
+}
+
 export async function getGig(id: string): Promise<Job | null> {
   const db = createServiceClient();
   const { data } = await db.from("jobs").select("*, business:businesses(*)").eq("id", id).maybeSingle();

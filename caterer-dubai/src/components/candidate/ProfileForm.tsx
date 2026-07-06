@@ -293,7 +293,7 @@ export default function ProfileForm(props: Props) {
             label="Full name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Yusuf Rahman"
+            placeholder="e.g. Max Kingaby"
             required
             fullWidth
             size="small"

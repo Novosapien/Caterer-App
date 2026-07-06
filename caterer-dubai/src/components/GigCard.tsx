@@ -37,13 +37,13 @@ export default function GigCard({ job }: { job: Job }) {
       sx={{
         overflow: "hidden",
         border: "1px solid",
-        borderColor: job.is_urgent ? "rgba(240,85,43,0.30)" : brand.line,
+        borderColor: job.is_urgent ? "rgba(246,166,35,0.32)" : brand.line,
         boxShadow: surfaces.cardShadow,
         transition: "transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease, border-color .3s ease",
         "&:hover": {
           transform: "translateY(-4px)",
           boxShadow: surfaces.cardShadowHover,
-          borderColor: job.is_urgent ? brand.flameBright : "rgba(239,125,0,0.42)",
+          borderColor: job.is_urgent ? brand.urgent : "rgba(239,125,0,0.42)",
         },
         "&:hover .gig-img": { transform: "scale(1.07)" },
         "&:hover .gig-arrow": { bgcolor: brand.teal, color: "#fff", borderColor: brand.teal },
@@ -82,7 +82,7 @@ export default function GigCard({ job }: { job: Job }) {
           {/* Details column */}
           <Box sx={{ flex: 1, minWidth: 0, p: 2 }}>
             <Stack direction="row" sx={{ alignItems: "baseline", justifyContent: "space-between", gap: 1 }}>
-              <Typography component="div" sx={{ fontWeight: 800, color: "#fff", lineHeight: 1 }}>
+              <Typography component="div" sx={{ fontWeight: 800, color: brand.pay, lineHeight: 1 }}>
                 <Box component="span" sx={{ fontSize: "1.2rem", letterSpacing: "-0.01em" }}>{formatAED(job.pay_aed)}</Box>
                 <Box component="span" sx={{ fontSize: "0.82rem", color: brand.muted, fontWeight: 600 }}>
                   {PAY_SUFFIX[job.pay_unit]}

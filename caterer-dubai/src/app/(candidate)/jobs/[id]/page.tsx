@@ -99,8 +99,8 @@ export default async function GigDetailPage({
 
         {/* Hero pay */}
         <Stack direction="row" spacing={1} sx={{ mt: 2.5, alignItems: "center" }}>
-          <PaymentsIcon sx={{ color: brand.flame }} />
-          <Typography sx={{ fontWeight: 800, fontSize: "1.6rem", lineHeight: 1, color: brand.flame }}>
+          <PaymentsIcon sx={{ color: brand.pay }} />
+          <Typography sx={{ fontWeight: 800, fontSize: "1.6rem", lineHeight: 1, color: brand.pay }}>
             {formatPay(job.pay_aed, job.pay_unit)}
           </Typography>
         </Stack>

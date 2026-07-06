@@ -42,6 +42,8 @@ export const brand = {
 
   // --- Success (functional) --------------------------------------------------
   herb: "#2E9E67", // "applied!" / available success green
+  pay: "#34D171", // money / earnings green — used for all pay figures
+  urgent: "#F6A623", // amber — "hot / now" signal (NOT alarm red)
 
   // --- Surfaces / neutrals (DARK: shiny-black language from the search page) --
   base: "#0C0C0E", // page background — near-black

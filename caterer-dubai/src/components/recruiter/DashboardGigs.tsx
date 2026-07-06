@@ -156,7 +156,7 @@ export default function DashboardGigs({ gigs, jobIds }: { gigs: DashboardGig[]; 
               spacing={1}
               sx={{ mt: 1.5, alignItems: "center", flexWrap: "wrap", rowGap: 0.75 }}
             >
-              <Typography sx={{ fontWeight: 800, color: brand.flame, mr: 0.5 }}>
+              <Typography sx={{ fontWeight: 800, color: brand.pay, mr: 0.5 }}>
                 {formatPay(g.pay_aed, g.pay_unit)}
               </Typography>
               <Chip

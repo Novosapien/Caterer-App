@@ -204,7 +204,7 @@ export default async function CandidateCvPage({
             {candidate.desired_pay_aed != null && (
               <Box>
                 <Typography variant="caption" color="text.secondary">Target rate</Typography>
-                <Typography sx={{ fontWeight: 800, color: brand.flame }}>
+                <Typography sx={{ fontWeight: 800, color: brand.pay }}>
                   {formatPay(candidate.desired_pay_aed, candidate.desired_pay_unit ?? "shift")}
                 </Typography>
               </Box>

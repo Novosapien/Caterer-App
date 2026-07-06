@@ -138,11 +138,11 @@ export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[
               height: 48,
               flexShrink: 0,
               borderRadius: "50%",
-              color: urgentOnly ? "#fff" : brand.flameBright,
-              bgcolor: urgentOnly ? brand.flameBright : brand.flameBrightSoft,
-              border: `1.5px solid ${urgentOnly ? brand.flameBright : "transparent"}`,
+              color: urgentOnly ? "#241a06" : "#B26A00",
+              bgcolor: urgentOnly ? brand.urgent : "rgba(246,166,35,0.18)",
+              border: `1.5px solid ${urgentOnly ? brand.urgent : "transparent"}`,
               transition: "all .2s ease",
-              "&:hover": { bgcolor: urgentOnly ? brand.flameDeep : "#FBD9CC" },
+              "&:hover": { bgcolor: urgentOnly ? "#E0940F" : "rgba(246,166,35,0.30)" },
             }}
           >
             <TuneIcon />
