@@ -10,6 +10,7 @@ import EmptyState from "@/components/EmptyState";
 import GigSearch from "@/components/candidate/GigSearch";
 import GigDateChips from "@/components/candidate/GigDateChips";
 import CompleteProfileBanner from "@/components/candidate/CompleteProfileBanner";
+import WhatsAppConnectBanner from "@/components/candidate/WhatsAppConnectBanner";
 import { listOpenGigs } from "@/lib/queries";
 import { brand } from "@/theme/brand";
 import type { Job, JobSuggestion } from "@/lib/types";
@@ -190,7 +191,9 @@ export default async function JobsPage({
           </Stack>
         </Stack>
 
-        <Stack spacing={2} sx={{ mt: 1.5 }}>
+        <WhatsAppConnectBanner sx={{ mt: 2 }} />
+
+        <Stack spacing={2} sx={{ mt: 2 }}>
           {gigs.length === 0 ? (
             <EmptyState
               icon={<SearchOffIcon fontSize="inherit" />}
