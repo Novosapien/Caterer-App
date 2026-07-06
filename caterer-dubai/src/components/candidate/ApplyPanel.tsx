@@ -16,10 +16,10 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import PhoneField from "@/components/PhoneField";
-import { startPhoneVerification, verifyPhoneAndApply, autoApply } from "@/app/(candidate)/actions";
+import { applyToGig, autoApply } from "@/app/(candidate)/actions";
 import { brand } from "@/theme/brand";
 
-type Step = "collapsed" | "details" | "otp" | "done";
+type Step = "collapsed" | "details" | "done";
 
 // Who's viewing — when a chef is already signed in we offer one-tap auto-apply.
 export interface ApplyCandidate {
@@ -40,19 +40,14 @@ export default function ApplyPanel({
   const [step, setStep] = useState<Step>("collapsed");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const [sending, setSending] = useState(false);
-  const [demoMode, setDemoMode] = useState(false);
 
   function reset() {
     setStep("collapsed");
     setName("");
     setPhone("");
-    setCode("");
     setError(null);
-    setDemoMode(false);
   }
 
   function runAutoApply() {
@@ -67,29 +62,12 @@ export default function ApplyPanel({
     });
   }
 
-  async function submitDetails() {
+  function submitDetails() {
     setError(null);
     if (!name.trim()) return setError("Please enter your name.");
     if (phone.replace(/\D/g, "").length < 8) return setError("Please enter a valid mobile number.");
-    setSending(true);
-    const res = await startPhoneVerification(phone);
-    setSending(false);
-    if (!res.ok) {
-      setError(res.error ?? "Couldn't send the code. Please try again.");
-      return;
-    }
-    setDemoMode(res.demo);
-    setStep("otp");
-  }
-
-  function verifyOtp() {
-    setError(null);
-    const digits = code.replace(/\D/g, "");
-    if (digits.length !== 6) {
-      return setError("Enter the 6-digit code.");
-    }
     startTransition(async () => {
-      const res = await verifyPhoneAndApply({ jobId, name: name.trim(), phone, code: digits });
+      const res = await applyToGig({ jobId, name: name.trim(), phone });
       if (!res.ok) {
         setError(res.error ?? "Something went wrong. Please try again.");
         return;
@@ -188,9 +166,7 @@ export default function ApplyPanel({
                 Apply in 20 seconds
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {step === "details"
-                  ? "No CV, no sign-up. Just your name and mobile."
-                  : "Enter your 6-digit verification code."}
+                No CV, no sign-up. Just your name and mobile.
               </Typography>
             </Box>
             <IconButton size="small" aria-label="close apply" onClick={reset}>
@@ -219,60 +195,10 @@ export default function ApplyPanel({
                 size="large"
                 variant="contained"
                 onClick={submitDetails}
-                disabled={sending}
-                sx={{ py: 1.5 }}
-              >
-                {sending ? "Sending code…" : "Send code"}
-              </Button>
-            </Stack>
-          )}
-
-          {step === "otp" && (
-            <Stack spacing={1.5}>
-              <TextField
-                label="6-digit code"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                fullWidth
-                type="tel"
-                slotProps={{
-                  htmlInput: {
-                    inputMode: "numeric",
-                    maxLength: 6,
-                    style: { letterSpacing: "0.4em" },
-                  },
-                }}
-                autoFocus
-              />
-              {demoMode ? (
-                <Alert severity="info" sx={{ borderRadius: 3, py: 0.5 }}>
-                  Demo mode: no real SMS is sent. Enter any 6 digits (e.g. 000000) to continue.
-                </Alert>
-              ) : (
-                <Typography variant="caption" color="text.secondary">
-                  We sent a code to {phone}. It may take a few seconds to arrive.
-                </Typography>
-              )}
-              <Button
-                fullWidth
-                size="large"
-                variant="contained"
-                onClick={verifyOtp}
                 disabled={pending}
                 sx={{ py: 1.5 }}
               >
-                {pending ? "Verifying…" : "Verify & apply"}
-              </Button>
-              <Button
-                variant="text"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setError(null);
-                  setStep("details");
-                }}
-              >
-                Change number
+                {pending ? "Applying…" : "Apply"}
               </Button>
             </Stack>
           )}
