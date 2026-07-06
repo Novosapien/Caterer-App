@@ -90,7 +90,7 @@ gcloud run deploy caterer-agent \
   --region europe-west1 \
   --min-instances=1 \
   --allow-unauthenticated \
-  --set-env-vars ANTHROPIC_MODEL=claude-sonnet-5,TWILIO_WHATSAPP_FROM=whatsapp:+14155238886 \
+  --set-env-vars ANTHROPIC_MODEL=claude-sonnet-5,TWILIO_WHATSAPP_FROM=whatsapp:+17372583478 \
   --set-secrets ANTHROPIC_API_KEY=...,TWILIO_ACCOUNT_SID=...,TWILIO_AUTH_TOKEN=...,SUPABASE_URL=...,SUPABASE_SERVICE_ROLE_KEY=...,SUPABASE_DB_URL=...,NOTIFY_SHARED_SECRET=...
 ```
 

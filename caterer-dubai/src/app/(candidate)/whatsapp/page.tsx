@@ -20,9 +20,9 @@ const WA_GREEN = "#25D366";
 
 // The WhatsApp sandbox number is public. The one-time join code is account-specific
 // (from the Twilio console) — set NEXT_PUBLIC_WHATSAPP_JOIN to wire the one-tap button.
-const WA_NUMBER_DISPLAY = "+1 415 523 8886";
-const WA_NUMBER_E164 = "14155238886";
-const WA_JOIN = process.env.NEXT_PUBLIC_WHATSAPP_JOIN ?? "join <your code>";
+const WA_NUMBER_DISPLAY = "+1 737 258 3478";
+const WA_NUMBER_E164 = "17372583478";
+const WA_JOIN = process.env.NEXT_PUBLIC_WHATSAPP_JOIN ?? "join twilio-trial";
 const waLink = `https://wa.me/${WA_NUMBER_E164}?text=${encodeURIComponent(WA_JOIN)}`;
 
 const cardSx = {
