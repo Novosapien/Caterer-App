@@ -259,6 +259,9 @@ export const theme = createTheme({
           paddingBottom: 12,
           "& .MuiBottomNavigationAction-label": { fontSize: "0.75rem", fontWeight: 600, marginTop: 4 },
           "& .MuiSvgIcon-root": {
+            // content-box so the 20px pill padding sits AROUND the 24px glyph rather than
+            // collapsing it to zero width under the global border-box reset.
+            boxSizing: "content-box",
             borderRadius: md.shape.full,
             padding: "4px 20px",
             transition: "background-color .2s ease, color .2s ease",
