@@ -7,6 +7,7 @@ import { setSession, getSession } from "@/lib/session";
 import { isVerifyConfigured, startVerification, checkVerification } from "@/lib/twilioVerify";
 import { getCandidate, getGig } from "@/lib/queries";
 import { reviewCvForJob } from "@/lib/cvReview";
+import { extractCvFields } from "@/lib/cvExtract";
 import type { PayUnit, WorkPref, CvRating } from "@/lib/types";
 
 // Candidate server actions (progressive apply + profile edits).
@@ -326,6 +327,158 @@ export async function uploadCv(
 
   revalidatePath("/profile");
   return { ok: true, url };
+}
+
+// Autofill the profile from the saved CV (the extraction seam). Reads the uploaded CV,
+// pulls out structured fields with Claude, and merges them into the profile: arrays are
+// unioned (never lose existing tags), scalars fill blanks (a typed name is never
+// clobbered), and work history is inserted only when the profile has none yet. The raw
+// extraction is stored to candidate_profiles.cv_extracted (best-effort). Returns the
+// applied values so the open edit form can reflect them instantly.
+export async function importProfileFromCv(): Promise<{
+  ok: boolean;
+  error?: string;
+  summary?: string[];
+  applied?: {
+    name: string | null;
+    headline: string | null;
+    bio: string | null;
+    years: number | null;
+    languages: string[];
+    desiredRoles: string[];
+  };
+}> {
+  const session = await getSession();
+  if (!session || session.role !== "candidate") {
+    return { ok: false, error: "Apply to a gig first to create your profile." };
+  }
+  const candidate = await getCandidate(session.profileId);
+  if (!candidate) return { ok: false, error: "We couldn't find your profile." };
+  if (!candidate.cv_url) return { ok: false, error: "Upload a CV first, then autofill." };
+
+  // Pull the CV bytes back from the public bucket.
+  let bytes: Uint8Array;
+  let contentType: string;
+  try {
+    const resp = await fetch(candidate.cv_url);
+    if (!resp.ok) throw new Error(`fetch status ${resp.status}`);
+    contentType = resp.headers.get("content-type") || "application/pdf";
+    bytes = new Uint8Array(await resp.arrayBuffer());
+  } catch (err) {
+    console.error("CV fetch failed:", err);
+    return { ok: false, error: "We couldn't read your uploaded CV. Try re-uploading it." };
+  }
+
+  let extracted;
+  try {
+    extracted = await extractCvFields(bytes, contentType);
+  } catch (err) {
+    console.error("CV extraction failed:", err);
+    return { ok: false, error: "We couldn't read that CV. A text-based PDF works best." };
+  }
+
+  // Case-insensitive union that preserves existing order and adds new tags.
+  const union = (existing: string[] = [], found: string[] = []): string[] => {
+    const seen = new Set(existing.map((s) => s.toLowerCase()));
+    const out = [...existing];
+    for (const raw of found) {
+      const t = raw.trim();
+      if (t && !seen.has(t.toLowerCase())) {
+        seen.add(t.toLowerCase());
+        out.push(t);
+      }
+    }
+    return out;
+  };
+
+  const specialisms = union(candidate.specialisms, extracted.specialisms);
+  const cuisines = union(candidate.cuisines, extracted.cuisines);
+  const certifications = union(candidate.certifications, extracted.certifications);
+  const languages = union(candidate.languages, extracted.languages);
+  const desiredRoles = union(candidate.desired_roles, extracted.desired_roles);
+  const headline = candidate.headline || extracted.headline || null;
+  const bio = candidate.bio || extracted.bio || null;
+  const years = candidate.years_experience ?? extracted.years_experience ?? null;
+
+  const db = createServiceClient();
+
+  const { error: updErr } = await db
+    .from("candidate_profiles")
+    .update({
+      headline,
+      bio,
+      years_experience: years,
+      specialisms,
+      cuisines,
+      certifications,
+      languages,
+      desired_roles: desiredRoles,
+    })
+    .eq("profile_id", session.profileId);
+  if (updErr) return { ok: false, error: "Could not save the imported details." };
+
+  // Name lives on the profiles row. Fill only when there isn't one already.
+  let appliedName = candidate.profile?.name?.trim() || null;
+  if (extracted.name && !appliedName) {
+    await db.from("profiles").update({ name: extracted.name }).eq("id", session.profileId);
+    appliedName = extracted.name;
+  }
+
+  // Work history: insert only if the profile has none yet (avoids duplicates on re-run).
+  let addedExperience = 0;
+  if (!(candidate.experience?.length) && extracted.experience.length) {
+    const rows = extracted.experience
+      .slice(0, 12)
+      .filter((x) => x.company || x.title)
+      .map((x, i) => ({
+        profile_id: session.profileId,
+        title: x.title || "Role",
+        company: x.company || "",
+        location: x.location,
+        start_label: x.start_label,
+        end_label: x.is_current ? null : x.end_label,
+        is_current: x.is_current,
+        description: x.description,
+        sort_order: i,
+      }));
+    if (rows.length) {
+      const { error: expErr } = await db.from("candidate_experience").insert(rows);
+      if (!expErr) addedExperience = rows.length;
+    }
+  }
+
+  // Store the raw extraction for audit. Best-effort: no-ops cleanly if migration 0004
+  // (cv_extracted / cv_extracted_at) has not been applied yet.
+  try {
+    await db
+      .from("candidate_profiles")
+      .update({
+        cv_extracted: extracted as unknown as Record<string, unknown>,
+        cv_extracted_at: new Date().toISOString(),
+      })
+      .eq("profile_id", session.profileId);
+  } catch {
+    /* columns may not exist yet */
+  }
+
+  const summary: string[] = [];
+  if (extracted.headline) summary.push("headline");
+  if (extracted.bio) summary.push("summary");
+  if (extracted.years_experience != null) summary.push("years of experience");
+  if (extracted.specialisms.length) summary.push(`${extracted.specialisms.length} skills`);
+  if (extracted.cuisines.length) summary.push(`${extracted.cuisines.length} cuisines`);
+  if (extracted.certifications.length)
+    summary.push(`${extracted.certifications.length} certifications`);
+  if (extracted.languages.length) summary.push(`${extracted.languages.length} languages`);
+  if (addedExperience) summary.push(`${addedExperience} work history entries`);
+
+  revalidatePath("/profile");
+  revalidatePath("/profile/edit");
+  return {
+    ok: true,
+    summary,
+    applied: { name: appliedName, headline, bio, years, languages, desiredRoles },
+  };
 }
 
 // --- Experience CRUD (R7 — LinkedIn-style work history) ---------------------

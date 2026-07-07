@@ -23,6 +23,7 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
 import DescriptionIcon from "@mui/icons-material/Description";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import TranslateIcon from "@mui/icons-material/Translate";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -30,6 +31,7 @@ import AddIcon from "@mui/icons-material/Add";
 import {
   updateCandidateProfile,
   uploadCv,
+  importProfileFromCv,
   uploadAvatar,
   addExperience,
   deleteExperience,
@@ -144,6 +146,7 @@ export default function ProfileForm(props: Props) {
   // CV upload
   const [uploadingCv, setUploadingCv] = useState(false);
   const [cvUrl, setCvUrl] = useState<string | null>(props.initialCvUrl);
+  const [importingCv, setImportingCv] = useState(false);
 
   // Avatar upload
   const [avatarUrl, setAvatarUrl] = useState<string | null>(props.initialAvatarUrl);
@@ -223,9 +226,30 @@ export default function ProfileForm(props: Props) {
     setUploadingCv(false);
     if (res.ok && res.url) {
       setCvUrl(res.url);
-      setToast({ msg: "CV uploaded. You can now auto-apply to gigs.", ok: true });
+      setToast({ msg: "CV uploaded. Tap Autofill to pull your details in.", ok: true });
     } else {
       setToast({ msg: res.error ?? "Could not upload your CV.", ok: false });
+    }
+  }
+
+  // Read the saved CV and pull its details into the profile fields (the extraction seam).
+  async function handleImportCv() {
+    setImportingCv(true);
+    const res = await importProfileFromCv();
+    setImportingCv(false);
+    if (res.ok && res.applied) {
+      const a = res.applied;
+      if (a.name) setName(a.name);
+      if (a.headline) setHeadline(a.headline);
+      if (a.bio) setBio(a.bio);
+      if (a.years != null) setYears(String(a.years));
+      if (a.languages.length) setLanguages(a.languages);
+      if (a.desiredRoles.length) setDesiredRoles(a.desiredRoles);
+      router.refresh(); // pulls in work history + skills/cuisines/certs on the read page
+      const parts = res.summary?.length ? `: ${res.summary.join(", ")}` : "";
+      setToast({ msg: `Imported from your CV${parts}. Review and save.`, ok: true });
+    } else {
+      setToast({ msg: res.error ?? "Could not import from your CV.", ok: false });
     }
   }
 
@@ -364,7 +388,7 @@ export default function ProfileForm(props: Props) {
             <Box>
               <Typography sx={{ fontWeight: 700 }}>Your CV</Typography>
               <Typography variant="caption" color="text.secondary">
-                Save it once → auto-apply to any gig in one tap.
+                Upload it once, then autofill your whole profile from it.
               </Typography>
             </Box>
           </Stack>
@@ -383,10 +407,22 @@ export default function ProfileForm(props: Props) {
               startIcon={uploadingCv ? <CircularProgress size={16} /> : undefined}
             >
               {uploadingCv ? "Uploading…" : cvUrl ? "Replace" : "Upload CV"}
-              <input hidden type="file" accept=".pdf,.doc,.docx,image/*" onChange={handleCv} />
+              <input hidden type="file" accept=".pdf,image/*" onChange={handleCv} />
             </Button>
           </Stack>
         </Stack>
+        {cvUrl && (
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={handleImportCv}
+            disabled={importingCv}
+            startIcon={importingCv ? <CircularProgress size={16} color="inherit" /> : <AutoAwesomeIcon />}
+            sx={{ mt: 1.75, borderRadius: "10px", fontWeight: 800 }}
+          >
+            {importingCv ? "Reading your CV…" : "Autofill profile from CV"}
+          </Button>
+        )}
       </Paper>
 
       {/* Experience */}

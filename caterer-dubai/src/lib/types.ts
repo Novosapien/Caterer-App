@@ -43,6 +43,9 @@ export interface CandidateProfile {
   // full-profile fields (migration 0003)
   languages: string[];
   work_pref: WorkPref | null;
+  // CV extraction (migration 0004)
+  cv_extracted?: Record<string, unknown> | null;
+  cv_extracted_at?: string | null;
   // convenience joins + computed
   profile?: Profile;
   experience?: CandidateExperience[];
@@ -156,6 +159,31 @@ export interface CvRating {
   strengths: string[]; // where the CV matches the role
   gaps: string[]; // what's missing or weak for this role
   recommendations: string[]; // concrete CV changes to improve fit
+}
+
+// Structured fields extracted from an uploaded CV (see lib/cvExtract.ts). These map onto
+// the candidate_profiles columns + candidate_experience rows during import.
+export interface ExtractedCvExperience {
+  title: string;
+  company: string;
+  location: string | null;
+  start_label: string | null;
+  end_label: string | null;
+  is_current: boolean;
+  description: string | null;
+}
+
+export interface ExtractedCv {
+  name: string | null;
+  headline: string | null;
+  bio: string | null;
+  years_experience: number | null;
+  specialisms: string[];
+  cuisines: string[];
+  certifications: string[];
+  languages: string[];
+  desired_roles: string[];
+  experience: ExtractedCvExperience[];
 }
 
 export interface AppNotification {
