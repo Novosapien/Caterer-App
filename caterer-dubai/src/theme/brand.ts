@@ -59,6 +59,59 @@ export const brand = {
   pink: "#F0E1F1",
 };
 
+// Material Design 3 token layer (dark scheme), coloured from the Caterer brand.
+// Brand orange is kept as the vivid `primary` (branded Material You) with an accessible
+// dark on-primary. Surfaces follow the MD3 tonal surface-container model; elevation uses
+// MD3's soft ambient shadows. Consumed by theme.ts and MD3-aware components.
+export const md = {
+  // --- Primary (Caterer orange) ---
+  primary: "#EF7D00",
+  onPrimary: "#241100",
+  primaryContainer: "#7A3D00",
+  onPrimaryContainer: "#FFDCC2",
+  // --- Secondary (Caterer purple) ---
+  secondary: "#D48BD6",
+  onSecondary: "#40103F",
+  secondaryContainer: "#5C2A5D",
+  onSecondaryContainer: "#F7D9F6",
+  // --- Tertiary (gold / amber) ---
+  tertiary: "#F6A623",
+  onTertiary: "#3E2900",
+  tertiaryContainer: "#5A3E00",
+  onTertiaryContainer: "#FFE0A3",
+  // --- Error ---
+  error: "#FFB4AB",
+  onError: "#690005",
+  errorContainer: "#93000A",
+  onErrorContainer: "#FFDAD6",
+  // --- Neutral surfaces (MD3 tonal containers, dark) ---
+  surface: "#131316",
+  surfaceDim: "#0C0C0E",
+  surfaceBright: "#39383C",
+  surfaceContainerLowest: "#0A0A0C",
+  surfaceContainerLow: "#17171A",
+  surfaceContainer: "#1C1B1F",
+  surfaceContainerHigh: "#262529",
+  surfaceContainerHighest: "#302F34",
+  onSurface: "#E7E1E6",
+  onSurfaceVariant: "#CBC4CE",
+  outline: "#958F99",
+  outlineVariant: "rgba(255,255,255,0.12)",
+  // --- MD3 shape scale (corner radii, px) ---
+  shape: { xs: 4, sm: 8, md: 12, lg: 16, xl: 28, full: 999 },
+  // --- MD3 state-layer opacities ---
+  state: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
+  // --- MD3 elevation (soft ambient shadows, levels 0-5) ---
+  elevation: [
+    "none",
+    "0 1px 2px rgba(0,0,0,0.30), 0 1px 3px 1px rgba(0,0,0,0.15)",
+    "0 1px 2px rgba(0,0,0,0.30), 0 2px 6px 2px rgba(0,0,0,0.15)",
+    "0 4px 8px 3px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.30)",
+    "0 6px 10px 4px rgba(0,0,0,0.15), 0 2px 3px rgba(0,0,0,0.30)",
+    "0 8px 12px 6px rgba(0,0,0,0.15), 0 4px 4px rgba(0,0,0,0.30)",
+  ],
+};
+
 // Reusable gradients, glows and glass — the premium surface language.
 export const surfaces = {
   // Dark: charcoal with a diagonal sheen (app bar, dark panels, hero).
