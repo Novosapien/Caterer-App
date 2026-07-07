@@ -2,21 +2,16 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import GigCard from "@/components/GigCard";
 import EmptyState from "@/components/EmptyState";
 import GigSearch from "@/components/candidate/GigSearch";
 import GigDateChips from "@/components/candidate/GigDateChips";
-import CompleteProfileBanner from "@/components/candidate/CompleteProfileBanner";
 import WhatsAppConnectBanner from "@/components/candidate/WhatsAppConnectBanner";
 import { listOpenGigs } from "@/lib/queries";
 import { brand } from "@/theme/brand";
+import { display } from "@/theme/fonts";
 import type { Job, JobSuggestion } from "@/lib/types";
-
-const HERO_IMG =
-  "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1400&q=75";
 
 // Dubai-local date key (YYYY-MM-DD) so date filters honour the venue's timezone.
 function dubaiDateKey(ms: number): string {
@@ -80,127 +75,70 @@ export default async function JobsPage({
   }));
 
   return (
-    <Box>
-      {/* Hero */}
-      <Box
-        sx={{
-          position: "relative",
-          minHeight: 232,
-          backgroundImage: `linear-gradient(180deg, rgba(35,35,37,0.28) 0%, rgba(35,35,37,0.34) 45%, rgba(35,35,37,0.86) 100%), url(${HERO_IMG})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          px: 2.5,
-          pt: 3,
-          pb: 2.5,
-        }}
-      >
-        {/* LIVE NOW pill */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: 18,
-            left: 20,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 0.75,
-            px: 1.4,
-            py: 0.5,
-            borderRadius: 999,
-            bgcolor: "rgba(255,255,255,0.14)",
-            border: "1px solid rgba(255,255,255,0.28)",
-            backdropFilter: "blur(8px)",
-            WebkitBackdropFilter: "blur(8px)",
-          }}
-        >
+    <Box
+      sx={{
+        minHeight: "100dvh",
+        color: "#fff",
+        // Shiny piano-black, matching the landing page: one specular highlight fading
+        // into a deep near-black. Calm and glossy, not a busy photo hero.
+        backgroundColor: "#08080A",
+        backgroundImage: `
+          radial-gradient(120% 62% at 50% -10%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 26%, rgba(255,255,255,0) 52%),
+          linear-gradient(180deg, #141416 0%, #0A0A0C 62%, #0C0C0E 100%)
+        `,
+      }}
+    >
+      <Container maxWidth="sm" sx={{ pt: { xs: 3.5, sm: 4.5 } }}>
+        {/* Calm header: one orange accent, generous air (mirrors the landing). */}
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", mb: 2 }}>
           <Box
-            sx={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              bgcolor: brand.tealBright,
-              boxShadow: `0 0 10px ${brand.tealBright}`,
-              animation: "livepulse 1.6s ease-in-out infinite",
-              "@keyframes livepulse": {
-                "0%,100%": { opacity: 1, transform: "scale(1)" },
-                "50%": { opacity: 0.4, transform: "scale(0.7)" },
-              },
-            }}
+            sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: brand.teal, boxShadow: `0 0 12px ${brand.teal}` }}
           />
-          <Typography sx={{ color: "#fff", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.08em" }}>
-            LIVE NOW
+          <Typography sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, fontSize: "0.9rem" }}>
+            {allOpen.length} live {allOpen.length === 1 ? "gig" : "gigs"} across Dubai
           </Typography>
-        </Box>
-
-        <Typography
-          variant="h2"
-          sx={{ color: "#fff", lineHeight: 1.0, fontSize: { xs: "2.5rem", sm: "3rem" } }}
-        >
-          Gigs in{" "}
-          <Box component="span" sx={{ color: brand.tealBright }}>
-            Dubai
-          </Box>
-        </Typography>
-        <Typography sx={{ color: "rgba(255,255,255,0.9)", mt: 1, maxWidth: 320, fontWeight: 500 }}>
-          Find catering &amp; hospitality gigs that fit your schedule.
-        </Typography>
-      </Box>
-
-      <Container maxWidth="sm" sx={{ position: "relative", zIndex: 2 }}>
-        {/* Floating glass search card overlapping the hero — modern marketplace pattern */}
-        <Paper
-          elevation={0}
-          sx={{
-            mt: "-28px",
-            p: 1.5,
-            borderRadius: 5,
-            border: `1px solid ${brand.line}`,
-            boxShadow: "0 26px 60px -30px rgba(35,35,37,0.5)",
-          }}
-        >
-          <GigSearch suggestions={suggestions} />
-          <Box sx={{ mt: 1.25 }}>
-            <GigDateChips />
-          </Box>
-        </Paper>
-
-        {/* Count + sort row */}
-        <Stack
-          direction="row"
-          sx={{ mt: 2, alignItems: "center", justifyContent: "space-between", gap: 1 }}
-        >
-          <Stack direction="row" spacing={0.75} sx={{ alignItems: "baseline" }}>
-            <Typography sx={{ fontWeight: 800, color: brand.teal, fontSize: "1.15rem" }}>
-              {gigs.length}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {gigs.length === 1 ? "gig" : "gigs"}
-              {search ? ` for “${search}”` : " available"}
-            </Typography>
-          </Stack>
-          <Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
-            <Typography variant="body2" color="text.secondary">
-              Sort by:
-            </Typography>
-            <Typography variant="body2" sx={{ fontWeight: 800, color: brand.teal }}>
-              {urgentOnly ? "Urgent" : "Urgent first"}
-            </Typography>
-            <KeyboardArrowDownIcon sx={{ fontSize: "1.1rem", color: brand.teal }} />
-          </Stack>
         </Stack>
 
-        <WhatsAppConnectBanner sx={{ mt: 2 }} />
+        <Typography
+          component="h1"
+          sx={{
+            fontFamily: display.style.fontFamily,
+            fontWeight: 700,
+            letterSpacing: "-0.03em",
+            lineHeight: 1.04,
+            fontSize: { xs: "2.2rem", sm: "2.6rem" },
+            mb: { xs: 2.75, sm: 3.25 },
+          }}
+        >
+          Find your next{" "}
+          <Box component="span" sx={{ color: brand.teal }}>
+            gig
+          </Box>
+        </Typography>
 
-        <Stack spacing={2} sx={{ mt: 2 }}>
+        {/* Search sits directly on the charcoal — a single clean field, no floating card. */}
+        <GigSearch suggestions={suggestions} />
+        <Box sx={{ mt: 1.5 }}>
+          <GigDateChips />
+        </Box>
+
+        {/* One quiet result count, no sort chrome. */}
+        <Typography sx={{ color: "rgba(255,255,255,0.55)", fontSize: "0.9rem", mt: 3, mb: 1.5 }}>
+          <Box component="span" sx={{ color: "#fff", fontWeight: 700 }}>
+            {gigs.length}
+          </Box>{" "}
+          {gigs.length === 1 ? "gig" : "gigs"}
+          {search ? ` for “${search}”` : " available"}
+        </Typography>
+
+        <Stack spacing={2}>
           {gigs.length === 0 ? (
             <EmptyState
               icon={<SearchOffIcon fontSize="inherit" />}
               title="No gigs match"
               subtitle={
                 search || whenFilter || urgentOnly
-                  ? "Try widening your filters — different role, date or area."
+                  ? "Try widening your filters: a different role, date or area."
                   : "No open gigs right now. Check back soon."
               }
             />
@@ -209,7 +147,8 @@ export default async function JobsPage({
           )}
         </Stack>
 
-        <CompleteProfileBanner sx={{ mt: 3 }} />
+        {/* A single quiet prompt at the end, not two competing banners. */}
+        <WhatsAppConnectBanner sx={{ mt: 3, mb: 2 }} />
       </Container>
     </Box>
   );
