@@ -407,7 +407,7 @@ export default function ProfileForm(props: Props) {
               startIcon={uploadingCv ? <CircularProgress size={16} /> : undefined}
             >
               {uploadingCv ? "Uploading…" : cvUrl ? "Replace" : "Upload CV"}
-              <input hidden type="file" accept=".pdf,image/*" onChange={handleCv} />
+              <input hidden type="file" accept=".pdf,.doc,.docx,image/*" onChange={handleCv} />
             </Button>
           </Stack>
         </Stack>

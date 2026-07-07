@@ -84,20 +84,51 @@ const TOOL: Anthropic.Tool = {
 const IMAGE_MEDIA = ["image/jpeg", "image/png", "image/gif", "image/webp"] as const;
 type ImageMedia = (typeof IMAGE_MEDIA)[number];
 
-// Build the document/image content block for the CV bytes.
-function cvBlock(bytes: Uint8Array, contentType: string): Anthropic.ContentBlockParam {
-  const data = Buffer.from(bytes).toString("base64");
+const INSTRUCTION = "Extract this candidate's CV into the structured fields.";
+
+// Build the message content for the CV bytes. PDFs and images go straight to Claude as
+// document/image blocks; Word .docx is unzipped to plain text with mammoth first (Claude
+// cannot read .docx natively). `filename` (the stored CV URL) disambiguates Word formats.
+async function buildCvContent(
+  bytes: Uint8Array,
+  contentType: string,
+  filename = "",
+): Promise<Anthropic.ContentBlockParam[]> {
   const ct = (contentType || "").toLowerCase();
-  if (ct.includes("pdf")) {
-    return { type: "document", source: { type: "base64", media_type: "application/pdf", data } };
+  const name = filename.toLowerCase();
+  const isPdf = ct.includes("pdf") || name.endsWith(".pdf");
+  const isImage = ct.startsWith("image/");
+  const isDocx = ct.includes("wordprocessingml") || ct.includes("officedocument") || name.endsWith(".docx");
+  const isLegacyDoc = !isDocx && (name.endsWith(".doc") || ct === "application/msword");
+
+  if (isPdf) {
+    const data = Buffer.from(bytes).toString("base64");
+    return [
+      { type: "document", source: { type: "base64", media_type: "application/pdf", data } },
+      { type: "text", text: INSTRUCTION },
+    ];
   }
-  if (ct.startsWith("image/")) {
+  if (isImage) {
     const media: ImageMedia = (IMAGE_MEDIA as readonly string[]).includes(ct)
       ? (ct as ImageMedia)
       : "image/png";
-    return { type: "image", source: { type: "base64", media_type: media, data } };
+    const data = Buffer.from(bytes).toString("base64");
+    return [
+      { type: "image", source: { type: "base64", media_type: media, data } },
+      { type: "text", text: INSTRUCTION },
+    ];
   }
-  throw new Error("Unsupported CV type for extraction. Please upload a PDF or an image.");
+  if (isDocx) {
+    const mammoth = (await import("mammoth")).default;
+    const { value } = await mammoth.extractRawText({ buffer: Buffer.from(bytes) });
+    const text = (value || "").trim();
+    if (!text) throw new Error("That Word document appears to be empty.");
+    return [{ type: "text", text: `CV content (from a Word document):\n\n${text}\n\n${INSTRUCTION}` }];
+  }
+  if (isLegacyDoc) {
+    throw new Error("Legacy Word .doc isn't supported for autofill. Please upload a PDF or .docx.");
+  }
+  throw new Error("Unsupported CV type for extraction. Please upload a PDF, Word .docx, or an image.");
 }
 
 const str = (v: unknown): string | null =>
@@ -111,26 +142,20 @@ const arr = (v: unknown): string[] =>
 export async function extractCvFields(
   bytes: Uint8Array,
   contentType: string,
+  filename = "",
 ): Promise<ExtractedCv> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) throw new Error("ANTHROPIC_API_KEY is not configured.");
   const client = new Anthropic({ apiKey });
 
+  const content = await buildCvContent(bytes, contentType, filename);
   const message = await client.messages.create({
     model: MODEL,
     max_tokens: 2000,
     system: SYSTEM,
     tools: [TOOL],
     tool_choice: { type: "tool", name: "submit_cv_fields" },
-    messages: [
-      {
-        role: "user",
-        content: [
-          cvBlock(bytes, contentType),
-          { type: "text", text: "Extract this candidate's CV into the structured fields." },
-        ],
-      },
-    ],
+    messages: [{ role: "user", content }],
   });
 
   const block = message.content.find((b) => b.type === "tool_use");

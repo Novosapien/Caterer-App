@@ -371,10 +371,13 @@ export async function importProfileFromCv(): Promise<{
 
   let extracted;
   try {
-    extracted = await extractCvFields(bytes, contentType);
+    extracted = await extractCvFields(bytes, contentType, candidate.cv_url);
   } catch (err) {
     console.error("CV extraction failed:", err);
-    return { ok: false, error: "We couldn't read that CV. A text-based PDF works best." };
+    const msg = err instanceof Error && /\.doc\b|Word|Unsupported|empty/i.test(err.message)
+      ? err.message
+      : "We couldn't read that CV. A text-based PDF or .docx works best.";
+    return { ok: false, error: msg };
   }
 
   // Case-insensitive union that preserves existing order and adds new tags.
