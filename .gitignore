@@ -33,6 +33,10 @@ venv/
 .pytest_cache/
 **/.pytest_cache/
 
+# ---- Local demo assets (may contain real CVs / personal data) ----
+Demo CV/
+**/Demo CV/
+
 # ---- Misc ----
 .DS_Store
 **/.DS_Store
