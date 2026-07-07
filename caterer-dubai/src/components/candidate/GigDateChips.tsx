@@ -1,15 +1,14 @@
 "use client";
 
-import { useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import AppsIcon from "@mui/icons-material/Apps";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { brand, surfaces } from "@/theme/brand";
 
-// Horizontal, scrollable date filters driving the ?when= param
-// (all | today | tomorrow | week). The active chip fills bright orange.
+// Horizontal, scrollable date filters (all | today | tomorrow | week). The active chip
+// fills bright orange. Controlled by the parent feed so switching filters in-memory —
+// no URL change, no server round-trip.
 const CHIPS: { label: string; value: string; icon: React.ReactNode }[] = [
   { label: "All Gigs", value: "", icon: <AppsIcon sx={{ fontSize: "1rem" }} /> },
   { label: "Today", value: "today", icon: <CalendarTodayIcon sx={{ fontSize: "0.95rem" }} /> },
@@ -17,21 +16,13 @@ const CHIPS: { label: string; value: string; icon: React.ReactNode }[] = [
   { label: "This Week", value: "week", icon: <CalendarTodayIcon sx={{ fontSize: "0.95rem" }} /> },
 ];
 
-export default function GigDateChips() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [, startTransition] = useTransition();
-  const current = searchParams.get("when") ?? "";
-
-  function select(value: string) {
-    const params = new URLSearchParams(Array.from(searchParams.entries()));
-    if (value) params.set("when", value);
-    else params.delete("when");
-    startTransition(() => {
-      router.replace(params.toString() ? `/jobs?${params.toString()}` : "/jobs", { scroll: false });
-    });
-  }
-
+export default function GigDateChips({
+  value: current,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
   return (
     <Stack
       direction="row"
@@ -50,7 +41,7 @@ export default function GigDateChips() {
         return (
           <Button
             key={c.label}
-            onClick={() => select(c.value)}
+            onClick={() => onChange(c.value)}
             startIcon={c.icon}
             disableRipple
             sx={{

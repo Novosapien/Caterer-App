@@ -2,21 +2,13 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import SearchOffIcon from "@mui/icons-material/SearchOff";
-import GigCard from "@/components/GigCard";
-import EmptyState from "@/components/EmptyState";
 import GigSearch from "@/components/candidate/GigSearch";
-import GigDateChips from "@/components/candidate/GigDateChips";
+import JobsFeed from "@/components/candidate/JobsFeed";
 import WhatsAppConnectBanner from "@/components/candidate/WhatsAppConnectBanner";
 import { listOpenGigs } from "@/lib/queries";
 import { brand } from "@/theme/brand";
 import { display } from "@/theme/fonts";
 import type { Job, JobSuggestion } from "@/lib/types";
-
-// Dubai-local date key (YYYY-MM-DD) so date filters honour the venue's timezone.
-function dubaiDateKey(ms: number): string {
-  return new Date(ms).toLocaleDateString("en-CA", { timeZone: "Asia/Dubai" });
-}
 
 // Substring match across the fields a chef would search by.
 function matchesQuery(j: Job, search: string): boolean {
@@ -27,22 +19,6 @@ function matchesQuery(j: Job, search: string): boolean {
     j.location_area.toLowerCase().includes(q) ||
     j.role_type.toLowerCase().includes(q)
   );
-}
-
-function filterByWhen(gigs: Job[], when: string): Job[] {
-  if (!when) return gigs;
-  const now = Date.now();
-  const DAY = 86_400_000;
-  const todayKey = dubaiDateKey(now);
-  const tomorrowKey = dubaiDateKey(now + DAY);
-  const weekEndKey = dubaiDateKey(now + 6 * DAY);
-  return gigs.filter((g) => {
-    const k = dubaiDateKey(new Date(g.start_at).getTime());
-    if (when === "today") return k === todayKey;
-    if (when === "tomorrow") return k === tomorrowKey;
-    if (when === "week") return k >= todayKey && k <= weekEndKey;
-    return true;
-  });
 }
 
 // Candidate gig feed (R1) — anonymous, no login. searchParams is a Promise (Next 16).
@@ -58,10 +34,11 @@ export default async function JobsPage({
 
   // Fetch the FULL open catalogue once: the feed is filtered from it, and the whole set
   // feeds the search box's instant type-ahead suggestions (independent of the filters).
+  // Search + urgent are applied server-side (URL-driven); the Today/Tomorrow/This Week
+  // date filter runs client-side in JobsFeed so switching it is instant (no round-trip).
   const allOpen = await listOpenGigs({}); // urgent already ordered first
-  let gigs = urgentOnly ? allOpen.filter((j) => j.is_urgent) : allOpen;
-  if (search) gigs = gigs.filter((j) => matchesQuery(j, search));
-  gigs = filterByWhen(gigs, whenFilter);
+  let baseGigs = urgentOnly ? allOpen.filter((j) => j.is_urgent) : allOpen;
+  if (search) baseGigs = baseGigs.filter((j) => matchesQuery(j, search));
 
   const suggestions: JobSuggestion[] = allOpen.map((j) => ({
     id: j.id,
@@ -118,34 +95,15 @@ export default async function JobsPage({
 
         {/* Search sits directly on the charcoal — a single clean field, no floating card. */}
         <GigSearch suggestions={suggestions} />
-        <Box sx={{ mt: 1.5 }}>
-          <GigDateChips />
-        </Box>
 
-        {/* One quiet result count, no sort chrome. */}
-        <Typography sx={{ color: "rgba(255,255,255,0.55)", fontSize: "0.9rem", mt: 3, mb: 1.5 }}>
-          <Box component="span" sx={{ color: "#fff", fontWeight: 700 }}>
-            {gigs.length}
-          </Box>{" "}
-          {gigs.length === 1 ? "gig" : "gigs"}
-          {search ? ` for “${search}”` : " available"}
-        </Typography>
-
-        <Stack spacing={2}>
-          {gigs.length === 0 ? (
-            <EmptyState
-              icon={<SearchOffIcon fontSize="inherit" />}
-              title="No gigs match"
-              subtitle={
-                search || whenFilter || urgentOnly
-                  ? "Try widening your filters: a different role, date or area."
-                  : "No open gigs right now. Check back soon."
-              }
-            />
-          ) : (
-            gigs.map((job) => <GigCard key={job.id} job={job} />)
-          )}
-        </Stack>
+        {/* Date chips + count + list live in a client component so switching
+            Today / Tomorrow / This Week filters in-memory (instant, no round-trip). */}
+        <JobsFeed
+          baseGigs={baseGigs}
+          initialWhen={whenFilter}
+          search={search}
+          urgentOnly={urgentOnly}
+        />
 
         {/* A single quiet prompt at the end, not two competing banners. */}
         <WhatsAppConnectBanner sx={{ mt: 3, mb: 2 }} />
