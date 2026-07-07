@@ -13,7 +13,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import EmptyState from "@/components/EmptyState";
-import { loginAsChef } from "@/app/actions/auth";
+import { loginAsChef, signOut } from "@/app/actions/auth";
 import { getSession } from "@/lib/session";
 import { getCandidate, getCandidateInsights } from "@/lib/queries";
 import { getProfileSections } from "@/components/candidate/profileSections";
@@ -46,22 +46,34 @@ export default async function ProfilePage() {
       <Container maxWidth="sm" sx={{ pt: 4 }}>
         <EmptyState
           icon={<PersonOutlineIcon fontSize="inherit" />}
-          title="No profile yet"
+          title={isRecruiter ? "Signed in as a business" : "Your chef profile"}
           subtitle={
             isRecruiter
-              ? "You're currently previewing as a recruiter. Switch to the demo chef to see the chef profile."
-              : "Preview the demo chef, or browse gigs and apply to any one. We'll set up your profile in 20 seconds, then you can build it out here."
+              ? "You're signed in as a business account. Log in with a chef account to see the chef profile."
+              : "Log in or create a free account to build your chef profile. You can keep browsing gigs without one."
           }
         />
-        <Stack spacing={1.25} sx={{ alignItems: "center" }}>
-          <form action={loginAsChef}>
-            <Button type="submit" variant="contained" size="large">
-              View as demo chef (Max)
-            </Button>
-          </form>
+        <Stack spacing={1.5} sx={{ alignItems: "center" }}>
+          {!isRecruiter && (
+            <Stack direction="row" spacing={1.25}>
+              <Button component="a" href="/login" variant="contained" size="large">
+                Log in
+              </Button>
+              <Button component="a" href="/signup" variant="outlined" color="inherit" size="large">
+                Create account
+              </Button>
+            </Stack>
+          )}
           <Button component="a" href="/jobs" variant="text" color="inherit">
             Browse gigs
           </Button>
+          {!isRecruiter && (
+            <form action={loginAsChef}>
+              <Button type="submit" variant="text" size="small" sx={{ color: MUTED }}>
+                or preview the demo chef
+              </Button>
+            </form>
+          )}
         </Stack>
       </Container>
     );
@@ -95,7 +107,7 @@ export default async function ProfilePage() {
   return (
     <Box sx={{ bgcolor: PAGE, color: "#fff", minHeight: "100dvh" }}>
       <Container maxWidth="sm" sx={{ pt: 1.5, pb: 13 }}>
-        {/* Slim toolbar — back to the feed */}
+        {/* Slim toolbar — back to the feed + log out */}
         <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", py: 1 }}>
           <Button
             component="a"
@@ -105,6 +117,14 @@ export default async function ProfilePage() {
           >
             Gigs
           </Button>
+          <form action={signOut}>
+            <Button
+              type="submit"
+              sx={{ color: MUTED, fontWeight: 600, px: 1, "&:hover": { color: "#fff", bgcolor: "transparent" } }}
+            >
+              Log out
+            </Button>
+          </form>
         </Stack>
 
         {/* Header — restrained identity, one accent, no chrome */}

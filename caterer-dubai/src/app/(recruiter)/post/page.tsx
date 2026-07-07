@@ -5,13 +5,16 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
 import LockIcon from "@mui/icons-material/Lock";
-import { DEMO_BUSINESS_ID } from "@/lib/demo";
+import { getSession } from "@/lib/session";
+import { getOwnedBusinessId } from "@/lib/queries";
 import { getRemainingCredits } from "../actions";
 import PostGigForm from "@/components/recruiter/PostGigForm";
 import { brand } from "@/theme/brand";
 
 export default async function PostGigPage() {
-  const remaining = await getRemainingCredits(DEMO_BUSINESS_ID);
+  const session = await getSession();
+  const businessId = session ? await getOwnedBusinessId(session.profileId) : null;
+  const remaining = businessId ? await getRemainingCredits(businessId) : 0;
 
   return (
     <>

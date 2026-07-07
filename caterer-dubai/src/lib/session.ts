@@ -1,9 +1,10 @@
 import { cookies } from "next/headers";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import type { Role } from "./types";
 
-// Demo-grade session: a cookie holding {profileId, role}. This stands in for full
-// Supabase Auth so the clickable demo's 1-tap personas + phone-first apply work without
-// provisioning a phone/SMS provider. (Fidelity: "clickable demo, simulated data".)
+// Identity resolution. Real accounts come from Supabase Auth (email + password); the demo
+// cookie is a fallback for the 1-tap personas and guest quick-apply; null = anonymous
+// browsing (the landing, gig feed and gig pages are all public).
 
 const COOKIE = "caterer_session";
 
@@ -13,6 +14,26 @@ export interface Session {
 }
 
 export async function getSession(): Promise<Session | null> {
+  // 1) Real Supabase Auth session → resolve the linked profile.
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const db = createServiceClient();
+      const { data: profile } = await db
+        .from("profiles")
+        .select("id, role")
+        .eq("auth_user_id", user.id)
+        .maybeSingle();
+      if (profile) return { profileId: profile.id as string, role: profile.role as Role };
+    }
+  } catch {
+    // Auth unavailable or token invalid — fall through to the demo cookie.
+  }
+
+  // 2) Demo cookie (personas + guest quick-apply).
   const store = await cookies();
   const raw = store.get(COOKIE)?.value;
   if (!raw) return null;
@@ -23,6 +44,7 @@ export async function getSession(): Promise<Session | null> {
   }
 }
 
+// Demo/guest cookie writers — kept for the 1-tap personas and the phone-first guest apply.
 export async function setSession(session: Session): Promise<void> {
   const store = await cookies();
   store.set(COOKIE, JSON.stringify(session), {

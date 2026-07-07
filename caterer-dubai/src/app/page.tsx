@@ -9,7 +9,8 @@ import BrandLogo from "@/components/BrandLogo";
 import LandingMenu from "@/components/LandingMenu";
 import LandingSearch from "@/components/LandingSearch";
 import RoleCarousel, { type RoleCard } from "@/components/RoleCarousel";
-import { loginAsRecruiterAndPost } from "@/app/actions/auth";
+import { signOut } from "@/app/actions/auth";
+import { getSession } from "@/lib/session";
 import { listOpenGigs } from "@/lib/queries";
 import { brand } from "@/theme/brand";
 import { display } from "@/theme/fonts";
@@ -36,7 +37,8 @@ const ROLE_DEFS = [
 // Landing: restrained and confident. Deep charcoal, one orange accent, generous air.
 // No vanity metrics, no icon grid, no superlatives — the calm reads as expensive.
 export default async function Landing() {
-  const allOpen = await listOpenGigs({});
+  const [allOpen, session] = await Promise.all([listOpenGigs({}), getSession()]);
+  const role = session?.role ?? null;
   const count = allOpen.length;
 
   // Count real open roles per niche so each card carries an honest number.
@@ -133,24 +135,34 @@ export default async function Landing() {
             <BrandLogo dark />
           </Box>
           <Stack direction="row" spacing={{ xs: 0.75, sm: 1.5 }} sx={{ alignItems: "center" }}>
+            {role ? (
+              <form action={signOut}>
+                <Button
+                  type="submit"
+                  sx={{ display: { xs: "none", sm: "inline-flex" }, color: "rgba(255,255,255,0.82)", fontWeight: 600, px: 1, "&:hover": { color: "#fff", bgcolor: "transparent" } }}
+                >
+                  Log out
+                </Button>
+              </form>
+            ) : (
+              <Button
+                component="a"
+                href="/login"
+                sx={{ display: { xs: "none", sm: "inline-flex" }, color: "rgba(255,255,255,0.82)", fontWeight: 600, px: 1, "&:hover": { color: "#fff", bgcolor: "transparent" } }}
+              >
+                Log in
+              </Button>
+            )}
             <Button
               component="a"
-              href="/jobs"
-              sx={{ display: { xs: "none", sm: "inline-flex" }, color: "rgba(255,255,255,0.82)", fontWeight: 600, px: 1, "&:hover": { color: "#fff", bgcolor: "transparent" } }}
+              href={role === "recruiter" ? "/post" : "/signup?type=business"}
+              variant="contained"
+              color="teal"
+              sx={{ fontWeight: 700, px: { xs: 1.75, sm: 2.5 }, whiteSpace: "nowrap" }}
             >
-              Find a job
+              Post a job
             </Button>
-            <form action={loginAsRecruiterAndPost}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="teal"
-                sx={{ fontWeight: 700, px: { xs: 1.75, sm: 2.5 }, whiteSpace: "nowrap" }}
-              >
-                Post a job
-              </Button>
-            </form>
-            <LandingMenu />
+            <LandingMenu role={role} />
           </Stack>
         </Stack>
 

@@ -2,27 +2,31 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import { listPackages } from "@/lib/queries";
+import { listPackages, getOwnedBusinessId } from "@/lib/queries";
 import { createServiceClient } from "@/lib/supabase/server";
-import { DEMO_BUSINESS_ID } from "@/lib/demo";
+import { getSession } from "@/lib/session";
 import { getRemainingCredits } from "../actions";
 import PackageCard from "@/components/recruiter/PackageCard";
 import { brand } from "@/theme/brand";
 
 export default async function PackagesPage() {
   const packages = await listPackages();
+  const session = await getSession();
+  const businessId = session ? await getOwnedBusinessId(session.profileId) : null;
   const db = createServiceClient();
 
   // Current plan = most recently purchased package for this business.
-  const { data: lastPurchase } = await db
-    .from("purchases")
-    .select("package_id")
-    .eq("business_id", DEMO_BUSINESS_ID)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const { data: lastPurchase } = businessId
+    ? await db
+        .from("purchases")
+        .select("package_id")
+        .eq("business_id", businessId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle()
+    : { data: null };
   const currentPackageId = (lastPurchase as { package_id?: string } | null)?.package_id ?? null;
-  const remaining = await getRemainingCredits(DEMO_BUSINESS_ID);
+  const remaining = businessId ? await getRemainingCredits(businessId) : 0;
 
   return (
     <>

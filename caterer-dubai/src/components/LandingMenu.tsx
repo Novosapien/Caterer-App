@@ -4,10 +4,14 @@ import { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Divider from "@mui/material/Divider";
 import MenuIcon from "@mui/icons-material/Menu";
+import { signOut } from "@/app/actions/auth";
+import type { Role } from "@/lib/types";
 
-// Compact overflow menu for the landing top bar. Real routes, no dead links.
-export default function LandingMenu() {
+// Compact overflow menu for the landing top bar. Real routes, no dead links. Auth-aware:
+// shows Log in / Sign up when signed out, and Log out (+ area links) when signed in.
+export default function LandingMenu({ role = null }: { role?: Role | null }) {
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
   const open = Boolean(anchor);
   const close = () => setAnchor(null);
@@ -49,8 +53,29 @@ export default function LandingMenu() {
         }}
       >
         <MenuItem component="a" href="/jobs" onClick={close}>Find a job</MenuItem>
-        <MenuItem component="a" href="/recruiter" onClick={close}>Post a job</MenuItem>
-        <MenuItem component="a" href="/profile" onClick={close}>My profile</MenuItem>
+        <MenuItem
+          component="a"
+          href={role === "recruiter" ? "/recruiter" : "/signup?type=business"}
+          onClick={close}
+        >
+          {role === "recruiter" ? "Recruiter dashboard" : "Post a job"}
+        </MenuItem>
+        {role === "candidate" && (
+          <MenuItem component="a" href="/profile" onClick={close}>My profile</MenuItem>
+        )}
+        <Divider sx={{ borderColor: "rgba(255,255,255,0.1)" }} />
+        {role && (
+          <MenuItem
+            onClick={() => {
+              close();
+              void signOut();
+            }}
+          >
+            Log out
+          </MenuItem>
+        )}
+        {!role && <MenuItem component="a" href="/login" onClick={close}>Log in</MenuItem>}
+        {!role && <MenuItem component="a" href="/signup" onClick={close}>Sign up</MenuItem>}
       </Menu>
     </>
   );

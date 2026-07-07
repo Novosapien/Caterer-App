@@ -12,25 +12,41 @@ import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
 import GroupIcon from "@mui/icons-material/GroupOutlined";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumberOutlined";
 import { createServiceClient } from "@/lib/supabase/server";
-import { DEMO_BUSINESS_ID } from "@/lib/demo";
+import { getSession } from "@/lib/session";
+import { getOwnedBusinessId } from "@/lib/queries";
 import { getRemainingCredits } from "../actions";
 import DashboardGigs, { type DashboardGig } from "@/components/recruiter/DashboardGigs";
 import { brand } from "@/theme/brand";
 import type { Job } from "@/lib/types";
 
 export default async function RecruiterDashboardPage() {
+  const session = await getSession();
   const db = createServiceClient();
+  const businessId = session ? await getOwnedBusinessId(session.profileId) : null;
+
+  if (!businessId) {
+    return (
+      <Paper sx={{ p: 4, textAlign: "center" }}>
+        <Typography variant="h6" sx={{ fontWeight: 800 }}>
+          No business linked
+        </Typography>
+        <Typography color="text.secondary" sx={{ mt: 0.5 }}>
+          Your recruiter account isn&apos;t linked to a business yet.
+        </Typography>
+      </Paper>
+    );
+  }
 
   const { data: business } = await db
     .from("businesses")
     .select("name")
-    .eq("id", DEMO_BUSINESS_ID)
+    .eq("id", businessId)
     .maybeSingle();
 
   const { data: jobsData } = await db
     .from("jobs")
     .select("*")
-    .eq("business_id", DEMO_BUSINESS_ID)
+    .eq("business_id", businessId)
     .order("is_urgent", { ascending: false })
     .order("created_at", { ascending: false });
   const jobs = (jobsData ?? []) as unknown as Job[];
@@ -62,7 +78,7 @@ export default async function RecruiterDashboardPage() {
     };
   });
 
-  const remaining = await getRemainingCredits(DEMO_BUSINESS_ID);
+  const remaining = await getRemainingCredits(businessId);
   const urgentCount = jobs.filter((j) => j.is_urgent && j.status === "open").length;
   const totalApplicants = [...counts.values()].reduce((s, c) => s + c.applicants, 0);
 

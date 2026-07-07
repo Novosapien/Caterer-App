@@ -29,14 +29,19 @@ export default async function RecruiterLayout({ children }: { children: React.Re
           <Typography color="text.secondary" sx={{ mb: 3 }}>
             Post shifts, manage applicants and ping available chefs on WhatsApp — all from one dashboard.
           </Typography>
-          <form action={loginAsRecruiter}>
-            <Button type="submit" variant="contained" size="large" fullWidth>
-              Enter as recruiter
+          <Stack spacing={1.25}>
+            <Button component="a" href="/login" variant="contained" size="large" fullWidth>
+              Log in
             </Button>
-          </form>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 2 }}>
-            Demo persona · Sofia @ Atlantis Events
-          </Typography>
+            <Button component="a" href="/signup?type=business" variant="outlined" size="large" fullWidth>
+              Create a business account
+            </Button>
+            <form action={loginAsRecruiter}>
+              <Button type="submit" variant="text" size="small" color="inherit" fullWidth>
+                or enter the demo recruiter
+              </Button>
+            </form>
+          </Stack>
         </Paper>
       </Box>
     );

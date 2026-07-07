@@ -12,6 +12,20 @@ import type {
 // Server-side read helpers (service-role; RLS bypassed — demo grade). Feature streams
 // import these for gig/candidate/package reads. Writes live in feature server actions.
 
+// Resolve the business a recruiter owns from their profile id. Works for both real
+// business accounts and the demo recruiter persona (which owns the seeded business).
+export async function getOwnedBusinessId(profileId: string): Promise<string | null> {
+  const db = createServiceClient();
+  const { data } = await db
+    .from("businesses")
+    .select("id")
+    .eq("owner_profile_id", profileId)
+    .order("id", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  return (data?.id as string) ?? null;
+}
+
 export async function listOpenGigs(opts?: { search?: string; urgentOnly?: boolean }): Promise<Job[]> {
   const db = createServiceClient();
   let q = db.from("jobs").select("*, business:businesses(*)").eq("status", "open");

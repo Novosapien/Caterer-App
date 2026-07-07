@@ -6,7 +6,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { matchCandidatesForGig } from "@/lib/matching";
 import { notifyAgentService } from "@/lib/agentClient";
 import { getSession } from "@/lib/session";
-import { DEMO_BUSINESS_ID } from "@/lib/demo";
+import { getOwnedBusinessId } from "@/lib/queries";
 import type { Job } from "@/lib/types";
 
 // --- Credit gating helper ---------------------------------------------------
@@ -33,10 +33,12 @@ export async function getRemainingCredits(businessId: string): Promise<number> {
 export async function buyPackage(packageId: string): Promise<{ ok: boolean; error?: string }> {
   const session = await getSession();
   if (!session || session.role !== "recruiter") return { ok: false, error: "Not authorised" };
+  const businessId = await getOwnedBusinessId(session.profileId);
+  if (!businessId) return { ok: false, error: "No business found for your account." };
   const db = createServiceClient();
   const { error } = await db
     .from("purchases")
-    .insert({ business_id: DEMO_BUSINESS_ID, package_id: packageId });
+    .insert({ business_id: businessId, package_id: packageId });
   if (error) return { ok: false, error: error.message };
   revalidatePath("/packages");
   revalidatePath("/recruiter");
@@ -59,9 +61,11 @@ export interface CreateJobResult {
 export async function createJob(form: FormData): Promise<CreateJobResult> {
   const session = await getSession();
   if (!session || session.role !== "recruiter") return { ok: false, error: "Not authorised" };
+  const businessId = await getOwnedBusinessId(session.profileId);
+  if (!businessId) return { ok: false, error: "No business found for your account." };
 
   // Credit gating (R5 / EC5): block if 0 remaining.
-  const remaining = await getRemainingCredits(DEMO_BUSINESS_ID);
+  const remaining = await getRemainingCredits(businessId);
   if (remaining <= 0) {
     return { ok: false, error: "no-credits" };
   }
@@ -92,7 +96,7 @@ export async function createJob(form: FormData): Promise<CreateJobResult> {
   // Only include image_url when an image was actually attached — keeps the gig image
   // optional and avoids referencing the column at all if it isn't set.
   const payload: Record<string, unknown> = {
-    business_id: DEMO_BUSINESS_ID,
+    business_id: businessId,
     title,
     role_type: roleType,
     description: description || null,
@@ -164,6 +168,8 @@ export async function uploadBusinessImage(
 ): Promise<{ ok: boolean; url?: string; error?: string }> {
   const session = await getSession();
   if (!session || session.role !== "recruiter") return { ok: false, error: "Not authorised" };
+  const businessId = await getOwnedBusinessId(session.profileId);
+  if (!businessId) return { ok: false, error: "No business found for your account." };
 
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
@@ -178,7 +184,7 @@ export async function uploadBusinessImage(
 
   const db = createServiceClient();
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const path = `${DEMO_BUSINESS_ID}/${randomUUID()}-${safeName}`;
+  const path = `${businessId}/${randomUUID()}-${safeName}`;
   const bytes = new Uint8Array(await file.arrayBuffer());
 
   const { error: upErr } = await db.storage
