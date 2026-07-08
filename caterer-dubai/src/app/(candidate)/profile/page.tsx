@@ -111,7 +111,7 @@ export default async function ProfilePage() {
 
   return (
     <Box sx={{ bgcolor: PAGE, color: "#fff", minHeight: "100dvh" }}>
-      <Container maxWidth="sm" sx={{ pt: 1.5, pb: 13 }}>
+      <Container maxWidth="sm" sx={{ pt: 1.5, pb: 5 }}>
         {/* Slim toolbar — back to the feed + log out */}
         <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", py: 1 }}>
           <Button
@@ -260,6 +260,37 @@ export default async function ProfilePage() {
           )}
         </Box>
 
+        {/* Primary actions — sit directly under the profile card (not a sticky bar). */}
+        <Stack direction="row" spacing={1.5} sx={{ mb: 2 }}>
+          <Button
+            component="a"
+            href={candidate.cv_url ?? "/profile/edit"}
+            target={candidate.cv_url ? "_blank" : undefined}
+            startIcon={<DescriptionIcon />}
+            sx={{
+              flex: 1,
+              py: 1.25,
+              color: "#fff",
+              bgcolor: "rgba(255,255,255,0.06)",
+              border: `1px solid ${HAIRLINE}`,
+              fontWeight: 700,
+              "&:hover": { bgcolor: "rgba(255,255,255,0.1)" },
+            }}
+          >
+            {candidate.cv_url ? "View CV" : "Add CV"}
+          </Button>
+          <Button
+            component="a"
+            href="/profile/edit"
+            variant="contained"
+            color="teal"
+            startIcon={<EditIcon />}
+            sx={{ flex: 1.6, py: 1.25, fontWeight: 700 }}
+          >
+            Edit profile
+          </Button>
+        </Stack>
+
         {/* Applications the chef has made — from the app or the WhatsApp agent. */}
         <AppliedJobs applications={applications} />
 
@@ -340,53 +371,6 @@ export default async function ProfilePage() {
           ))}
         </Box>
       </Container>
-
-      {/* Sticky action bar */}
-      <Box
-        sx={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 1200,
-          bgcolor: "rgba(14,14,16,0.86)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
-          borderTop: `1px solid ${HAIRLINE}`,
-        }}
-      >
-        <Container maxWidth="sm" sx={{ py: 1.5 }}>
-          <Stack direction="row" spacing={1.5}>
-            <Button
-              component="a"
-              href={candidate.cv_url ?? "/profile/edit"}
-              target={candidate.cv_url ? "_blank" : undefined}
-              startIcon={<DescriptionIcon />}
-              sx={{
-                flex: 1,
-                py: 1.25,
-                color: "#fff",
-                bgcolor: "rgba(255,255,255,0.06)",
-                border: `1px solid ${HAIRLINE}`,
-                fontWeight: 700,
-                "&:hover": { bgcolor: "rgba(255,255,255,0.1)" },
-              }}
-            >
-              {candidate.cv_url ? "View CV" : "Add CV"}
-            </Button>
-            <Button
-              component="a"
-              href="/profile/edit"
-              variant="contained"
-              color="teal"
-              startIcon={<EditIcon />}
-              sx={{ flex: 1.6, py: 1.25, fontWeight: 700 }}
-            >
-              Edit profile
-            </Button>
-          </Stack>
-        </Container>
-      </Box>
     </Box>
   );
 }
