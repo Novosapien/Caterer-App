@@ -109,8 +109,22 @@ export default function ApplyPanel({
               {candidate.hasCv ? " · CV attached" : " · add a CV in your profile to stand out"}
             </Typography>
           </Stack>
-          <Button variant="text" color="inherit" size="small" onClick={() => setStep("details")}>
-            Apply with a different number
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", my: 0.25 }}>
+            <Box sx={{ flex: 1, height: "1px", bgcolor: brand.line }} />
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              or
+            </Typography>
+            <Box sx={{ flex: 1, height: "1px", bgcolor: brand.line }} />
+          </Stack>
+          <Button
+            fullWidth
+            size="large"
+            variant="outlined"
+            color="inherit"
+            onClick={() => setStep("details")}
+            sx={{ py: 1.5, fontWeight: 700, borderColor: brand.line }}
+          >
+            Apply manually
           </Button>
         </Stack>
       );
@@ -174,10 +188,12 @@ export default function ApplyPanel({
           >
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800 }}>
-                Apply in 20 seconds
+                {candidate ? "Apply manually" : "Apply in 20 seconds"}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                No CV, no sign-up. Just your name and mobile.
+                {candidate
+                  ? "Enter the name and mobile you want to apply with."
+                  : "No CV, no sign-up. Just your name and mobile."}
               </Typography>
             </Box>
             <IconButton size="small" aria-label="close apply" onClick={reset}>
