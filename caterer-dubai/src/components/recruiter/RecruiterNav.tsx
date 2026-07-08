@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Box from "@mui/material/Box";
@@ -34,7 +34,6 @@ const TABS = [
 
 export default function RecruiterNav() {
   const pathname = usePathname();
-  const router = useRouter();
 
   const isActive = (href: string) =>
     href === "/recruiter" ? pathname === "/recruiter" : pathname.startsWith(href);
@@ -108,13 +107,15 @@ export default function RecruiterNav() {
       >
         <BottomNavigation
           value={activeTab}
-          onChange={(_, value) => router.push(value)}
           showLabels
           sx={{ bgcolor: "transparent", borderRadius: 999 }}
         >
           {TABS.map((t) => (
             <BottomNavigationAction
               key={t.href}
+              component={Link}
+              href={t.href}
+              prefetch
               label={t.label}
               value={t.href}
               icon={t.icon}

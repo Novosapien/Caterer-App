@@ -1,6 +1,7 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Paper from "@mui/material/Paper";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
@@ -19,7 +20,6 @@ const TABS = [
 
 export default function CandidateNav() {
   const pathname = usePathname();
-  const router = useRouter();
 
   // Match the most specific tab (e.g. /jobs/[id] -> Gigs).
   const active =
@@ -42,14 +42,17 @@ export default function CandidateNav() {
         borderRadius: 0,
       }}
     >
-      <BottomNavigation
-        value={active}
-        onChange={(_, value) => router.push(value)}
-        showLabels
-        sx={{ bgcolor: "transparent" }}
-      >
+      <BottomNavigation value={active} showLabels sx={{ bgcolor: "transparent" }}>
         {TABS.map((t) => (
-          <BottomNavigationAction key={t.value} label={t.label} value={t.value} icon={t.icon} />
+          <BottomNavigationAction
+            key={t.value}
+            component={Link}
+            href={t.value}
+            prefetch
+            label={t.label}
+            value={t.value}
+            icon={t.icon}
+          />
         ))}
       </BottomNavigation>
     </Paper>
