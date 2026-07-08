@@ -218,6 +218,18 @@ export const theme = createTheme({
       },
     },
     MuiInputLabel: { styleOverrides: { root: { "&.Mui-focused": { color: md.primary } } } },
+    // Dropdowns open flush beneath their field (no floating gap, no selected-item
+    // overlay). Applies to every <Select> and <TextField select> across the app.
+    MuiSelect: {
+      defaultProps: {
+        MenuProps: {
+          anchorOrigin: { vertical: "bottom", horizontal: "left" },
+          transformOrigin: { vertical: "top", horizontal: "left" },
+          marginThreshold: 8,
+          slotProps: { paper: { sx: { mt: 0.5, borderRadius: 2 } } },
+        },
+      },
+    },
     // MD3 top app bar: flat surface container, hairline separation.
     MuiAppBar: {
       defaultProps: { elevation: 0 },
