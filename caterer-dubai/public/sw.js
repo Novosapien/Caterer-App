@@ -1,5 +1,7 @@
 // Minimal service worker — makes the app installable + a basic offline shell.
-const CACHE = "caterer-v1";
+// App code freshness is handled by the version poll in ServiceWorkerRegister, not
+// by caching here (navigations stay network-first). Bump CACHE to evict old shells.
+const CACHE = "caterer-v2";
 const PRECACHE = ["/", "/jobs", "/manifest.webmanifest", "/icon.svg"];
 
 self.addEventListener("install", (event) => {
