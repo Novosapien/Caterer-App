@@ -220,13 +220,18 @@ export const theme = createTheme({
     MuiInputLabel: { styleOverrides: { root: { "&.Mui-focused": { color: md.primary } } } },
     // Dropdowns open flush beneath their field (no floating gap, no selected-item
     // overlay). Applies to every <Select> and <TextField select> across the app.
+    // The height is capped so a long list (e.g. 11 role types) always fits directly
+    // below the field on a phone and scrolls internally, instead of MUI repositioning
+    // the whole menu to fit the viewport (which detached it from the field).
     MuiSelect: {
       defaultProps: {
         MenuProps: {
           anchorOrigin: { vertical: "bottom", horizontal: "left" },
           transformOrigin: { vertical: "top", horizontal: "left" },
-          marginThreshold: 8,
-          slotProps: { paper: { sx: { mt: 0.5, borderRadius: 2 } } },
+          marginThreshold: 0,
+          slotProps: {
+            paper: { sx: { mt: 0.5, borderRadius: 2, maxHeight: "38vh" } },
+          },
         },
       },
     },
