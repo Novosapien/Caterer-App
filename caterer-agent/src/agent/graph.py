@@ -17,6 +17,7 @@ credentials.
 
 from __future__ import annotations
 
+import logging
 from functools import lru_cache
 from typing import Optional
 
@@ -24,6 +25,8 @@ from src.agent.context import ConversationContext
 from src.agent.prompts import build_system_prompt
 from src.agent.tools import build_tools
 from src.config import get_settings
+
+logger = logging.getLogger("caterer_agent")
 
 
 # ---------------------------------------------------------------------------
@@ -96,6 +99,24 @@ def get_checkpointer():
     return _checkpointer
 
 
+def reset_checkpointer() -> None:
+    """Drop the cached checkpointer so the next use reconnects (best-effort close).
+
+    Supabase closes idle Postgres connections, which leaves the single cached
+    connection dead ("server closed the connection unexpectedly"). Clearing the
+    globals forces the next get_checkpointer() to open a fresh connection.
+    """
+    global _checkpointer, _checkpointer_cm
+    cm = _checkpointer_cm
+    _checkpointer = None
+    _checkpointer_cm = None
+    if cm is not None:
+        try:
+            cm.__exit__(None, None, None)
+        except Exception:  # pragma: no cover - the connection is already broken
+            pass
+
+
 # ---------------------------------------------------------------------------
 # Per-turn agent construction + invocation
 # ---------------------------------------------------------------------------
@@ -119,6 +140,27 @@ def _build_agent(job_id: str, candidate_profile_id: str, system_prompt: str):
         prompt=system_prompt,
         checkpointer=get_checkpointer(),
     )
+
+
+def _is_conn_error(exc: BaseException) -> bool:
+    """True if the exception (or its cause) is a dropped-Postgres-connection error.
+
+    Matches psycopg OperationalError/InterfaceError by class name and the tell-tale
+    "server closed the connection" / "connection is closed" messages, walking the
+    __cause__/__context__ chain since the saver may wrap it.
+    """
+    seen = set()
+    cur: Optional[BaseException] = exc
+    while cur is not None and id(cur) not in seen:
+        seen.add(id(cur))
+        name = type(cur).__name__
+        msg = str(cur).lower()
+        if name in ("OperationalError", "InterfaceError") or (
+            "server closed the connection" in msg or "connection is closed" in msg
+        ):
+            return True
+        cur = cur.__cause__ or cur.__context__
+    return False
 
 
 def _extract_reply_text(result: dict) -> str:
@@ -166,7 +208,19 @@ def run_turn(
     # via prompt= (not persisted), and prior turns come from the checkpointer.
     payload = {"messages": [{"role": "user", "content": inbound_text}]}
 
-    result = agent.invoke(payload, config=config)
+    try:
+        result = agent.invoke(payload, config=config)
+    except Exception as exc:
+        # The checkpointer holds a single Postgres connection that Supabase drops
+        # when idle. On a connection-level failure, reconnect once and retry so a
+        # stale connection self-heals instead of failing the turn.
+        if _is_conn_error(exc):
+            logger.warning("Checkpointer connection lost (%s); reconnecting and retrying.", exc)
+            reset_checkpointer()
+            agent = _build_agent(job_id, candidate_profile_id, system_prompt)
+            result = agent.invoke(payload, config=config)
+        else:
+            raise
     reply = _extract_reply_text(result)
     if not reply:
         reply = (
