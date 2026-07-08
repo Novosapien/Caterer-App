@@ -22,6 +22,14 @@ def _fmt(value: object, fallback: str = "not specified") -> str:
     return str(value)
 
 
+def _fmt_list(value: object, fallback: str = "not specified") -> str:
+    """Join a list of strings for the prompt, or fall back if empty/None."""
+    if isinstance(value, (list, tuple)):
+        items = [str(v).strip() for v in value if v not in (None, "")]
+        return ", ".join(items) if items else fallback
+    return _fmt(value, fallback)
+
+
 def _fmt_dubai(value: object, fallback: str = "not specified") -> str:
     """Format an ISO timestamp as one unambiguous Dubai-local string.
 
@@ -79,6 +87,22 @@ THE GIG (the ONLY gig you may discuss — every fact below is authoritative)
 - Dress code: {_fmt(gig.dress_code)}
 - Status: {_fmt(gig.status, "open")}
 - Details: {_fmt(gig.description, "none provided")}
+
+THE CHEF (their profile / CV on file — use ONLY this to answer fit or CV questions)
+- Name: {name}
+- Headline: {_fmt(candidate.headline)}
+- Experience: {_fmt(candidate.years_experience)} years
+- Specialisms: {_fmt_list(candidate.specialisms)}
+- Cuisines: {_fmt_list(candidate.cuisines)}
+- Certifications: {_fmt_list(candidate.certifications)}
+- Languages: {_fmt_list(candidate.languages)}
+- Bio: {_fmt(candidate.bio, "none on file")}
+- CV on file: {"yes" if candidate.has_cv else "no"}
+
+FIT / CV QUESTIONS
+- If the chef asks whether they suit the gig or whether their CV fits, give a brief, honest read of THE CHEF facts against THE GIG (role, cuisine, level). One or two sentences.
+- Their CV IS on file when "CV on file" is yes — never tell them you have no CV/details in that case; reason from the profile facts above.
+- Only say a specific detail is missing when its field above is "not specified"/"none on file". Never invent experience, certs, or skills they don't list.
 
 TIME
 - Right now it is {now_dubai} in Dubai. Use this only to decide whether the start is "tonight", "tomorrow", etc.

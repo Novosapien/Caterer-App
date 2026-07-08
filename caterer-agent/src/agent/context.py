@@ -67,6 +67,15 @@ class CandidateContext:
     candidate_profile_id: str
     name: Optional[str]
     phone: Optional[str]
+    headline: Optional[str] = None
+    years_experience: Optional[int] = None
+    specialisms: Optional[list] = None
+    cuisines: Optional[list] = None
+    certifications: Optional[list] = None
+    languages: Optional[list] = None
+    bio: Optional[str] = None
+    desired_roles: Optional[list] = None
+    has_cv: bool = False
 
 
 @dataclass
@@ -259,17 +268,22 @@ def load_gig(job_id: str) -> GigContext:
 
 
 def load_candidate(candidate_profile_id: str) -> CandidateContext:
-    """Load a candidate's name/phone from candidate_profiles joined to profiles.
+    """Load a candidate's profile/CV from candidate_profiles joined to profiles.
 
     candidate_profiles.profile_id is the PK and FK to profiles.id, which carries
-    name/phone.
+    name/phone. The CV-relevant fields (headline, specialisms, cuisines, etc.)
+    live on candidate_profiles itself, so the agent can answer fit/CV questions.
     """
     sb = get_supabase()
 
     def _query():
         return (
             sb.table("candidate_profiles")
-            .select("profile_id, profiles(name, phone)")
+            .select(
+                "profile_id, headline, years_experience, specialisms, cuisines, "
+                "certifications, languages, bio, desired_roles, cv_url, cv_extracted, "
+                "profiles(name, phone)"
+            )
             .eq("profile_id", candidate_profile_id)
             .limit(1)
             .execute()
@@ -290,6 +304,15 @@ def load_candidate(candidate_profile_id: str) -> CandidateContext:
         candidate_profile_id=candidate_profile_id,
         name=profile.get("name"),
         phone=profile.get("phone"),
+        headline=row.get("headline"),
+        years_experience=row.get("years_experience"),
+        specialisms=row.get("specialisms"),
+        cuisines=row.get("cuisines"),
+        certifications=row.get("certifications"),
+        languages=row.get("languages"),
+        bio=row.get("bio"),
+        desired_roles=row.get("desired_roles"),
+        has_cv=bool(row.get("cv_url") or row.get("cv_extracted")),
     )
 
 
