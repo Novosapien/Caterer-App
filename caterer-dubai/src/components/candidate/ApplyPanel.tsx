@@ -14,6 +14,7 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import DescriptionIcon from "@mui/icons-material/Description";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import PhoneField from "@/components/PhoneField";
@@ -229,11 +230,25 @@ export default function ApplyPanel({
         <>
           <Stack
             direction="row"
-            spacing={1}
-            sx={{ justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}
+            spacing={1.5}
+            sx={{ alignItems: "flex-start", mb: 2 }}
           >
-            <Box>
-              <Typography variant="h6" sx={{ fontWeight: 800 }}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "12px",
+                background: surfaces.accentGradient,
+                boxShadow: surfaces.tealGlowShadow,
+                display: "grid",
+                placeItems: "center",
+                flexShrink: 0,
+              }}
+            >
+              <SendRoundedIcon sx={{ color: "#fff", fontSize: "1.15rem" }} />
+            </Box>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.15 }}>
                 {candidate ? "Apply manually" : "Apply in 20 seconds"}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -242,7 +257,12 @@ export default function ApplyPanel({
                   : "No CV, no sign-up. Just your name and mobile."}
               </Typography>
             </Box>
-            <IconButton size="small" aria-label="close apply" onClick={reset} sx={{ color: "text.secondary" }}>
+            <IconButton
+              size="small"
+              aria-label="close apply"
+              onClick={reset}
+              sx={{ color: "text.secondary", mt: -0.5, mr: -0.5 }}
+            >
               <CloseIcon fontSize="small" />
             </IconButton>
           </Stack>
