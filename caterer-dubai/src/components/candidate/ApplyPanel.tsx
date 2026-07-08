@@ -18,7 +18,7 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutlineOutlined
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import PhoneField from "@/components/PhoneField";
 import { applyToGig, autoApply } from "@/app/(candidate)/actions";
-import { brand } from "@/theme/brand";
+import { brand, surfaces } from "@/theme/brand";
 
 type Step = "collapsed" | "details" | "done";
 
@@ -34,9 +34,11 @@ export interface ApplyCandidate {
 export default function ApplyPanel({
   jobId,
   candidate,
+  gigTitle,
 }: {
   jobId: string;
   candidate?: ApplyCandidate | null;
+  gigTitle?: string | null;
 }) {
   const [step, setStep] = useState<Step>("collapsed");
   const [name, setName] = useState("");
@@ -147,22 +149,68 @@ export default function ApplyPanel({
     <Paper
       elevation={0}
       sx={{
-        p: 2.5,
+        p: { xs: 2.25, sm: 2.75 },
         borderRadius: 4,
         border: `1px solid ${brand.line}`,
-        bgcolor: "background.paper",
+        bgcolor: "rgba(255,255,255,0.035)",
       }}
     >
+      {/* --- Success --- */}
       <Collapse in={step === "done"}>
-        <Stack spacing={1.5} sx={{ alignItems: "center", textAlign: "center", py: 1 }}>
-          <CheckCircleIcon sx={{ fontSize: 48, color: brand.herb }} />
-          <Typography variant="h6" sx={{ fontWeight: 800 }}>
-            You&rsquo;ve applied!
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            We&rsquo;ll WhatsApp you if it&rsquo;s a match. Turn on availability in your profile to
-            get pinged for urgent gigs first.
-          </Typography>
+        <Stack spacing={1.75} sx={{ alignItems: "center", textAlign: "center", py: 1.5 }}>
+          <Box
+            sx={{
+              width: 66,
+              height: 66,
+              borderRadius: "50%",
+              display: "grid",
+              placeItems: "center",
+              color: brand.herb,
+              bgcolor: `${brand.herb}22`,
+              border: `1px solid ${brand.herb}55`,
+              boxShadow: `0 0 0 7px ${brand.herb}14`,
+            }}
+          >
+            <CheckCircleIcon sx={{ fontSize: 34 }} />
+          </Box>
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 800 }}>
+              You&rsquo;re in!
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, maxWidth: 320 }}>
+              {gigTitle ? (
+                <>
+                  Application sent for <b>{gigTitle}</b>.{" "}
+                </>
+              ) : (
+                "Application sent. "
+              )}
+              We&rsquo;ll WhatsApp you if it&rsquo;s a match.
+            </Typography>
+          </Box>
+
+          <Stack spacing={1} sx={{ width: "100%", pt: 0.5 }}>
+            <Button
+              component="a"
+              href="/profile"
+              fullWidth
+              size="large"
+              variant="contained"
+              sx={{ py: 1.35, fontWeight: 800, background: surfaces.accentGradient }}
+            >
+              Track my applications
+            </Button>
+            <Button
+              fullWidth
+              variant="outlined"
+              color="inherit"
+              onClick={reset}
+              sx={{ py: 1.05, fontWeight: 700, borderColor: brand.line }}
+            >
+              Keep browsing
+            </Button>
+          </Stack>
+
           <Button
             component="a"
             href="/whatsapp"
@@ -173,18 +221,16 @@ export default function ApplyPanel({
           >
             How WhatsApp alerts work
           </Button>
-          <Button variant="outlined" color="inherit" onClick={reset} sx={{ mt: 0.5 }}>
-            Keep browsing
-          </Button>
         </Stack>
       </Collapse>
 
+      {/* --- Manual application form --- */}
       {step !== "done" && (
         <>
           <Stack
             direction="row"
             spacing={1}
-            sx={{ justifyContent: "space-between", alignItems: "flex-start", mb: 1.5 }}
+            sx={{ justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}
           >
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800 }}>
@@ -196,13 +242,34 @@ export default function ApplyPanel({
                   : "No CV, no sign-up. Just your name and mobile."}
               </Typography>
             </Box>
-            <IconButton size="small" aria-label="close apply" onClick={reset}>
+            <IconButton size="small" aria-label="close apply" onClick={reset} sx={{ color: "text.secondary" }}>
               <CloseIcon fontSize="small" />
             </IconButton>
           </Stack>
 
+          {gigTitle && (
+            <Stack
+              direction="row"
+              spacing={0.75}
+              sx={{
+                alignItems: "center",
+                mb: 1.75,
+                px: 1.25,
+                py: 0.85,
+                borderRadius: 2.5,
+                bgcolor: `${brand.teal}14`,
+                border: `1px solid ${brand.teal}2E`,
+              }}
+            >
+              <BoltIcon sx={{ fontSize: "1rem", color: brand.teal }} />
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                Applying for <b style={{ color: "#fff" }}>{gigTitle}</b>
+              </Typography>
+            </Stack>
+          )}
+
           {error && (
-            <Alert severity="error" sx={{ mb: 1.5, borderRadius: 3 }}>
+            <Alert severity="error" sx={{ mb: 1.75, borderRadius: 3 }}>
               {error}
             </Alert>
           )}
@@ -221,11 +288,12 @@ export default function ApplyPanel({
                 fullWidth
                 size="large"
                 variant="contained"
+                startIcon={<BoltIcon />}
                 onClick={submitDetails}
                 disabled={pending}
-                sx={{ py: 1.5 }}
+                sx={{ py: 1.5, fontWeight: 800, background: surfaces.accentGradient }}
               >
-                {pending ? "Applying…" : "Apply"}
+                {pending ? "Applying…" : "Submit application"}
               </Button>
             </Stack>
           )}

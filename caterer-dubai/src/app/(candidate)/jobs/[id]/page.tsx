@@ -151,7 +151,7 @@ export default async function GigDetailPage({
         )}
 
         {/* Inline apply panel — sits BELOW the summary (R2, C5). */}
-        <ApplyPanel jobId={job.id} candidate={applyCandidate} />
+        <ApplyPanel jobId={job.id} candidate={applyCandidate} gigTitle={job.title} />
       </Container>
     </Box>
   );
