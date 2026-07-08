@@ -161,3 +161,15 @@ export async function listApplicationsForJob(jobId: string): Promise<Application
     .order("updated_at", { ascending: false });
   return (data ?? []) as unknown as Application[];
 }
+
+// A candidate's own applications, newest first, with the gig joined so the profile
+// can show which gigs they've applied to (whether via the app or the WhatsApp agent).
+export async function listApplicationsForCandidate(profileId: string): Promise<Application[]> {
+  const db = createServiceClient();
+  const { data } = await db
+    .from("applications")
+    .select("*, job:jobs(*, business:businesses(*))")
+    .eq("candidate_profile_id", profileId)
+    .order("updated_at", { ascending: false });
+  return (data ?? []) as unknown as Application[];
+}

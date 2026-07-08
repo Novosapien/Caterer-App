@@ -13,9 +13,10 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import EmptyState from "@/components/EmptyState";
+import AppliedJobs from "@/components/candidate/AppliedJobs";
 import { loginAsChef, signOut } from "@/app/actions/auth";
 import { getSession } from "@/lib/session";
-import { getCandidate, getCandidateInsights } from "@/lib/queries";
+import { getCandidate, getCandidateInsights, listApplicationsForCandidate } from "@/lib/queries";
 import { getProfileSections } from "@/components/candidate/profileSections";
 import { brand } from "@/theme/brand";
 
@@ -87,7 +88,11 @@ export default async function ProfilePage() {
   const segment = candidate.cuisines[0] ?? candidate.specialisms[1] ?? null;
 
   // Real engagement metrics, shown as one quiet inline row (private to the candidate).
-  const insights = await getCandidateInsights(session!.profileId);
+  // Applications drive the "keep track of what I've applied to" section below.
+  const [insights, applications] = await Promise.all([
+    getCandidateInsights(session!.profileId),
+    listApplicationsForCandidate(session!.profileId),
+  ]);
   const metrics = [
     { n: insights.profileViews, label: "profile views" },
     { n: insights.applications, label: "applications" },
@@ -254,6 +259,9 @@ export default async function ProfilePage() {
             </>
           )}
         </Box>
+
+        {/* Applications the chef has made — from the app or the WhatsApp agent. */}
+        <AppliedJobs applications={applications} />
 
         {/* WhatsApp alerts explainer — links to the step-by-step walkthrough */}
         <Box
