@@ -36,6 +36,9 @@ const ROLE_TYPES = [
   "Kitchen Porter",
 ];
 
+// Sentinel value for the "Other" menu item — reveals a free-text role field.
+const OTHER_ROLE = "__other__";
+
 const AREAS = [
   "Palm Jumeirah",
   "Downtown Dubai",
@@ -64,6 +67,7 @@ export default function PostGigForm() {
 
   const [title, setTitle] = useState("");
   const [roleType, setRoleType] = useState("");
+  const [customRole, setCustomRole] = useState("");
   const [venue, setVenue] = useState("");
   const [area, setArea] = useState("");
   const [payAed, setPayAed] = useState("");
@@ -100,9 +104,16 @@ export default function PostGigForm() {
     e.preventDefault();
     setError(null);
 
+    // Resolve the role: a picked preset, or the free-typed value when "Other" is chosen.
+    const resolvedRole = roleType === OTHER_ROLE ? customRole.trim() : roleType;
+
     // Client-side required check — do this BEFORE anything that could clear state.
-    if (!title.trim() || !roleType || !venue.trim() || !area || !payAed.trim() || !startAt) {
-      setError("Please fill in all required fields.");
+    if (!title.trim() || !resolvedRole || !venue.trim() || !area || !payAed.trim() || !startAt) {
+      setError(
+        roleType === OTHER_ROLE && !customRole.trim()
+          ? "Type the role for your gig."
+          : "Please fill in all required fields.",
+      );
       return;
     }
     const payNum = Number(payAed);
@@ -113,7 +124,7 @@ export default function PostGigForm() {
 
     const fd = new FormData();
     fd.set("title", title.trim());
-    fd.set("role_type", roleType);
+    fd.set("role_type", resolvedRole);
     fd.set("venue", venue.trim());
     fd.set("location_area", area);
     fd.set("pay_aed", payAed.trim());
@@ -173,6 +184,7 @@ export default function PostGigForm() {
                 {r}
               </MenuItem>
             ))}
+            <MenuItem value={OTHER_ROLE}>Other (type your own)…</MenuItem>
           </TextField>
           <TextField
             label="Venue"
@@ -183,6 +195,19 @@ export default function PostGigForm() {
             onChange={(e) => setVenue(e.target.value)}
           />
         </Stack>
+
+        {roleType === OTHER_ROLE && (
+          <TextField
+            label="Role"
+            placeholder="e.g. Sushi Chef, Sommelier, Mixologist"
+            required
+            fullWidth
+            autoFocus
+            value={customRole}
+            onChange={(e) => setCustomRole(e.target.value)}
+            helperText="Type the exact role title for this gig."
+          />
+        )}
 
         <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
           <TextField
