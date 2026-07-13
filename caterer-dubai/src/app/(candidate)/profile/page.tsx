@@ -20,8 +20,8 @@ import { getProfileSections } from "@/components/candidate/profileSections";
 import { brand } from "@/theme/brand";
 
 // Dark, premium palette for the candidate profile — warm charcoal page, lifted cards.
-const PAGE = "#252324";
-const CARD = "#302E31";
+const PAGE = "#08080A";
+const CARD = "#16161A";
 const CARD_BORDER = "rgba(255,255,255,0.08)";
 const MUTED = "rgba(255,255,255,0.60)";
 const HAIRLINE = "rgba(255,255,255,0.10)";
@@ -113,13 +113,8 @@ export default async function ProfilePage() {
       sx={{
         color: "#fff",
         minHeight: "100dvh",
-        // Glossy: a soft specular highlight up top fading into the charcoal.
+        // Flat near-black — the site background hex. Gloss lives on the cards.
         backgroundColor: PAGE,
-        backgroundImage: `
-          radial-gradient(130% 58% at 50% -12%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 32%, rgba(255,255,255,0) 60%),
-          linear-gradient(180deg, #2C2A2D 0%, #242223 58%, ${PAGE} 100%)
-        `,
-        backgroundAttachment: "fixed",
       }}
     >
       <Container maxWidth="sm" sx={{ pt: 2.5, pb: 5 }}>
@@ -298,7 +293,7 @@ export default async function ProfilePage() {
             alignItems: "center",
             gap: 1.5,
             transition: "border-color 120ms, background-color 120ms",
-            "&:hover": { borderColor: "rgba(37,211,102,0.4)", bgcolor: "#383539" },
+            "&:hover": { borderColor: "rgba(37,211,102,0.4)", bgcolor: "#1F1F23" },
           }}
         >
           <Box
@@ -345,7 +340,7 @@ export default async function ProfilePage() {
                 alignItems: "center",
                 gap: 1.5,
                 transition: "border-color 120ms, background-color 120ms",
-                "&:hover": { borderColor: "rgba(255,255,255,0.22)", bgcolor: "#383539" },
+                "&:hover": { borderColor: "rgba(255,255,255,0.22)", bgcolor: "#1F1F23" },
               }}
             >
               <Box sx={{ color: MUTED, display: "inline-flex", flexShrink: 0 }}>{s.icon}</Box>

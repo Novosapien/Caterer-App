@@ -56,8 +56,8 @@ export default async function JobsPage({
       sx={{
         minHeight: "100dvh",
         color: "#fff",
-        // Flat warm charcoal — the site background hex.
-        backgroundColor: "#252324",
+        // Flat near-black — the site background hex.
+        backgroundColor: "#08080A",
       }}
     >
       <Container maxWidth="sm" sx={{ pt: { xs: 3.5, sm: 4.5 } }}>

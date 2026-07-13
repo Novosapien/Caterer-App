@@ -21,7 +21,7 @@ import type { CandidateProfile, WorkPref } from "@/lib/types";
 // pages render identically).
 export const MUTED = "rgba(255,255,255,0.60)";
 export const HAIRLINE = "rgba(255,255,255,0.10)";
-export const CARD = "#302E31";
+export const CARD = "#16161A";
 export const CARD_BORDER = "rgba(255,255,255,0.08)";
 // Glossy card: the flat fill plus a soft top-down sheen and a hairline top
 // highlight (inset shadow) so the surface reads like lit glass, not matte card.

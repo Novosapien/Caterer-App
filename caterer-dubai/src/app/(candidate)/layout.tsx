@@ -4,7 +4,6 @@ import Toolbar from "@mui/material/Toolbar";
 import BrandLogo from "@/components/BrandLogo";
 import CandidateNav from "@/components/candidate/CandidateNav";
 import CandidateMenu from "@/components/candidate/CandidateMenu";
-import { surfaces } from "@/theme/brand";
 
 // Mobile-first candidate shell: solid navy top bar (brand + hamburger menu) + fixed
 // bottom navigation. Content scrolls between them.
@@ -17,11 +16,12 @@ export default function CandidateLayout({
         position="sticky"
         elevation={0}
         sx={{
-          background: surfaces.navyGradient,
+          backgroundColor: "#08080A",
+          backgroundImage: "none",
           backdropFilter: "none",
           color: "#fff",
-          boxShadow: "0 8px 30px -20px rgba(35,35,37,0.9)",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          boxShadow: "none",
+          borderBottom: "1px solid rgba(255,255,255,0.08)",
         }}
       >
         <Toolbar sx={{ minHeight: 60, justifyContent: "space-between" }}>

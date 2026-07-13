@@ -9,7 +9,7 @@ import { getSession } from "@/lib/session";
 import { getCandidate } from "@/lib/queries";
 import { getProfileSections, cardSx, MUTED } from "@/components/candidate/profileSections";
 
-const PAGE = "#252324";
+const PAGE = "#08080A";
 
 // A single profile section's full detail (About, Experience, Key skills, etc.).
 // Reached from the compact section cards on /profile.

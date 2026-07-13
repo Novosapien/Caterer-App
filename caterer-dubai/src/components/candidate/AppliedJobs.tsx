@@ -9,7 +9,7 @@ import type { Application, ApplicationStatus } from "@/lib/types";
 
 // Candidate's "keep track of my applications" section on the profile. Lists the gigs
 // they've applied to (from the app or the WhatsApp agent) with a status pill.
-const CARD = "#302E31";
+const CARD = "#16161A";
 const CARD_BORDER = "rgba(255,255,255,0.08)";
 const MUTED = "rgba(255,255,255,0.60)";
 const HAIRLINE = "rgba(255,255,255,0.10)";

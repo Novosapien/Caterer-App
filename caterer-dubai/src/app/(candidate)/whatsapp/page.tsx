@@ -11,8 +11,8 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { brand } from "@/theme/brand";
 
 // Dark tokens (match the profile / rest of the app).
-const PAGE = "#252324";
-const CARD = "#302E31";
+const PAGE = "#08080A";
+const CARD = "#16161A";
 const CARD_BORDER = "rgba(255,255,255,0.08)";
 const HAIRLINE = "rgba(255,255,255,0.10)";
 const MUTED = "rgba(255,255,255,0.60)";
