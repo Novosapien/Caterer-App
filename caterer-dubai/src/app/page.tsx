@@ -8,7 +8,6 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import BrandLogo from "@/components/BrandLogo";
 import LandingMenu from "@/components/LandingMenu";
 import LandingSearch from "@/components/LandingSearch";
-import RoleCarousel, { type RoleCard } from "@/components/RoleCarousel";
 import { signOut } from "@/app/actions/auth";
 import { getSession } from "@/lib/session";
 import { listOpenGigs } from "@/lib/queries";
@@ -17,22 +16,10 @@ import { display } from "@/theme/fonts";
 import type { JobSuggestion } from "@/lib/types";
 
 const UNSPLASH = "https://images.unsplash.com/photo-";
-const img = (id: string) => `${UNSPLASH}${id}?auto=format&fit=crop&w=1000&q=80`;
 
 // Hero chef: a professional in chef whites slicing fish for sushi (Tokyo). Bleeds in
 // from the top-right and dissolves into the shiny black so the headline stays legible.
 const HERO_CHEF = `${UNSPLASH}1609558531790-ec0fe1237631?auto=format&fit=crop&w=1400&q=80`;
-
-// The swipeable role rail. Each niche advertises itself and deep-links into the
-// feed pre-filtered by its keyword. `keywords` also power the live open-role count
-// shown on the card, so the numbers are real, not decorative.
-const ROLE_DEFS = [
-  { label: "CHEF", headline: "Apply for chef roles today", href: "/jobs?q=chef", image: img("1577219491135-ce391730fb2c"), keywords: ["chef", "cook", "sous", "commis"] },
-  { label: "WAITER", headline: "Apply for waiter roles today", href: "/jobs?q=waiter", image: img("1592861956120-e524fc739696"), keywords: ["waiter", "waitress", "server", "runner", "service"] },
-  { label: "BARTENDER", headline: "Apply for bar roles today", href: "/jobs?q=bartender", image: img("1514362545857-3bc16c4c7d1b"), keywords: ["bartender", "barista", "mixolog", "bar"] },
-  { label: "KITCHEN PORTER", headline: "Apply to be a kitchen porter", href: "/jobs?q=porter", image: img("1581299894007-aaa50297cf16"), keywords: ["porter", "steward", "dishwash"] },
-  { label: "HOST", headline: "Apply for host roles today", href: "/jobs?q=host", image: img("1552566626-52f8b828add9"), keywords: ["host", "hostess", "front of house", "reception", "maitre"] },
-];
 
 // Landing: restrained and confident. Deep charcoal, one orange accent, generous air.
 // No vanity metrics, no icon grid, no superlatives — the calm reads as expensive.
@@ -40,21 +27,6 @@ export default async function Landing() {
   const [allOpen, session] = await Promise.all([listOpenGigs({}), getSession()]);
   const role = session?.role ?? null;
   const count = allOpen.length;
-
-  // Count real open roles per niche so each card carries an honest number.
-  const roles: RoleCard[] = ROLE_DEFS.map((r) => {
-    const n = allOpen.filter((j) => {
-      const hay = `${j.title} ${j.role_type}`.toLowerCase();
-      return r.keywords.some((k) => hay.includes(k));
-    }).length;
-    return {
-      label: r.label,
-      headline: r.headline,
-      href: r.href,
-      image: r.image,
-      sub: n > 0 ? `${n} open ${n === 1 ? "role" : "roles"} across Dubai` : "Roles across Dubai",
-    };
-  });
 
   const suggestions: JobSuggestion[] = allOpen.map((j) => ({
     id: j.id,
@@ -224,8 +196,7 @@ export default async function Landing() {
               maxWidth: 440,
             }}
           >
-            Chefs, waiters and crew. From urgent temp shifts to permanent
-            roles, hire and get hired in one place.
+            Chefs, waiters and crew. Hire and get hired in one place.
           </Typography>
         </Box>
 
@@ -267,26 +238,6 @@ export default async function Landing() {
             <KeyboardArrowRightIcon sx={{ color: brand.tealBright, fontSize: "1.2rem" }} />
           </Stack>
         </Box>
-
-        {/* Section header for the role rail */}
-        <Stack
-          direction="row"
-          sx={{ mt: { xs: 4, sm: 5 }, mb: 2, alignItems: "baseline", justifyContent: "space-between" }}
-        >
-          <Typography
-            sx={{ fontFamily: display.style.fontFamily, fontWeight: 700, fontSize: { xs: "1.35rem", sm: "1.5rem" } }}
-          >
-            Popular roles today
-          </Typography>
-          <Box component="a" href="/jobs" sx={{ textDecoration: "none" }}>
-            <Typography sx={{ color: brand.tealBright, fontWeight: 700, fontSize: "0.9rem" }}>
-              View all roles
-            </Typography>
-          </Box>
-        </Stack>
-
-        {/* Swipeable role rail: browse by niche, each card deep-links into the feed. */}
-        <RoleCarousel roles={roles} />
 
         <Box sx={{ flex: 1, minHeight: 40 }} />
       </Container>
