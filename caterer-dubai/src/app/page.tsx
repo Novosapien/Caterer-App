@@ -3,9 +3,11 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import QRCode from "qrcode";
 import BrandLogo from "@/components/BrandLogo";
 import LandingMenu from "@/components/LandingMenu";
 import LandingSearch from "@/components/LandingSearch";
+import AppBanner from "@/components/AppBanner";
 import { signOut } from "@/app/actions/auth";
 import { getSession } from "@/lib/session";
 import { listOpenGigs } from "@/lib/queries";
@@ -24,6 +26,14 @@ const HERO_CHEF = `${UNSPLASH}1609558531790-ec0fe1237631?auto=format&fit=crop&w=
 export default async function Landing() {
   const [allOpen, session] = await Promise.all([listOpenGigs({}), getSession()]);
   const role = session?.role ?? null;
+
+  // Real QR pointing to caterer.com (same target as their site's app banner), rendered
+  // as inline SVG so it's self-contained. Dark modules on the white tile in AppBanner.
+  const qrSvg = await QRCode.toString("https://www.caterer.com/", {
+    type: "svg",
+    margin: 0,
+    color: { dark: "#0A0A0C", light: "#0000" },
+  });
 
   const suggestions: JobSuggestion[] = allOpen.map((j) => ({
     id: j.id,
@@ -202,7 +212,12 @@ export default async function Landing() {
           <LandingSearch suggestions={suggestions} />
         </Box>
 
-        <Box sx={{ flex: 1, minHeight: 40 }} />
+        <Box sx={{ flex: 1, minHeight: 48 }} />
+
+        {/* Get-the-app footer banner (QR to caterer.com + Dubai phone mock). */}
+        <Box sx={{ mt: 4, mb: 5 }}>
+          <AppBanner qrSvg={qrSvg} />
+        </Box>
       </Container>
     </Box>
   );
