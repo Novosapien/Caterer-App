@@ -21,7 +21,7 @@ import type { CandidateProfile, WorkPref } from "@/lib/types";
 // pages render identically).
 export const MUTED = "rgba(255,255,255,0.60)";
 export const HAIRLINE = "rgba(255,255,255,0.10)";
-export const CARD = "#1A1A1C";
+export const CARD = "#302E31";
 export const CARD_BORDER = "rgba(255,255,255,0.08)";
 export const cardSx = {
   bgcolor: CARD,

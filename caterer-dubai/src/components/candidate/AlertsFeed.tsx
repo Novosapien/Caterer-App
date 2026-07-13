@@ -17,7 +17,7 @@ import { relativeTime } from "@/lib/format";
 import { brand, surfaces } from "@/theme/brand";
 import type { AppNotification } from "@/lib/types";
 
-const CARD = "#161619";
+const CARD = "#302E31";
 const CARD_BORDER = "rgba(255,255,255,0.09)";
 const MUTED = "rgba(255,255,255,0.58)";
 const HAIRLINE = "rgba(255,255,255,0.10)";

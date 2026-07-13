@@ -20,9 +20,9 @@ import { getCandidate, getCandidateInsights, listApplicationsForCandidate } from
 import { getProfileSections } from "@/components/candidate/profileSections";
 import { brand } from "@/theme/brand";
 
-// Dark, premium palette for the candidate profile — near-black page, lifted cards.
-const PAGE = "#0E0E10";
-const CARD = "#1A1A1C";
+// Dark, premium palette for the candidate profile — warm charcoal page, lifted cards.
+const PAGE = "#252324";
+const CARD = "#302E31";
 const CARD_BORDER = "rgba(255,255,255,0.08)";
 const MUTED = "rgba(255,255,255,0.60)";
 const HAIRLINE = "rgba(255,255,255,0.10)";
@@ -307,7 +307,7 @@ export default async function ProfilePage() {
             alignItems: "center",
             gap: 1.5,
             transition: "border-color 120ms, background-color 120ms",
-            "&:hover": { borderColor: "rgba(37,211,102,0.4)", bgcolor: "#1E1E22" },
+            "&:hover": { borderColor: "rgba(37,211,102,0.4)", bgcolor: "#383539" },
           }}
         >
           <Box
@@ -351,7 +351,7 @@ export default async function ProfilePage() {
                 alignItems: "center",
                 gap: 1.5,
                 transition: "border-color 120ms, background-color 120ms",
-                "&:hover": { borderColor: "rgba(255,255,255,0.22)", bgcolor: "#1E1E22" },
+                "&:hover": { borderColor: "rgba(255,255,255,0.22)", bgcolor: "#383539" },
               }}
             >
               <Box sx={{ color: MUTED, display: "inline-flex", flexShrink: 0 }}>{s.icon}</Box>

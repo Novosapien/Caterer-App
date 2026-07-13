@@ -45,12 +45,12 @@ export const brand = {
   pay: "#34D171", // money / earnings green — used for all pay figures
   urgent: "#F6A623", // amber — "hot / now" signal (NOT alarm red)
 
-  // --- Surfaces / neutrals (DARK: shiny-black language from the search page) --
-  base: "#0C0C0E", // page background — near-black
+  // --- Surfaces / neutrals (DARK: warm charcoal page, cards lifted above it) --
+  base: "#252324", // page background — warm charcoal
   paper: "#FFFFFF", // pure white — kept ONLY for the white search pills
-  card: "#17171A", // dark card / raised surface (theme paper)
-  cardHover: "#1E1E22", // dark card hover
-  surfaceAlt: "#1F1F22", // tinted dark panel / inset
+  card: "#302E31", // dark card / raised surface (theme paper), lifted above base
+  cardHover: "#383539", // dark card hover
+  surfaceAlt: "#2B292C", // tinted dark panel / inset
   cream: "rgba(255,255,255,0.06)", // soft dark chip / inset fill
   line: "rgba(255,255,255,0.10)", // hairline border on dark
   muted: "rgba(255,255,255,0.60)", // secondary text on dark
@@ -84,15 +84,15 @@ export const md = {
   onError: "#690005",
   errorContainer: "#93000A",
   onErrorContainer: "#FFDAD6",
-  // --- Neutral surfaces (MD3 tonal containers, dark) ---
-  surface: "#131316",
-  surfaceDim: "#0C0C0E",
-  surfaceBright: "#39383C",
-  surfaceContainerLowest: "#0A0A0C",
-  surfaceContainerLow: "#17171A",
-  surfaceContainer: "#1C1B1F",
-  surfaceContainerHigh: "#262529",
-  surfaceContainerHighest: "#302F34",
+  // --- Neutral surfaces (MD3 tonal containers, warm charcoal) ---
+  surface: "#252324", // page background — warm charcoal
+  surfaceDim: "#1F1D1F",
+  surfaceBright: "#403D43",
+  surfaceContainerLowest: "#1C1A1C",
+  surfaceContainerLow: "#2B292C",
+  surfaceContainer: "#302E31",
+  surfaceContainerHigh: "#37353A",
+  surfaceContainerHighest: "#403D43",
   onSurface: "#E7E1E6",
   onSurfaceVariant: "#CBC4CE",
   outline: "#958F99",

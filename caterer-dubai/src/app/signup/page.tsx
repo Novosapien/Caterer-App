@@ -10,10 +10,10 @@ import { display } from "@/theme/fonts";
 const PAGE_BG = {
   minHeight: "100dvh",
   color: "#fff",
-  backgroundColor: "#08080A",
+  backgroundColor: "#252324",
   backgroundImage: `
     radial-gradient(120% 62% at 50% -10%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 26%, rgba(255,255,255,0) 52%),
-    linear-gradient(180deg, #141416 0%, #0A0A0C 62%, #0C0C0E 100%)
+    linear-gradient(180deg, #2C2A2D 0%, #201E20 62%, #252324 100%)
   `,
 };
 

@@ -40,7 +40,7 @@ export default async function AlertsPage() {
   const notifications = (data ?? []) as AppNotification[];
 
   return (
-    <Box sx={{ bgcolor: "#0E0E10", color: "#fff", minHeight: "100dvh" }}>
+    <Box sx={{ bgcolor: "#252324", color: "#fff", minHeight: "100dvh" }}>
       <Container maxWidth="sm" sx={{ pt: 3, pb: 12 }}>
         {notifications.length === 0 ? (
           <EmptyState

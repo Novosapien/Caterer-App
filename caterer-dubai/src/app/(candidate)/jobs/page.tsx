@@ -56,12 +56,12 @@ export default async function JobsPage({
       sx={{
         minHeight: "100dvh",
         color: "#fff",
-        // Shiny piano-black, matching the landing page: one specular highlight fading
-        // into a deep near-black. Calm and glossy, not a busy photo hero.
-        backgroundColor: "#08080A",
+        // Warm charcoal with one soft specular highlight fading into the charcoal.
+        // Calm and glossy, not a busy photo hero.
+        backgroundColor: "#252324",
         backgroundImage: `
-          radial-gradient(120% 62% at 50% -10%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 26%, rgba(255,255,255,0) 52%),
-          linear-gradient(180deg, #141416 0%, #0A0A0C 62%, #0C0C0E 100%)
+          radial-gradient(120% 62% at 50% -10%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 26%, rgba(255,255,255,0) 52%),
+          linear-gradient(180deg, #2C2A2D 0%, #201E20 62%, #252324 100%)
         `,
       }}
     >
