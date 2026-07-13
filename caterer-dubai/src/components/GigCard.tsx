@@ -10,10 +10,49 @@ import Divider from "@mui/material/Divider";
 import PlaceIcon from "@mui/icons-material/Place";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import UrgentBadge from "./UrgentBadge";
+import BoltIcon from "@mui/icons-material/Bolt";
 import type { Job } from "@/lib/types";
 import { formatAED, formatStart } from "@/lib/format";
 import { brand, surfaces } from "@/theme/brand";
+
+// Small status tag that lives inside the card (top-right), replacing the loud
+// amber pill that used to float over the photo. Urgent reads as a quiet amber
+// tint; Temp stays neutral. Same footprint so they sit together cleanly.
+function StatusTag({
+  label,
+  icon,
+  tone,
+}: {
+  label: string;
+  icon?: React.ReactNode;
+  tone: "urgent" | "neutral";
+}) {
+  const urgent = tone === "urgent";
+  return (
+    <Box
+      sx={{
+        flexShrink: 0,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 0.35,
+        pl: icon ? 0.75 : 1.1,
+        pr: 1.1,
+        py: 0.35,
+        borderRadius: 999,
+        bgcolor: urgent ? "rgba(246,166,35,0.14)" : brand.surfaceAlt,
+        color: urgent ? brand.urgent : "rgba(255,255,255,0.9)",
+        border: `1px solid ${urgent ? "rgba(246,166,35,0.38)" : "transparent"}`,
+        fontSize: "0.72rem",
+        fontWeight: 700,
+        letterSpacing: "0.02em",
+        "& svg": { fontSize: "0.92rem" },
+      }}
+    >
+      {icon}
+      {label}
+    </Box>
+  );
+}
 
 // Every card gets imagery: a graceful catering fallback when a gig has no photo,
 // so the feed reads consistently premium rather than half-imaged.
@@ -72,40 +111,37 @@ export default function GigCard({ job }: { job: Job }) {
                 transition: "transform .6s cubic-bezier(.2,.7,.3,1)",
               }}
             />
+            {/* Urgent gigs get a slim amber spine on the image edge — a quiet,
+                premium signal instead of a pill stuck on the photo. */}
             {job.is_urgent && (
-              <Box sx={{ position: "absolute", top: 10, left: 10 }}>
-                <UrgentBadge />
-              </Box>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  width: 4,
+                  background: `linear-gradient(180deg, ${brand.urgent} 0%, ${brand.gold} 100%)`,
+                }}
+              />
             )}
           </Box>
 
           {/* Details column */}
           <Box sx={{ flex: 1, minWidth: 0, p: 2 }}>
-            <Stack direction="row" sx={{ alignItems: "baseline", justifyContent: "space-between", gap: 1 }}>
-              <Typography component="div" sx={{ fontWeight: 800, color: brand.pay, lineHeight: 1 }}>
-                <Box component="span" sx={{ fontSize: "1.2rem", letterSpacing: "-0.01em" }}>{formatAED(job.pay_aed)}</Box>
-                <Box component="span" sx={{ fontSize: "0.82rem", color: brand.muted, fontWeight: 600 }}>
-                  {PAY_SUFFIX[job.pay_unit]}
-                </Box>
-              </Typography>
-              {job.is_temp && (
-                <Box
-                  sx={{
-                    flexShrink: 0,
-                    px: 1.1,
-                    py: 0.35,
-                    borderRadius: 999,
-                    bgcolor: brand.surfaceAlt,
-                    color: "#fff",
-                    fontSize: "0.72rem",
-                    fontWeight: 700,
-                    letterSpacing: "0.02em",
-                  }}
-                >
-                  Temp
-                </Box>
-              )}
-            </Stack>
+            {(job.is_urgent || job.is_temp) && (
+              <Stack direction="row" spacing={0.75} sx={{ mb: 1, flexWrap: "wrap", rowGap: 0.75 }}>
+                {job.is_urgent && <StatusTag tone="urgent" icon={<BoltIcon />} label="Urgent" />}
+                {job.is_temp && <StatusTag tone="neutral" label="Temp" />}
+              </Stack>
+            )}
+
+            <Typography component="div" sx={{ fontWeight: 800, color: brand.pay, lineHeight: 1 }} noWrap>
+              <Box component="span" sx={{ fontSize: "1.2rem", letterSpacing: "-0.01em" }}>{formatAED(job.pay_aed)}</Box>
+              <Box component="span" sx={{ fontSize: "0.82rem", color: brand.muted, fontWeight: 600 }}>
+                {PAY_SUFFIX[job.pay_unit]}
+              </Box>
+            </Typography>
 
             <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.2, mt: 0.75 }} noWrap>
               {job.title}

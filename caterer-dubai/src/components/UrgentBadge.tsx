@@ -1,22 +1,36 @@
-import Chip from "@mui/material/Chip";
+import Box from "@mui/material/Box";
 import BoltIcon from "@mui/icons-material/Bolt";
 import { brand } from "@/theme/brand";
 
-// Amber URGENT treatment for hot gigs (spec R10 / "start-tomorrow hot jobs").
-// Amber = "hot / now" without the alarm of red (red is reserved for errors).
+// Refined URGENT treatment for hot gigs (spec R10 / "start-tomorrow hot jobs").
+// A quiet amber-tinted outline tag rather than a loud solid pill — amber = "hot /
+// now" without the alarm of red (red is reserved for errors). Matches the inline
+// status tag used on the gig feed cards.
 export default function UrgentBadge({ size = "small" }: { size?: "small" | "medium" }) {
+  const med = size === "medium";
   return (
-    <Chip
-      icon={<BoltIcon sx={{ fontSize: "1rem !important", color: "#241a06 !important" }} />}
-      label="URGENT"
-      size={size}
+    <Box
+      component="span"
       sx={{
-        bgcolor: brand.urgent,
-        color: "#241a06",
-        fontWeight: 800,
-        letterSpacing: "0.06em",
-        boxShadow: "0 6px 16px -8px rgba(246,166,35,0.65)",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 0.35,
+        pl: med ? 1 : 0.75,
+        pr: med ? 1.4 : 1.1,
+        py: med ? 0.5 : 0.35,
+        borderRadius: 999,
+        bgcolor: "rgba(246,166,35,0.14)",
+        color: brand.urgent,
+        border: "1px solid rgba(246,166,35,0.38)",
+        fontSize: med ? "0.82rem" : "0.72rem",
+        fontWeight: 700,
+        letterSpacing: "0.02em",
+        lineHeight: 1,
+        "& svg": { fontSize: med ? "1.05rem" : "0.92rem" },
       }}
-    />
+    >
+      <BoltIcon />
+      Urgent
+    </Box>
   );
 }
