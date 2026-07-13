@@ -14,11 +14,14 @@ import { display } from "@/theme/fonts";
 const PAGE_BG = {
   minHeight: "100dvh",
   color: "#fff",
-  backgroundColor: "#252324",
+  // Match the signup screen: near-black with a warm orange glow from the left.
+  backgroundColor: "#08080A",
   backgroundImage: `
-    radial-gradient(120% 62% at 50% -10%, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 26%, rgba(255,255,255,0) 52%),
-    linear-gradient(180deg, #2C2A2D 0%, #201E20 62%, #252324 100%)
+    radial-gradient(56% 46% at -6% 44%, rgba(239,125,0,0.32) 0%, rgba(239,125,0,0.10) 32%, rgba(239,125,0,0) 66%),
+    radial-gradient(40% 26% at 106% 2%, rgba(239,125,0,0.18) 0%, rgba(239,125,0,0) 60%),
+    linear-gradient(180deg, #0C0C0E 0%, #08080A 58%, #0A0A0C 100%)
   `,
+  backgroundAttachment: "fixed",
 };
 
 const demoBtnSx = {
@@ -39,9 +42,9 @@ export default function LoginPage() {
         </Box>
         <Typography
           component="h1"
-          sx={{ fontFamily: display.style.fontFamily, fontWeight: 700, fontSize: "1.9rem", letterSpacing: "-0.02em", textAlign: "center" }}
+          sx={{ fontFamily: display.style.fontFamily, fontWeight: 800, fontSize: { xs: "2.35rem", sm: "2.6rem" }, lineHeight: 1.05, letterSpacing: "-0.03em", textAlign: "center" }}
         >
-          Welcome back
+          Welcome <Box component="span" sx={{ color: brand.teal }}>back</Box>
         </Typography>
         <Typography sx={{ color: "rgba(255,255,255,0.6)", textAlign: "center", mt: 1, mb: 3 }}>
           Log in to your chef or business account.
