@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef, useTransition } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useMemo, useRef } from "react";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
+import Badge from "@mui/material/Badge";
 import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
@@ -15,59 +15,28 @@ import { rankGigs } from "@/lib/gigSuggest";
 import { brand } from "@/theme/brand";
 import type { JobSuggestion } from "@/lib/types";
 
-// Search box with instant type-ahead: as the chef types, a live list of matching gigs
-// drops down and refines with each letter. Selecting one opens that gig. The debounced
-// ?q= update also narrows the feed below. The orange button toggles urgent-only.
-export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[] }) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [value, setValue] = useState(searchParams.get("q") ?? "");
+// Controlled search box with instant type-ahead. The parent (GigBrowser) owns the query
+// value and filters the feed in-memory, so typing narrows the list instantly. The round
+// button opens the multi-category Filters panel and badges the active-filter count.
+export default function GigSearch({
+  value,
+  onChange,
+  suggestions,
+  onFilterClick,
+  activeCount,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  suggestions: JobSuggestion[];
+  onFilterClick: () => void;
+  activeCount: number;
+}) {
   const [open, setOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
-  const [, startTransition] = useTransition();
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const urgentOnly = searchParams.get("urgent") === "1";
-
-  // Debounce the ?q= param so the feed below narrows as the chef types.
-  useEffect(() => {
-    const current = searchParams.get("q") ?? "";
-    if (value === current) return;
-    const t = setTimeout(() => {
-      const params = new URLSearchParams(Array.from(searchParams.entries()));
-      if (value.trim()) params.set("q", value.trim());
-      else params.delete("q");
-      startTransition(() => {
-        router.replace(params.toString() ? `/jobs?${params.toString()}` : "/jobs", {
-          scroll: false,
-        });
-      });
-    }, 250);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
 
   const matches = useMemo(() => rankGigs(value, suggestions), [value, suggestions]);
   const showDropdown = open && value.trim().length > 0 && matches.length > 0;
-
-  // Committing a search narrows the feed below (never opens a single gig).
-  function commitSearch(query: string) {
-    setOpen(false);
-    const params = new URLSearchParams(Array.from(searchParams.entries()));
-    if (query.trim()) params.set("q", query.trim());
-    else params.delete("q");
-    startTransition(() => {
-      router.replace(params.toString() ? `/jobs?${params.toString()}` : "/jobs", { scroll: false });
-    });
-  }
-
-  function toggleUrgent() {
-    const params = new URLSearchParams(Array.from(searchParams.entries()));
-    if (urgentOnly) params.delete("urgent");
-    else params.set("urgent", "1");
-    startTransition(() => {
-      router.replace(params.toString() ? `/jobs?${params.toString()}` : "/jobs", { scroll: false });
-    });
-  }
 
   function onKeyDown(e: React.KeyboardEvent) {
     if (!showDropdown) return;
@@ -79,11 +48,13 @@ export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[
       setActiveIdx((i) => Math.max(i - 1, 0));
     } else if (e.key === "Enter") {
       e.preventDefault();
-      commitSearch(value);
+      setOpen(false);
     } else if (e.key === "Escape") {
       setOpen(false);
     }
   }
+
+  const filtersActive = activeCount > 0;
 
   return (
     <Box sx={{ position: "relative" }}>
@@ -105,7 +76,7 @@ export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[
           <InputBase
             value={value}
             onChange={(e) => {
-              setValue(e.target.value);
+              onChange(e.target.value);
               setActiveIdx(-1);
               setOpen(true);
             }}
@@ -124,7 +95,7 @@ export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[
               aria-label="clear search"
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
-                setValue("");
+                onChange("");
                 setActiveIdx(-1);
               }}
               sx={{ color: "#6A6A6E" }}
@@ -134,24 +105,25 @@ export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[
           )}
         </Paper>
 
-        <Tooltip title={urgentOnly ? "Showing urgent only" : "Urgent gigs only"}>
+        <Tooltip title="Filters">
           <IconButton
-            onClick={toggleUrgent}
-            aria-label="toggle urgent-only filter"
-            aria-pressed={urgentOnly}
+            onClick={onFilterClick}
+            aria-label="open filters"
             sx={{
               width: 48,
               height: 48,
               flexShrink: 0,
               borderRadius: "50%",
-              color: urgentOnly ? "#241a06" : "#B26A00",
-              bgcolor: urgentOnly ? brand.urgent : "rgba(246,166,35,0.18)",
-              border: `1.5px solid ${urgentOnly ? brand.urgent : "transparent"}`,
+              color: filtersActive ? "#241100" : brand.tealBright,
+              bgcolor: filtersActive ? brand.teal : "rgba(239,125,0,0.16)",
+              border: `1.5px solid ${filtersActive ? brand.teal : "transparent"}`,
               transition: "all .2s ease",
-              "&:hover": { bgcolor: urgentOnly ? "#E0940F" : "rgba(246,166,35,0.30)" },
+              "&:hover": { bgcolor: filtersActive ? "#D96F00" : "rgba(239,125,0,0.28)" },
             }}
           >
-            <TuneIcon />
+            <Badge badgeContent={activeCount} color="error" overlap="circular">
+              <TuneIcon />
+            </Badge>
           </IconButton>
         </Tooltip>
       </Box>
@@ -162,7 +134,7 @@ export default function GigSearch({ suggestions }: { suggestions: JobSuggestion[
           query={value}
           activeIdx={activeIdx}
           onHover={setActiveIdx}
-          onSelect={() => commitSearch(value)}
+          onSelect={() => setOpen(false)}
         />
       )}
     </Box>

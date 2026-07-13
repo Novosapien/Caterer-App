@@ -2,24 +2,12 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import GigSearch from "@/components/candidate/GigSearch";
-import JobsFeed from "@/components/candidate/JobsFeed";
+import GigBrowser from "@/components/candidate/GigBrowser";
 import WhatsAppConnectBanner from "@/components/candidate/WhatsAppConnectBanner";
 import { listOpenGigs } from "@/lib/queries";
 import { brand } from "@/theme/brand";
 import { display } from "@/theme/fonts";
-import type { Job, JobSuggestion } from "@/lib/types";
-
-// Substring match across the fields a chef would search by.
-function matchesQuery(j: Job, search: string): boolean {
-  const q = search.toLowerCase();
-  return (
-    j.title.toLowerCase().includes(q) ||
-    j.venue.toLowerCase().includes(q) ||
-    j.location_area.toLowerCase().includes(q) ||
-    j.role_type.toLowerCase().includes(q)
-  );
-}
+import type { JobSuggestion } from "@/lib/types";
 
 // Candidate gig feed (R1) — anonymous, no login. searchParams is a Promise (Next 16).
 export default async function JobsPage({
@@ -28,17 +16,11 @@ export default async function JobsPage({
   searchParams: Promise<{ q?: string; when?: string; urgent?: string }>;
 }) {
   const { q, when, urgent } = await searchParams;
-  const search = q?.trim() ?? "";
-  const whenFilter = when?.trim() ?? "";
-  const urgentOnly = urgent === "1";
 
-  // Fetch the FULL open catalogue once: the feed is filtered from it, and the whole set
-  // feeds the search box's instant type-ahead suggestions (independent of the filters).
-  // Search + urgent are applied server-side (URL-driven); the Today/Tomorrow/This Week
-  // date filter runs client-side in JobsFeed so switching it is instant (no round-trip).
+  // Fetch the FULL open catalogue once and hand it to the client browser, which owns
+  // all filtering (search, date, and the multi-category Filters panel) in-memory so
+  // every keystroke and tick is instant. URL params seed the initial state (deep links).
   const allOpen = await listOpenGigs({}); // urgent already ordered first
-  let baseGigs = urgentOnly ? allOpen.filter((j) => j.is_urgent) : allOpen;
-  if (search) baseGigs = baseGigs.filter((j) => matchesQuery(j, search));
 
   const suggestions: JobSuggestion[] = allOpen.map((j) => ({
     id: j.id,
@@ -88,16 +70,14 @@ export default async function JobsPage({
           </Box>
         </Typography>
 
-        {/* Search sits directly on the charcoal — a single clean field, no floating card. */}
-        <GigSearch suggestions={suggestions} />
-
-        {/* Date chips + count + list live in a client component so switching
-            Today / Tomorrow / This Week filters in-memory (instant, no round-trip). */}
-        <JobsFeed
-          baseGigs={baseGigs}
-          initialWhen={whenFilter}
-          search={search}
-          urgentOnly={urgentOnly}
+        {/* Search + date chips + Filters panel + feed — one client component that filters
+            the full catalogue in-memory, so search, dates and every filter are instant. */}
+        <GigBrowser
+          allGigs={allOpen}
+          suggestions={suggestions}
+          initialQuery={q?.trim() ?? ""}
+          initialWhen={when?.trim() ?? ""}
+          initialUrgent={urgent === "1"}
         />
 
         {/* A single quiet prompt at the end, not two competing banners. */}
