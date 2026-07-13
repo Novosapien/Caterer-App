@@ -3,8 +3,6 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import GroupsIcon from "@mui/icons-material/Groups";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import BrandLogo from "@/components/BrandLogo";
 import LandingMenu from "@/components/LandingMenu";
 import LandingSearch from "@/components/LandingSearch";
@@ -26,7 +24,6 @@ const HERO_CHEF = `${UNSPLASH}1609558531790-ec0fe1237631?auto=format&fit=crop&w=
 export default async function Landing() {
   const [allOpen, session] = await Promise.all([listOpenGigs({}), getSession()]);
   const role = session?.role ?? null;
-  const count = allOpen.length;
 
   const suggestions: JobSuggestion[] = allOpen.map((j) => ({
     id: j.id,
@@ -203,40 +200,6 @@ export default async function Landing() {
         {/* Search — a single clean field on the charcoal. */}
         <Box sx={{ width: "100%" }}>
           <LandingSearch suggestions={suggestions} />
-        </Box>
-
-        {/* Live-gigs pill with a direct route into the full feed. */}
-        <Box
-          component="a"
-          href="/jobs"
-          sx={{
-            mt: 2.5,
-            textDecoration: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 1,
-            px: 2,
-            py: 1.5,
-            borderRadius: 999,
-            border: "1px solid rgba(255,255,255,0.12)",
-            transition: "border-color 0.2s ease, background-color 0.2s ease",
-            "&:hover": { borderColor: "rgba(239,125,0,0.5)", bgcolor: "rgba(255,255,255,0.02)" },
-          }}
-        >
-          <Stack direction="row" spacing={1.25} sx={{ alignItems: "center" }}>
-            <GroupsIcon sx={{ color: brand.tealBright, fontSize: "1.35rem" }} />
-            <Typography sx={{ color: "rgba(255,255,255,0.82)", fontWeight: 500, fontSize: "0.95rem" }}>
-              <Box component="span" sx={{ color: brand.tealBright, fontWeight: 800 }}>
-                {count.toLocaleString("en-GB")}
-              </Box>{" "}
-              live {count === 1 ? "gig" : "gigs"} right now
-            </Typography>
-          </Stack>
-          <Stack direction="row" spacing={0.25} sx={{ alignItems: "center", flexShrink: 0 }}>
-            <Typography sx={{ color: "#fff", fontWeight: 600, fontSize: "0.9rem" }}>View all jobs</Typography>
-            <KeyboardArrowRightIcon sx={{ color: brand.tealBright, fontSize: "1.2rem" }} />
-          </Stack>
         </Box>
 
         <Box sx={{ flex: 1, minHeight: 40 }} />
