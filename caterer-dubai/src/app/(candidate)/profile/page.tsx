@@ -109,7 +109,19 @@ export default async function ProfilePage() {
   const openTo = [candidate.open_to_urgent ? "Urgent gigs" : null, shortWp].filter(Boolean) as string[];
 
   return (
-    <Box sx={{ bgcolor: PAGE, color: "#fff", minHeight: "100dvh" }}>
+    <Box
+      sx={{
+        color: "#fff",
+        minHeight: "100dvh",
+        // Glossy: a soft specular highlight up top fading into the charcoal.
+        backgroundColor: PAGE,
+        backgroundImage: `
+          radial-gradient(130% 58% at 50% -12%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.025) 32%, rgba(255,255,255,0) 60%),
+          linear-gradient(180deg, #2C2A2D 0%, #242223 58%, ${PAGE} 100%)
+        `,
+        backgroundAttachment: "fixed",
+      }}
+    >
       <Container maxWidth="sm" sx={{ pt: 2.5, pb: 5 }}>
         {/* Header — restrained identity, one accent, no chrome */}
         <Box sx={{ ...cardSx, mb: 2 }}>

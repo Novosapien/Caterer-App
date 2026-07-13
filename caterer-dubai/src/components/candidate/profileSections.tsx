@@ -23,11 +23,16 @@ export const MUTED = "rgba(255,255,255,0.60)";
 export const HAIRLINE = "rgba(255,255,255,0.10)";
 export const CARD = "#302E31";
 export const CARD_BORDER = "rgba(255,255,255,0.08)";
+// Glossy card: the flat fill plus a soft top-down sheen and a hairline top
+// highlight (inset shadow) so the surface reads like lit glass, not matte card.
 export const cardSx = {
-  bgcolor: CARD,
   border: `1px solid ${CARD_BORDER}`,
   borderRadius: 4,
   p: { xs: 2.25, md: 2.75 },
+  backgroundColor: CARD,
+  backgroundImage:
+    "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.018) 16%, rgba(255,255,255,0) 42%)",
+  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.07), 0 14px 32px -20px rgba(0,0,0,0.75)",
 };
 
 const ratingSx = {
