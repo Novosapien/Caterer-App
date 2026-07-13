@@ -88,13 +88,28 @@ function PhoneMock() {
   return (
     <Box
       sx={{
-        borderRadius: "26px",
-        bgcolor: "#1a1a1c",
-        p: "6px",
-        boxShadow: "0 30px 60px -24px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06)",
+        borderRadius: "32px",
+        bgcolor: "#050506",
+        p: "11px",
+        boxShadow:
+          "0 30px 60px -24px rgba(0,0,0,0.85), inset 0 0 0 1.5px rgba(255,255,255,0.14), 0 0 0 1px rgba(0,0,0,0.9)",
       }}
     >
-      <Box sx={{ borderRadius: "20px", overflow: "hidden", bgcolor: "#FFFFFF", color: "#17171A" }}>
+      <Box sx={{ position: "relative", borderRadius: "22px", overflow: "hidden", bgcolor: "#FFFFFF", color: "#17171A" }}>
+        {/* Dynamic Island camera tab */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 5,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 46,
+            height: 15,
+            borderRadius: 999,
+            bgcolor: "#050506",
+            zIndex: 3,
+          }}
+        />
         {/* status bar */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", px: 1.25, pt: 0.75, pb: 0.25 }}>
           <Box sx={{ fontSize: "0.55rem", fontWeight: 800 }}>9:41</Box>
