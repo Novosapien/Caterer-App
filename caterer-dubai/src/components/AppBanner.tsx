@@ -70,11 +70,15 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
           width: { xs: 172, sm: 236 },
           transform: "rotate(-9deg)",
           transformOrigin: "bottom right",
-          // Dissolve the emerging (top/left) corner into the background.
+          // Soften just the top and left edges into a thin feather (no hard cut-off)
+          // while keeping the screen crisp — intersecting the two edge gradients means
+          // only the outer edges fade, not the whole corner into a blurry haze.
           maskImage:
-            "radial-gradient(135% 135% at 100% 100%, #000 42%, rgba(0,0,0,0.55) 66%, transparent 88%)",
+            "linear-gradient(to bottom, transparent 0%, #000 9%), linear-gradient(to right, transparent 0%, #000 7%)",
           WebkitMaskImage:
-            "radial-gradient(135% 135% at 100% 100%, #000 42%, rgba(0,0,0,0.55) 66%, transparent 88%)",
+            "linear-gradient(to bottom, transparent 0%, #000 9%), linear-gradient(to right, transparent 0%, #000 7%)",
+          maskComposite: "intersect",
+          WebkitMaskComposite: "source-in",
         }}
       >
         <PhoneMock />
