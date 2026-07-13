@@ -58,7 +58,9 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
         />
       </Box>
 
-      {/* Phone mock — bleeds off the right edge, tilted, like the reference. */}
+      {/* Phone mock — bleeds off the right edge, tilted, like the reference. Its top and
+          left edges fade to transparent so it emerges from the page like the hero chef,
+          instead of starting on a hard cut-off. */}
       <Box
         aria-hidden
         sx={{
@@ -68,6 +70,11 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
           width: { xs: 172, sm: 236 },
           transform: "rotate(-9deg)",
           transformOrigin: "bottom right",
+          // Dissolve the emerging (top/left) corner into the background.
+          maskImage:
+            "radial-gradient(135% 135% at 100% 100%, #000 42%, rgba(0,0,0,0.55) 66%, transparent 88%)",
+          WebkitMaskImage:
+            "radial-gradient(135% 135% at 100% 100%, #000 42%, rgba(0,0,0,0.55) 66%, transparent 88%)",
         }}
       >
         <PhoneMock />
