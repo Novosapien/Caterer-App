@@ -336,8 +336,10 @@ export default async function ProfilePage() {
           <ChevronRightIcon sx={{ color: MUTED, fontSize: "1.2rem", flexShrink: 0 }} />
         </Box>
 
-        {/* Compact section hub — each card opens its own detail page */}
-        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" }, gap: 1.5 }}>
+        {/* Compact section hub — each card opens its own detail page. The tracks use
+            minmax(0, 1fr) and the cards minWidth:0 so a long nowrap preview can't blow
+            the grid item out past the screen (grid items default to min-width:auto). */}
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "minmax(0, 1fr) minmax(0, 1fr)" }, gap: 1.5 }}>
           {sections.map((s) => (
             <Box
               key={s.key}
@@ -347,6 +349,7 @@ export default async function ProfilePage() {
                 textDecoration: "none",
                 ...cardSx,
                 p: 2,
+                minWidth: 0,
                 display: "flex",
                 alignItems: "center",
                 gap: 1.5,
