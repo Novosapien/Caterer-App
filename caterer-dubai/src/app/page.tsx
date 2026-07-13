@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { headers } from "next/headers";
 import QRCode from "qrcode";
 import BrandLogo from "@/components/BrandLogo";
 import LandingMenu from "@/components/LandingMenu";
@@ -27,9 +28,12 @@ export default async function Landing() {
   const [allOpen, session] = await Promise.all([listOpenGigs({}), getSession()]);
   const role = session?.role ?? null;
 
-  // Real QR pointing to caterer.com (same target as their site's app banner), rendered
-  // as inline SVG so it's self-contained. Dark modules on the white tile in AppBanner.
-  const qrSvg = await QRCode.toString("https://www.caterer.com/", {
+  // QR points at our /get-app smart redirect (App Store on iOS, Play on Android, web on
+  // desktop). Built from the request host so it's absolute and scannable on the deploy.
+  const h = await headers();
+  const host = h.get("host") ?? "caterer-dubai.vercel.app";
+  const proto = host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https";
+  const qrSvg = await QRCode.toString(`${proto}://${host}/get-app`, {
     type: "svg",
     margin: 0,
     color: { dark: "#0A0A0C", light: "#0000" },

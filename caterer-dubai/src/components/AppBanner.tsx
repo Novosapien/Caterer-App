@@ -15,13 +15,8 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
       sx={{
         position: "relative",
         overflow: "hidden",
-        borderRadius: "24px",
-        border: "1px solid rgba(255,255,255,0.10)",
-        backgroundColor: "#0E0E11",
-        backgroundImage:
-          "radial-gradient(90% 120% at 0% 0%, rgba(239,125,0,0.16) 0%, rgba(239,125,0,0) 55%)",
-        p: { xs: 2.75, sm: 4 },
-        pr: { xs: 2.75, sm: 4 },
+        // No card: the writing, QR and phone sit directly on the page background.
+        py: { xs: 1, sm: 2 },
       }}
     >
       <Box sx={{ maxWidth: { xs: "62%", sm: "58%" } }}>
@@ -55,9 +50,8 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
             width: { xs: 104, sm: 132 },
             height: { xs: 104, sm: 132 },
             p: 1,
-            borderRadius: "14px",
+            borderRadius: "12px",
             bgcolor: "#fff",
-            boxShadow: "0 12px 30px -14px rgba(0,0,0,0.7)",
             "& svg": { width: "100%", height: "100%", display: "block" },
           }}
           dangerouslySetInnerHTML={{ __html: qrSvg }}
