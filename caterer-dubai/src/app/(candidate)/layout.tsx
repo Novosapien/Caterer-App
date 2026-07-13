@@ -1,14 +1,12 @@
 import Box from "@mui/material/Box";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import BrandLogo from "@/components/BrandLogo";
 import CandidateNav from "@/components/candidate/CandidateNav";
+import CandidateMenu from "@/components/candidate/CandidateMenu";
 import { surfaces } from "@/theme/brand";
 
-// Mobile-first candidate shell: solid navy top bar (brand + alerts bell) + fixed
+// Mobile-first candidate shell: solid navy top bar (brand + hamburger menu) + fixed
 // bottom navigation. Content scrolls between them.
 export default function CandidateLayout({
   children,
@@ -30,11 +28,7 @@ export default function CandidateLayout({
           <Box component="a" href="/" sx={{ textDecoration: "none" }}>
             <BrandLogo dark />
           </Box>
-          <IconButton component="a" href="/alerts" aria-label="alerts" sx={{ color: "#fff" }}>
-            <Badge color="warning" variant="dot" overlap="circular">
-              <NotificationsNoneIcon />
-            </Badge>
-          </IconButton>
+          <CandidateMenu />
         </Toolbar>
       </AppBar>
 

@@ -9,12 +9,11 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutlineOutlined";
 import EditIcon from "@mui/icons-material/EditOutlined";
 import DescriptionIcon from "@mui/icons-material/Description";
 import StarIcon from "@mui/icons-material/Star";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import EmptyState from "@/components/EmptyState";
 import AppliedJobs from "@/components/candidate/AppliedJobs";
-import { loginAsChef, signOut } from "@/app/actions/auth";
+import { loginAsChef } from "@/app/actions/auth";
 import { getSession } from "@/lib/session";
 import { getCandidate, getCandidateInsights, listApplicationsForCandidate } from "@/lib/queries";
 import { getProfileSections } from "@/components/candidate/profileSections";
@@ -111,27 +110,7 @@ export default async function ProfilePage() {
 
   return (
     <Box sx={{ bgcolor: PAGE, color: "#fff", minHeight: "100dvh" }}>
-      <Container maxWidth="sm" sx={{ pt: 1.5, pb: 5 }}>
-        {/* Slim toolbar — back to the feed + log out */}
-        <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", py: 1 }}>
-          <Button
-            component="a"
-            href="/jobs"
-            startIcon={<ArrowBackIcon />}
-            sx={{ color: MUTED, fontWeight: 600, px: 1, "&:hover": { color: "#fff", bgcolor: "transparent" } }}
-          >
-            Gigs
-          </Button>
-          <form action={signOut}>
-            <Button
-              type="submit"
-              sx={{ color: MUTED, fontWeight: 600, px: 1, "&:hover": { color: "#fff", bgcolor: "transparent" } }}
-            >
-              Log out
-            </Button>
-          </form>
-        </Stack>
-
+      <Container maxWidth="sm" sx={{ pt: 2.5, pb: 5 }}>
         {/* Header — restrained identity, one accent, no chrome */}
         <Box sx={{ ...cardSx, mb: 2 }}>
           <Stack direction="row" spacing={{ xs: 2, sm: 2.5 }} sx={{ alignItems: "flex-start" }}>
