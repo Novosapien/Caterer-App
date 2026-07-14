@@ -70,12 +70,13 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
         aria-hidden
         sx={{
           position: "absolute",
-          // Jam the bottom-right corner past the banner corner on every width so the
-          // phone reads as emerging FROM the corner, not floating inset from it.
-          right: { xs: -40, sm: -44 },
-          bottom: { xs: -40, sm: -46 },
-          width: { xs: 176, sm: 240 },
-          transform: "rotate(-9deg)",
+          // Jam the bottom-right corner well past the screen corner on every width so the
+          // phone's solid body fills the exact corner — the tilt would otherwise leave a
+          // black triangle right at the corner where the rotated edges pull away from it.
+          right: { xs: -56, sm: -60 },
+          bottom: { xs: -58, sm: -64 },
+          width: { xs: 184, sm: 248 },
+          transform: "rotate(-8deg)",
           transformOrigin: "bottom right",
           // Soften just the top and left edges into a thin feather (no hard cut-off)
           // while keeping the screen crisp — intersecting the two edge gradients means
