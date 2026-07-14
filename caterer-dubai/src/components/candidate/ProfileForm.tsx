@@ -14,8 +14,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
-import Collapse from "@mui/material/Collapse";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
@@ -33,7 +31,6 @@ import {
   uploadCv,
   importProfileFromCv,
   uploadAvatar,
-  addExperience,
   deleteExperience,
 } from "@/app/(candidate)/actions";
 import { formatPay } from "@/lib/format";
@@ -152,19 +149,6 @@ export default function ProfileForm(props: Props) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(props.initialAvatarUrl);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
-  // Experience add form
-  const [addOpen, setAddOpen] = useState(false);
-  const [exp, setExp] = useState({
-    title: "",
-    company: "",
-    location: "",
-    startLabel: "",
-    endLabel: "",
-    isCurrent: false,
-    description: "",
-  });
-  const [savingExp, setSavingExp] = useState(false);
-
   function toggle(list: string[], set: (v: string[]) => void, tag: string) {
     set(list.includes(tag) ? list.filter((t) => t !== tag) : [...list, tag]);
   }
@@ -250,23 +234,6 @@ export default function ProfileForm(props: Props) {
       setToast({ msg: `Imported from your CV${parts}. Review and save.`, ok: true });
     } else {
       setToast({ msg: res.error ?? "Could not import from your CV.", ok: false });
-    }
-  }
-
-  async function submitExperience() {
-    if (!exp.title.trim() || !exp.company.trim()) {
-      setToast({ msg: "Add a role title and company.", ok: false });
-      return;
-    }
-    setSavingExp(true);
-    const res = await addExperience(exp);
-    setSavingExp(false);
-    if (res.ok) {
-      setExp({ title: "", company: "", location: "", startLabel: "", endLabel: "", isCurrent: false, description: "" });
-      setAddOpen(false);
-      router.refresh();
-    } else {
-      setToast({ msg: res.error ?? "Could not add experience.", ok: false });
     }
   }
 
@@ -432,11 +399,9 @@ export default function ProfileForm(props: Props) {
             <WorkOutlineIcon sx={{ color: "#fff" }} />
             <Typography sx={{ fontWeight: 700 }}>Experience</Typography>
           </Stack>
-          {!addOpen && (
-            <Button size="small" startIcon={<AddIcon />} onClick={() => setAddOpen(true)}>
-              Add
-            </Button>
-          )}
+          <Button component="a" href="/profile/experience/new" size="small" startIcon={<AddIcon />}>
+            Add
+          </Button>
         </Stack>
 
         <Stack spacing={1.5} sx={{ mb: props.experience.length ? 1.5 : 0 }}>
@@ -463,41 +428,12 @@ export default function ProfileForm(props: Props) {
               </IconButton>
             </Box>
           ))}
-          {props.experience.length === 0 && !addOpen && (
+          {props.experience.length === 0 && (
             <Typography variant="body2" color="text.secondary">
               No experience added yet. Add a role to build out your profile.
             </Typography>
           )}
         </Stack>
-
-        <Collapse in={addOpen}>
-          <Box sx={{ p: 1.5, borderRadius: 3, bgcolor: brand.cream, border: `1px solid ${brand.line}` }}>
-            <Stack spacing={1.5}>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                <TextField label="Role title" value={exp.title} onChange={(e) => setExp({ ...exp, title: e.target.value })} fullWidth size="small" />
-                <TextField label="Company / venue" value={exp.company} onChange={(e) => setExp({ ...exp, company: e.target.value })} fullWidth size="small" />
-              </Stack>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                <TextField label="Location" value={exp.location} onChange={(e) => setExp({ ...exp, location: e.target.value })} fullWidth size="small" />
-                <TextField label="Start (e.g. Jan 2021)" value={exp.startLabel} onChange={(e) => setExp({ ...exp, startLabel: e.target.value })} fullWidth size="small" />
-                <TextField label="End" value={exp.endLabel} onChange={(e) => setExp({ ...exp, endLabel: e.target.value })} fullWidth size="small" disabled={exp.isCurrent} />
-              </Stack>
-              <FormControlLabel
-                control={<Switch checked={exp.isCurrent} onChange={(e) => setExp({ ...exp, isCurrent: e.target.checked })} size="small" />}
-                label={<Typography variant="body2">I currently work here</Typography>}
-              />
-              <TextField label="What you did" value={exp.description} onChange={(e) => setExp({ ...exp, description: e.target.value })} multiline minRows={2} fullWidth size="small" />
-              <Stack direction="row" spacing={1}>
-                <Button variant="contained" size="small" onClick={submitExperience} disabled={savingExp}>
-                  {savingExp ? "Adding…" : "Add role"}
-                </Button>
-                <Button variant="text" color="inherit" size="small" onClick={() => setAddOpen(false)}>
-                  Cancel
-                </Button>
-              </Stack>
-            </Stack>
-          </Box>
-        </Collapse>
       </Paper>
 
       {/* Specialisms */}
