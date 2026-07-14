@@ -171,8 +171,6 @@ function PhoneMock() {
 
         <JobRow title="Catering & Events crew" company="Nikki Beach" posted="Posted today" logoBg={brand.teal} />
         <JobRow title="Waiter / Waitress" company="Zuma DIFC" posted="Posted 1d ago" logoBg="#E3F2E9" />
-        <JobRow title="Barista" company="Atlantis The Palm" posted="Posted 1d ago" logoBg="#EDE7F6" />
-        <JobRow title="Banquet Server" company="Address Sky View" posted="Posted 2d ago" logoBg="#FDECEC" />
         <Box sx={{ height: 10 }} />
       </Box>
     </Box>
