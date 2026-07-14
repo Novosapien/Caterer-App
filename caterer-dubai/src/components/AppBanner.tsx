@@ -39,7 +39,11 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
         <Typography
           sx={{ mt: 1, color: "rgba(255,255,255,0.6)", fontSize: { xs: "0.85rem", sm: "1rem" }, lineHeight: 1.5 }}
         >
-          Scan the QR code and start your job search.
+          Scan the QR code and start{" "}
+          {/* Keep "your job search." as one unit so "search" never dangles on its own line. */}
+          <Box component="span" sx={{ whiteSpace: "nowrap" }}>
+            your job search.
+          </Box>
         </Typography>
 
         {/* QR tile */}
@@ -65,9 +69,11 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
         aria-hidden
         sx={{
           position: "absolute",
-          right: { xs: -34, sm: -10 },
-          bottom: { xs: -26, sm: -34 },
-          width: { xs: 172, sm: 236 },
+          // Jam the bottom-right corner past the banner corner on every width so the
+          // phone reads as emerging FROM the corner, not floating inset from it.
+          right: { xs: -40, sm: -44 },
+          bottom: { xs: -40, sm: -46 },
+          width: { xs: 176, sm: 240 },
           transform: "rotate(-9deg)",
           transformOrigin: "bottom right",
           // Soften just the top and left edges into a thin feather (no hard cut-off)
