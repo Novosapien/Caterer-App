@@ -76,9 +76,8 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
           right: { xs: -56, sm: -60 },
           bottom: { xs: -58, sm: -64 },
           width: { xs: 184, sm: 248 },
-          // Gentle clockwise lean: the phone reads as a clean rectangle rising out of the
-          // corner. A counter-clockwise tilt angled the right edge inward and looked off.
-          transform: "rotate(5deg)",
+          // Gentle left lean, rising out of the corner.
+          transform: "rotate(-6deg)",
           transformOrigin: "bottom right",
           // Soften just the top and left edges into a thin feather (no hard cut-off)
           // while keeping the screen crisp — intersecting the two edge gradients means
@@ -161,14 +160,19 @@ function PhoneMock() {
           </Box>
         </Box>
 
-        {/* job card */}
+        {/* job feed — a realistic list that runs off the bottom edge, giving the phone a
+            true tall aspect ratio rather than a stubby, square-ish frame. */}
         <JobRow title="Junior Sous Chef / Kitchen assistant" company="Address Downtown" posted="Posted today" />
+        <JobRow title="Commis Chef" company="Jumeirah Al Qasr" posted="Posted today" logoBg="#FCE4D6" />
 
         <Box sx={{ textAlign: "center", fontSize: "0.5rem", color: "#8A8A8E", py: 0.35, bgcolor: "#F5F5F6" }}>
           Recommended for you
         </Box>
 
         <JobRow title="Catering & Events crew" company="Nikki Beach" posted="Posted today" logoBg={brand.teal} />
+        <JobRow title="Waiter / Waitress" company="Zuma DIFC" posted="Posted 1d ago" logoBg="#E3F2E9" />
+        <JobRow title="Barista" company="Atlantis The Palm" posted="Posted 1d ago" logoBg="#EDE7F6" />
+        <JobRow title="Banquet Server" company="Address Sky View" posted="Posted 2d ago" logoBg="#FDECEC" />
         <Box sx={{ height: 10 }} />
       </Box>
     </Box>
