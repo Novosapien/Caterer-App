@@ -15,7 +15,9 @@ import { brand } from "@/theme/brand";
 export default async function RecruiterLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
 
-  if (!session || session.role !== "recruiter") {
+  // Model A: any signed-in user can enter the posting portal (a chef can post a private
+  // gig too). Only anonymous visitors hit the sign-in wall — no separate business login.
+  if (!session) {
     return (
       <Box sx={{ minHeight: "100dvh", bgcolor: brand.cream, display: "grid", placeItems: "center", p: 3 }}>
         <Paper sx={{ p: 4, maxWidth: 420, width: "100%", textAlign: "center" }}>

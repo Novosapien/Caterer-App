@@ -6,7 +6,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { matchCandidatesForGig } from "@/lib/matching";
 import { notifyAgentService } from "@/lib/agentClient";
 import { getSession } from "@/lib/session";
-import { getOwnedBusinessId } from "@/lib/queries";
+import { ensurePosterBusiness } from "@/lib/posting";
 import type { Job } from "@/lib/types";
 
 // --- Credit gating helper ---------------------------------------------------
@@ -32,8 +32,8 @@ export async function getRemainingCredits(businessId: string): Promise<number> {
 // --- Buy a package (mock checkout, no payment processor) --------------------
 export async function buyPackage(packageId: string): Promise<{ ok: boolean; error?: string }> {
   const session = await getSession();
-  if (!session || session.role !== "recruiter") return { ok: false, error: "Not authorised" };
-  const businessId = await getOwnedBusinessId(session.profileId);
+  if (!session) return { ok: false, error: "Not authorised" };
+  const businessId = await ensurePosterBusiness(session.profileId);
   if (!businessId) return { ok: false, error: "No business found for your account." };
   const db = createServiceClient();
   const { error } = await db
@@ -60,9 +60,11 @@ export interface CreateJobResult {
 // --- Create (post) a gig ----------------------------------------------------
 export async function createJob(form: FormData): Promise<CreateJobResult> {
   const session = await getSession();
-  if (!session || session.role !== "recruiter") return { ok: false, error: "Not authorised" };
-  const businessId = await getOwnedBusinessId(session.profileId);
-  if (!businessId) return { ok: false, error: "No business found for your account." };
+  if (!session) return { ok: false, error: "Not authorised" };
+  // Provision a poster identity on first post (chef or business alike), so there is never
+  // a re-login or a separate "create a business" step in the way.
+  const businessId = await ensurePosterBusiness(session.profileId);
+  if (!businessId) return { ok: false, error: "Could not set up posting for your account." };
 
   // Credit gating (R5 / EC5): block if 0 remaining.
   const remaining = await getRemainingCredits(businessId);
@@ -167,8 +169,8 @@ export async function uploadBusinessImage(
   formData: FormData,
 ): Promise<{ ok: boolean; url?: string; error?: string }> {
   const session = await getSession();
-  if (!session || session.role !== "recruiter") return { ok: false, error: "Not authorised" };
-  const businessId = await getOwnedBusinessId(session.profileId);
+  if (!session) return { ok: false, error: "Not authorised" };
+  const businessId = await ensurePosterBusiness(session.profileId);
   if (!businessId) return { ok: false, error: "No business found for your account." };
 
   const file = formData.get("file");

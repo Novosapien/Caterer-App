@@ -138,7 +138,7 @@ export default async function Landing() {
             )}
             <Button
               component="a"
-              href={role === "recruiter" ? "/post" : "/signup?type=business"}
+              href={session ? "/post" : "/signup?type=business"}
               variant="contained"
               color="teal"
               sx={{ fontWeight: 700, px: { xs: 1.75, sm: 2.5 }, whiteSpace: "nowrap" }}
