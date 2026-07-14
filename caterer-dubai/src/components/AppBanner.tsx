@@ -76,7 +76,9 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
           right: { xs: -56, sm: -60 },
           bottom: { xs: -58, sm: -64 },
           width: { xs: 184, sm: 248 },
-          transform: "rotate(-8deg)",
+          // Gentle clockwise lean: the phone reads as a clean rectangle rising out of the
+          // corner. A counter-clockwise tilt angled the right edge inward and looked off.
+          transform: "rotate(5deg)",
           transformOrigin: "bottom right",
           // Soften just the top and left edges into a thin feather (no hard cut-off)
           // while keeping the screen crisp — intersecting the two edge gradients means
