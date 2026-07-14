@@ -7,6 +7,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
 import IconButton from "@mui/material/IconButton";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutlineOutlined";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
 import ApartmentIcon from "@mui/icons-material/ApartmentOutlined";
@@ -221,34 +223,37 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
             </Field>
 
             <Field icon={<ApartmentIcon />} label="Business type" htmlFor="businessType">
-              <Box sx={{ position: "relative" }}>
-                <Box
-                  component="select"
-                  id="businessType"
-                  name="businessType"
-                  value={businessType}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setBusinessType(e.target.value as BusinessType)
-                  }
-                  sx={{ ...inputSx, pr: 5.5, appearance: "none", cursor: "pointer" }}
-                >
-                  {BIZ_TYPES.map((t) => (
-                    <option key={t.value} value={t.value} style={{ color: "#000" }}>
-                      {t.label}
-                    </option>
-                  ))}
-                </Box>
-                <KeyboardArrowDownIcon
-                  sx={{
-                    position: "absolute",
-                    right: 14,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    pointerEvents: "none",
-                    color: "rgba(255,255,255,0.6)",
-                  }}
-                />
-              </Box>
+              {/* MUI Select (not a native <select>) so the open menu is a dark, themed
+                  dropdown that matches the rest of the app, not a tiny native popup. The
+                  name prop emits a hidden input so the form action still receives it. */}
+              <Select
+                id="businessType"
+                name="businessType"
+                value={businessType}
+                onChange={(e) => setBusinessType(e.target.value as BusinessType)}
+                fullWidth
+                IconComponent={KeyboardArrowDownIcon}
+                sx={{
+                  height: 52,
+                  bgcolor: FIELD_BG,
+                  borderRadius: "14px",
+                  color: "#fff",
+                  fontSize: "1rem",
+                  fontFamily: "inherit",
+                  "& .MuiSelect-select": { py: 0, display: "flex", alignItems: "center" },
+                  "& .MuiOutlinedInput-notchedOutline": { borderColor: FIELD_BORDER },
+                  "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: FIELD_BORDER },
+                  "&.Mui-focused": { boxShadow: `0 0 0 1px ${ORANGE}` },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: ORANGE },
+                  "& .MuiSelect-icon": { color: "rgba(255,255,255,0.6)" },
+                }}
+              >
+                {BIZ_TYPES.map((t) => (
+                  <MenuItem key={t.value} value={t.value}>
+                    {t.label}
+                  </MenuItem>
+                ))}
+              </Select>
             </Field>
           </>
         )}
