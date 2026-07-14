@@ -22,7 +22,7 @@ import { brand } from "@/theme/brand";
 // Dark, premium palette for the candidate profile — warm charcoal page, lifted cards.
 const PAGE = "#08080A";
 const CARD = "#16161A";
-const CARD_BORDER = "rgba(255,255,255,0.08)";
+const CARD_BORDER = "rgba(255,255,255,0.16)";
 const MUTED = "rgba(255,255,255,0.60)";
 const HAIRLINE = "rgba(255,255,255,0.10)";
 const AVAIL_GREEN = "#34D171";
