@@ -14,8 +14,9 @@ export default function AppBanner({ qrSvg }: { qrSvg: string }) {
     <Box
       sx={{
         position: "relative",
-        overflow: "hidden",
         // No card: the writing, QR and phone sit directly on the page background.
+        // NOTE: no overflow:hidden here — the phone must bleed past the content column's
+        // side padding to the true screen edge. The page root clips horizontal overflow.
         py: { xs: 1, sm: 2 },
       }}
     >
