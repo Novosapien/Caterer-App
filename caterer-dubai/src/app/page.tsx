@@ -3,8 +3,6 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { headers } from "next/headers";
-import QRCode from "qrcode";
 import BrandLogo from "@/components/BrandLogo";
 import LandingMenu from "@/components/LandingMenu";
 import LandingSearch from "@/components/LandingSearch";
@@ -27,17 +25,6 @@ const HERO_CHEF = `${UNSPLASH}1609558531790-ec0fe1237631?auto=format&fit=crop&w=
 export default async function Landing() {
   const [allOpen, session] = await Promise.all([listOpenGigs({}), getSession()]);
   const role = session?.role ?? null;
-
-  // QR points at our /get-app smart redirect (App Store on iOS, Play on Android, web on
-  // desktop). Built from the request host so it's absolute and scannable on the deploy.
-  const h = await headers();
-  const host = h.get("host") ?? "caterer-dubai.vercel.app";
-  const proto = host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https";
-  const qrSvg = await QRCode.toString(`${proto}://${host}/get-app`, {
-    type: "svg",
-    margin: 0,
-    color: { dark: "#0A0A0C", light: "#0000" },
-  });
 
   const suggestions: JobSuggestion[] = allOpen.map((j) => ({
     id: j.id,
@@ -220,7 +207,7 @@ export default async function Landing() {
 
         {/* Get-the-app footer banner (QR to caterer.com + Dubai phone mock). */}
         <Box sx={{ mt: 4, mb: 5 }}>
-          <AppBanner qrSvg={qrSvg} />
+          <AppBanner />
         </Box>
       </Container>
     </Box>
