@@ -95,9 +95,11 @@ function PhoneApp() {
         textDecoration: "none",
         color: "#fff",
         cursor: "pointer",
-        borderRadius: "40px",
+        // Only the TOP is rounded and there is no bottom padding: the phone has no bottom
+        // edge — it runs off the page and is clipped by the stage/page bottom.
+        borderRadius: "40px 40px 0 0",
         bgcolor: "#050506",
-        p: "12px",
+        p: "12px 12px 0",
         boxShadow:
           "0 40px 80px -30px rgba(0,0,0,0.9), inset 0 0 0 1.5px rgba(255,255,255,0.16), 0 0 0 1px rgba(0,0,0,0.9)",
         transition: "transform .15s",
@@ -114,13 +116,16 @@ function PhoneApp() {
       <Box
         sx={{
           position: "relative",
-          borderRadius: "30px",
+          borderRadius: "30px 30px 0 0",
           overflow: "hidden",
           bgcolor: "#0D0D10",
           color: "#fff",
           px: 3,
           pt: 2,
-          pb: 5,
+          pb: 0,
+          // Always taller than the clipping stage, so the phone's bottom is never in view —
+          // the app screen just continues off the bottom edge of the page.
+          minHeight: { xs: 460, sm: 500 },
           textAlign: "center",
         }}
       >
