@@ -102,6 +102,13 @@ function PhoneApp() {
           "0 40px 80px -30px rgba(0,0,0,0.9), inset 0 0 0 1.5px rgba(255,255,255,0.16), 0 0 0 1px rgba(0,0,0,0.9)",
         transition: "transform .15s",
         "&:active": { transform: "translateY(1px)" },
+        // Lift + brighten the CTA whenever the phone (the link) is hovered.
+        "&:hover .browse-cta": {
+          transform: "translateY(-2px)",
+          filter: "brightness(1.07)",
+          boxShadow: `0 10px 24px -6px ${brand.teal}B0`,
+        },
+        "&:hover .browse-cta svg": { transform: "translateX(3px)" },
       }}
     >
       <Box
@@ -175,8 +182,10 @@ function PhoneApp() {
           Chef, waiter or crew. Gigs across Dubai.
         </Typography>
 
-        {/* App-style CTA cue — the whole phone is the link, so this is a visual button. */}
+        {/* App-style CTA cue — the whole phone is the link, so this is a visual button. It
+            lifts/brightens on hover (and when the phone is hovered) so it reads clickable. */}
         <Stack
+          className="browse-cta"
           direction="row"
           spacing={0.75}
           sx={{
@@ -191,6 +200,9 @@ function PhoneApp() {
             color: "#0D0D10",
             fontWeight: 800,
             fontSize: "0.82rem",
+            transition: "transform .18s ease, filter .18s ease, box-shadow .18s ease",
+            boxShadow: `0 6px 18px -8px ${brand.teal}99`,
+            "& svg": { transition: "transform .18s ease" },
           }}
         >
           Browse gigs
