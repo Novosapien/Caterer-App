@@ -7,7 +7,6 @@ import BrandLogo from "@/components/BrandLogo";
 import LandingMenu from "@/components/LandingMenu";
 import LandingSearch from "@/components/LandingSearch";
 import AppBanner from "@/components/AppBanner";
-import { signOut } from "@/app/actions/auth";
 import { getSession } from "@/lib/session";
 import { listOpenGigs } from "@/lib/queries";
 import { brand } from "@/theme/brand";
@@ -105,24 +104,7 @@ export default async function Landing() {
             <BrandLogo dark />
           </Box>
           <Stack direction="row" spacing={{ xs: 0.75, sm: 1.5 }} sx={{ alignItems: "center" }}>
-            {role ? (
-              <form action={signOut}>
-                <Button
-                  type="submit"
-                  sx={{ display: { xs: "none", sm: "inline-flex" }, color: "rgba(255,255,255,0.82)", fontWeight: 600, px: 1, "&:hover": { color: "#fff", bgcolor: "transparent" } }}
-                >
-                  Log out
-                </Button>
-              </form>
-            ) : (
-              <Button
-                component="a"
-                href="/login"
-                sx={{ display: { xs: "none", sm: "inline-flex" }, color: "rgba(255,255,255,0.82)", fontWeight: 600, px: 1, "&:hover": { color: "#fff", bgcolor: "transparent" } }}
-              >
-                Log in
-              </Button>
-            )}
+            {/* Auth (Log in / Log out) lives only in the hamburger menu below. */}
             <Button
               component="a"
               href={session ? "/post" : "/signup?type=business"}
