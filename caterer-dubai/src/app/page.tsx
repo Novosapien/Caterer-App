@@ -205,8 +205,9 @@ export default async function Landing() {
 
         <Box sx={{ flex: 1, minHeight: 48 }} />
 
-        {/* Get-the-app footer banner (QR to caterer.com + Dubai phone mock). */}
-        <Box sx={{ mt: 4, mb: 5 }}>
+        {/* Get-the-app footer banner. No bottom margin: the phone runs off the bottom edge
+            of the page (the root's overflow:hidden clips it there). */}
+        <Box sx={{ mt: 4 }}>
           <AppBanner />
         </Box>
       </Container>

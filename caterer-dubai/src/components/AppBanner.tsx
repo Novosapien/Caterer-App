@@ -40,13 +40,14 @@ export default function AppBanner() {
         Browse gigs, apply in taps and get hired across Dubai.
       </Typography>
 
-      {/* Phone stage: the phone hangs from the top and the stage's overflow:hidden cuts it
-          off lower down, so it reads as a phone emerging from the bottom of the screen. */}
+      {/* Phone stage: shorter than the phone, with overflow:hidden, and no margin below the
+          banner (see page.tsx). The stage's bottom sits at the page's bottom edge, so the
+          phone is clipped there — it runs off the bottom of the screen. */}
       <Box
         sx={{
           position: "relative",
           mt: { xs: 3, sm: 3.5 },
-          height: { xs: 300, sm: 336 },
+          height: { xs: 322, sm: 356 },
           overflow: "hidden",
         }}
       >
@@ -161,7 +162,7 @@ function PhoneApp() {
         </Typography>
 
         <Typography sx={{ mt: 1.25, fontSize: "0.72rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.5 }}>
-          Chef, waiter or crew. Your next gig across Dubai, in your pocket.
+          Chef, waiter or crew. Gigs across Dubai.
         </Typography>
 
         {/* App-style CTA */}
@@ -185,6 +186,26 @@ function PhoneApp() {
           Browse gigs
           <ArrowForwardIcon sx={{ fontSize: "0.95rem" }} />
         </Stack>
+
+        {/* Popular roles — app-like filler that runs off the bottom edge of the screen. */}
+        <Box sx={{ mt: 3, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 0.75 }}>
+          {["Chef", "Waiter", "Barista", "Bartender", "Kitchen porter", "Events crew"].map((r) => (
+            <Box
+              key={r}
+              sx={{
+                px: 1.25,
+                py: 0.5,
+                borderRadius: "999px",
+                border: "1px solid rgba(255,255,255,0.14)",
+                fontSize: "0.62rem",
+                fontWeight: 600,
+                color: "rgba(255,255,255,0.72)",
+              }}
+            >
+              {r}
+            </Box>
+          ))}
+        </Box>
       </Box>
     </Box>
   );
