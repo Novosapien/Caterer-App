@@ -203,11 +203,11 @@ export default async function Landing() {
           <LandingSearch suggestions={suggestions} />
         </Box>
 
-        <Box sx={{ flex: 1, minHeight: 48 }} />
+        <Box sx={{ flex: 1, minHeight: 20 }} />
 
         {/* Get-the-app footer banner. No bottom margin: the phone runs off the bottom edge
             of the page (the root's overflow:hidden clips it there). */}
-        <Box sx={{ mt: 4 }}>
+        <Box sx={{ mt: 2.5 }}>
           <AppBanner />
         </Box>
       </Container>

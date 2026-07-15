@@ -47,7 +47,7 @@ export default function AppBanner() {
         sx={{
           position: "relative",
           mt: { xs: 3, sm: 3.5 },
-          height: { xs: 322, sm: 356 },
+          height: { xs: 384, sm: 420 },
           overflow: "hidden",
         }}
       >
@@ -81,17 +81,27 @@ export default function AppBanner() {
   );
 }
 
-// The app's welcome screen: brand mark, a warm "find your role" tagline, and a CTA. Dark
-// screen, on-brand, so it reads as the real app rather than a generic mock.
+// The app's welcome screen: brand mark, a warm "find your role" tagline, and a CTA. The
+// whole phone is a link into the gig feed, so it's tappable wherever the bottom edge cuts
+// it (the visible Browse gigs button is the cue). Dark screen, on-brand.
 function PhoneApp() {
   return (
     <Box
+      component="a"
+      href="/jobs"
+      aria-label="Browse gigs"
       sx={{
+        display: "block",
+        textDecoration: "none",
+        color: "#fff",
+        cursor: "pointer",
         borderRadius: "40px",
         bgcolor: "#050506",
         p: "12px",
         boxShadow:
           "0 40px 80px -30px rgba(0,0,0,0.9), inset 0 0 0 1.5px rgba(255,255,255,0.16), 0 0 0 1px rgba(0,0,0,0.9)",
+        transition: "transform .15s",
+        "&:active": { transform: "translateY(1px)" },
       }}
     >
       <Box
@@ -123,7 +133,7 @@ function PhoneApp() {
         />
 
         {/* Brand mark */}
-        <Stack direction="row" spacing={0.75} sx={{ mt: 3.25, justifyContent: "center", alignItems: "center" }}>
+        <Stack direction="row" spacing={0.75} sx={{ mt: 2.5, justifyContent: "center", alignItems: "center" }}>
           <Box
             sx={{
               width: 18,
@@ -146,7 +156,7 @@ function PhoneApp() {
 
         <Typography
           sx={{
-            mt: 3,
+            mt: 2.25,
             fontFamily: display.style.fontFamily,
             fontWeight: 800,
             fontSize: "1.5rem",
@@ -165,22 +175,22 @@ function PhoneApp() {
           Chef, waiter or crew. Gigs across Dubai.
         </Typography>
 
-        {/* App-style CTA */}
+        {/* App-style CTA cue — the whole phone is the link, so this is a visual button. */}
         <Stack
           direction="row"
           spacing={0.75}
           sx={{
-            mt: 3,
+            mt: 2.5,
             mx: "auto",
             width: "fit-content",
             alignItems: "center",
-            px: 2.25,
-            py: 1,
+            px: 2.5,
+            py: 1.1,
             borderRadius: "999px",
             bgcolor: brand.teal,
             color: "#0D0D10",
             fontWeight: 800,
-            fontSize: "0.8rem",
+            fontSize: "0.82rem",
           }}
         >
           Browse gigs
