@@ -190,6 +190,7 @@ export async function updateCandidateProfile(input: {
   locationArea?: string;
   available: boolean;
   openToUrgent: boolean;
+  whatsappOptIn?: boolean;
   interests: string[];
   languages: string[];
   workPref: WorkPref | null;
@@ -240,6 +241,18 @@ export async function updateCandidateProfile(input: {
     })
     .eq("profile_id", session.profileId);
   if (error) return { ok: false, error: "Could not save your changes." };
+
+  // WhatsApp opt-in is written separately and tolerantly: if the column doesn't exist yet
+  // (migration 0006 not applied), the profile save still succeeds instead of hard-failing.
+  if (input.whatsappOptIn !== undefined) {
+    const { error: optErr } = await db
+      .from("candidate_profiles")
+      .update({ whatsapp_opt_in: input.whatsappOptIn })
+      .eq("profile_id", session.profileId);
+    if (optErr && !/column .*whatsapp_opt_in.* does not exist/i.test(optErr.message)) {
+      return { ok: false, error: "Could not save your WhatsApp preference." };
+    }
+  }
 
   revalidatePath("/profile");
   revalidatePath("/profile/edit");

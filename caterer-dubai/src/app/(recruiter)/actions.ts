@@ -3,7 +3,7 @@
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/server";
-import { matchCandidatesForGig } from "@/lib/matching";
+import { matchCandidatesForGig, whatsappRecipients } from "@/lib/matching";
 import { notifyAgentService } from "@/lib/agentClient";
 import { getSession } from "@/lib/session";
 import { ensurePosterBusiness } from "@/lib/posting";
@@ -123,34 +123,43 @@ export async function createJob(form: FormData): Promise<CreateJobResult> {
   const job = inserted as unknown as Job;
   const result: CreateJobResult = { ok: true, jobId: job.id, isUrgent };
 
-  // Hero trigger: on urgent publish, run matching + notify the agent service +
-  // write an in-app notification per matched candidate (EC4 = 0-match handled).
-  if (isUrgent) {
+  // Proactive matching runs for every gig; matchCandidatesForGig self-limits to gigs that
+  // warrant an alert (urgent, or an evening/dinner shift). Matched chefs get an in-app
+  // alert; those who explicitly opted in to WhatsApp (and have a number) also get messaged.
+  {
     const matches = await matchCandidatesForGig(job);
     result.matchCount = matches.length;
 
     if (matches.length > 0) {
       const notif = matches.map((c) => ({
         profile_id: c.profile_id,
-        type: "urgent_gig",
+        type: isUrgent ? "urgent_gig" : "gig_match",
         payload: {
           job_id: job.id,
           title: job.title,
+          role_type: job.role_type,
           venue: job.venue,
           pay_aed: job.pay_aed,
           pay_unit: job.pay_unit,
           start_at: job.start_at,
+          is_urgent: isUrgent,
         },
       }));
       await db.from("notifications").insert(notif);
 
-      const agent = await notifyAgentService(job, matches);
-      if (agent.ok) {
-        result.notifiedCount = agent.results.length || matches.length;
+      // Only WhatsApp the chefs who gave explicit consent (whatsapp_opt_in) and have a phone.
+      const recipients = whatsappRecipients(matches);
+      if (recipients.length > 0) {
+        const agent = await notifyAgentService(job, recipients);
+        if (agent.ok) {
+          result.notifiedCount = agent.results.length || recipients.length;
+        } else {
+          // Agent service offline/blocked — still report the matches; WhatsApp pending.
+          result.notifiedCount = 0;
+          result.whatsappPending = true;
+        }
       } else {
-        // Agent service offline/blocked — still report the matches; WhatsApp pending.
         result.notifiedCount = 0;
-        result.whatsappPending = true;
       }
     } else {
       result.notifiedCount = 0;

@@ -51,6 +51,7 @@ export default async function ProfileEditPage() {
         initialYears={candidate.years_experience ?? null}
         initialAvailable={candidate.available}
         initialOpenToUrgent={candidate.open_to_urgent}
+        initialWhatsappOptIn={candidate.whatsapp_opt_in ?? false}
         initialInterests={candidate.interests ?? []}
         initialLanguages={candidate.languages ?? []}
         initialWorkPref={candidate.work_pref ?? null}

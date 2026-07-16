@@ -34,8 +34,8 @@ const cardSx = {
 
 const STEPS: { title: string; body: React.ReactNode; action?: React.ReactNode }[] = [
   {
-    title: "Turn on availability",
-    body: "In your profile, add your mobile number and switch on Available now and Open to urgent. That tells us which shifts to ping you about.",
+    title: "Turn on availability + WhatsApp",
+    body: "In your profile, add your mobile number, switch on Available now, and turn on Message me on WhatsApp. That's your consent for the assistant to message you about matching evening shifts in your line of work.",
     action: (
       <Button
         component="a"

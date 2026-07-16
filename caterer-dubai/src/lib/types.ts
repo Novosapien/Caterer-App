@@ -27,6 +27,9 @@ export interface CandidateProfile {
   interests: string[];
   open_to_urgent: boolean;
   available: boolean;
+  // Explicit consent for proactive WhatsApp gig alerts (migration 0006). May be undefined
+  // on rows read before the column exists — treat missing as not opted in.
+  whatsapp_opt_in?: boolean;
   available_from: string | null;
   location_area: string | null;
   radius_km: number | null;

@@ -32,6 +32,7 @@ export async function notifyAgentService(
       start_at: job.start_at,
       dress_code: job.dress_code,
       description: job.description,
+      is_urgent: job.is_urgent,
     },
     candidates: candidates.map((c) => ({
       candidate_id: c.profile_id,

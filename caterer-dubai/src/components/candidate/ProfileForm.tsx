@@ -21,6 +21,7 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
 import DescriptionIcon from "@mui/icons-material/Description";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import TranslateIcon from "@mui/icons-material/Translate";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
@@ -106,6 +107,7 @@ interface Props {
   initialYears: number | null;
   initialAvailable: boolean;
   initialOpenToUrgent: boolean;
+  initialWhatsappOptIn: boolean;
   initialInterests: string[];
   initialLanguages: string[];
   initialWorkPref: WorkPref | null;
@@ -127,6 +129,7 @@ export default function ProfileForm(props: Props) {
   );
   const [available, setAvailable] = useState(props.initialAvailable);
   const [openToUrgent, setOpenToUrgent] = useState(props.initialOpenToUrgent);
+  const [whatsappOptIn, setWhatsappOptIn] = useState(props.initialWhatsappOptIn);
   const [interests, setInterests] = useState<string[]>(props.initialInterests);
   const [languages, setLanguages] = useState<string[]>(props.initialLanguages);
   const [workPref, setWorkPref] = useState<WorkPref | "">(props.initialWorkPref ?? "");
@@ -166,6 +169,7 @@ export default function ProfileForm(props: Props) {
         yearsExperience: years.trim() === "" ? null : Number(years),
         available,
         openToUrgent,
+        whatsappOptIn,
         interests,
         languages,
         workPref: workPref === "" ? null : workPref,
@@ -344,6 +348,19 @@ export default function ProfileForm(props: Props) {
             </Box>
           </Stack>
           <Switch checked={openToUrgent} onChange={(e) => setOpenToUrgent(e.target.checked)} />
+        </Stack>
+        <Divider sx={{ my: 1.5 }} />
+        <Stack direction="row" spacing={1.5} sx={{ justifyContent: "space-between", alignItems: "center" }}>
+          <Stack direction="row" spacing={1.25} sx={{ alignItems: "center" }}>
+            <WhatsAppIcon sx={{ color: "#25D366" }} />
+            <Box>
+              <Typography sx={{ fontWeight: 700 }}>Message me on WhatsApp</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Let the Caterer assistant message you when an evening shift in your line fits.
+              </Typography>
+            </Box>
+          </Stack>
+          <Switch checked={whatsappOptIn} onChange={(e) => setWhatsappOptIn(e.target.checked)} />
         </Stack>
       </Paper>
 

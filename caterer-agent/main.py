@@ -67,6 +67,7 @@ class NotifyGig(BaseModel):
     start_at: str  # ISO 8601
     dress_code: Optional[str] = None
     description: Optional[str] = None
+    is_urgent: bool = False
 
 
 class NotifyRequest(BaseModel):
@@ -151,6 +152,7 @@ def _gig_to_context(gig: NotifyGig, candidate: NotifyCandidate) -> ConversationC
             dress_code=gig.dress_code,
             status="open",
             description=gig.description,
+            is_urgent=gig.is_urgent,
         ),
         candidate=CandidateContext(
             candidate_profile_id=candidate.candidate_id,

@@ -240,14 +240,18 @@ def build_invite_message(context: ConversationContext) -> str:
     name = candidate.name or "there"
     role = gig.role_type or gig.title or "a catering shift"
     venue = gig.venue or "a Dubai venue"
+    urgent = bool(gig.is_urgent)
 
-    bits = [f"Hi {name}! Urgent gig: {role} at {venue}"]
+    # Lead + closer adapt to urgency: urgent gigs read hot, evening/matched shifts read
+    # as a friendly heads-up. (No em dashes in the copy; a middot separates the pay.)
+    lead = "Urgent gig" if urgent else "New shift for you"
+    bits = [f"Hi {name}! {lead}: {role} at {venue}"]
     if gig.location_area:
         bits.append(f"({gig.location_area})")
     if gig.pay_aed is not None:
         pay_amount = int(gig.pay_aed) if float(gig.pay_aed).is_integer() else gig.pay_aed
         unit = gig.pay_unit or "shift"
-        bits.append(f"— AED {pay_amount} per {unit}")
+        bits.append(f"· AED {pay_amount} per {unit}")
     pitch = " ".join(bits).strip()
 
     extras = []
@@ -257,4 +261,5 @@ def build_invite_message(context: ConversationContext) -> str:
         extras.append(f"Dress: {gig.dress_code}.")
     tail = (" " + " ".join(extras)) if extras else ""
 
-    return f"{pitch}.{tail} Can you take it? 🔥"
+    closer = "Can you take it? 🔥" if urgent else "Fancy it? Reply yes or ask me anything."
+    return f"{pitch}.{tail} {closer}"

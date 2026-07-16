@@ -60,6 +60,7 @@ class GigContext:
     dress_code: Optional[str]
     status: Optional[str]
     description: Optional[str]
+    is_urgent: Optional[bool] = None
 
 
 @dataclass
@@ -243,6 +244,7 @@ def _row_to_gig(job_id: str, row: Optional[dict[str, Any]]) -> GigContext:
         dress_code=row.get("dress_code"),
         status=row.get("status"),
         description=row.get("description"),
+        is_urgent=row.get("is_urgent"),
     )
 
 
@@ -255,7 +257,7 @@ def load_gig(job_id: str) -> GigContext:
             sb.table("jobs")
             .select(
                 "id, title, role_type, venue, location_area, pay_aed, pay_unit, "
-                "start_at, dress_code, status, description"
+                "start_at, dress_code, status, description, is_urgent"
             )
             .eq("id", job_id)
             .limit(1)

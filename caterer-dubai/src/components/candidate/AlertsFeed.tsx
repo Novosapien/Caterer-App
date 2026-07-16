@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import TuneIcon from "@mui/icons-material/Tune";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import BoltIcon from "@mui/icons-material/Bolt";
+import RestaurantIcon from "@mui/icons-material/RestaurantOutlined";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
@@ -50,6 +51,13 @@ function decorate(n: AppNotification): {
         body: s(p.venue) ?? s(p.body) ?? "You're a match — reply on WhatsApp to grab it.",
         icon: <BoltIcon />,
         fg: brand.amber,
+      };
+    case "gig_match":
+      return {
+        title: s(p.title) ?? "A shift that fits you",
+        body: s(p.venue) ?? s(p.body) ?? "New evening shift in your line — reply on WhatsApp to grab it.",
+        icon: <RestaurantIcon />,
+        fg: brand.teal,
       };
     case "application_accepted":
     case "gig_won":
