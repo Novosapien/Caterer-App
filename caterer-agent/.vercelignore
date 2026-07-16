@@ -1,0 +1,7 @@
+# Never upload the local virtualenv, caches, or secrets to Vercel.
+.venv
+__pycache__
+**/__pycache__
+*.pyc
+.env
+.env.*
