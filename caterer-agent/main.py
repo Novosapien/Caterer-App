@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import hmac
 import logging
+import os
 from contextlib import asynccontextmanager
 from typing import List, Optional
 
@@ -54,6 +55,12 @@ from src.config import get_settings
 
 logger = logging.getLogger("caterer_agent")
 logging.basicConfig(level=logging.INFO)
+
+# GLOBAL KILL SWITCH. All WhatsApp sending (proactive /notify AND webhook replies)
+# is DISABLED unless AGENT_ENABLED is explicitly set to a truthy value. This exists
+# so the agent can never auto-message from a WhatsApp account it should not (e.g. a
+# personal number connected to Unipile). Default OFF is the safe default.
+_AGENT_ENABLED = os.getenv("AGENT_ENABLED", "0").strip().lower() in ("1", "true", "yes", "on")
 
 
 # ---------------------------------------------------------------------------
@@ -182,6 +189,24 @@ async def notify(
         return JSONResponse(status_code=401, content={"detail": "unauthorized"})
 
     gig = payload.gig
+
+    # Kill switch: when disabled, send nothing and report every candidate pending.
+    if not _AGENT_ENABLED:
+        logger.warning("notify: agent sending disabled (AGENT_ENABLED not set); no sends")
+        return JSONResponse(
+            status_code=200,
+            content=NotifyResponse(
+                results=[
+                    NotifyResult(
+                        candidate_id=c.candidate_id,
+                        thread_key=make_thread_key(c.candidate_id, gig.gig_id),
+                        status="pending",
+                    )
+                    for c in payload.candidates
+                ]
+            ).model_dump(),
+        )
+
     results: List[NotifyResult] = []
 
     for candidate in payload.candidates:
@@ -408,6 +433,11 @@ def _handle_general_turn(
 
 @app.post("/webhook/whatsapp")
 async def whatsapp_webhook(request: Request) -> Response:
+    # Kill switch: when disabled, ack every inbound and reply to NONE. This stops
+    # the agent auto-replying to a connected account's normal WhatsApp traffic.
+    if not _AGENT_ENABLED:
+        return _OK
+
     try:
         payload = await request.json()
     except Exception:
@@ -438,8 +468,8 @@ async def whatsapp_webhook(request: Request) -> Response:
         logger.exception("webhook: candidate resolve failed for %s: %s", from_phone, exc)
 
     if candidate is None:
-        # Not a registered number: polite fallback into the same chat.
-        _send_reply(chat_id, _UNKNOWN_SENDER_REPLY)
+        # Not a registered number (e.g. a normal contact messaging this account).
+        # Stay SILENT: never auto-reply to someone who isn't a known candidate.
         return _OK
 
     return _handle_general_turn(candidate, inbound_text, chat_id)
