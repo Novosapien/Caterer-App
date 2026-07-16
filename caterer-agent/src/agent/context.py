@@ -1,6 +1,6 @@
 """Thread routing + gig/candidate context loading.
 
-This module owns the Supabase reads that turn a Twilio inbound (phone only) into
+This module owns the Supabase reads that turn a Unipile inbound (phone only) into
 a concrete conversation:
 
   1. `resolve_active_thread(phone)` -> the single `active` whatsapp_threads row
@@ -114,8 +114,8 @@ def _with_retry(fn, *, retries: int = 1, backoff_s: float = 0.5):
 def resolve_active_thread(phone: str) -> Optional[ResolvedThread]:
     """Return the single `active` whatsapp_threads row for `phone`, or None.
 
-    Twilio inbound `From` arrives as "whatsapp:+9715...". We match on the bare
-    E.164 number stored in whatsapp_threads.phone.
+    The webhook resolves the sender's provider id to an E.164 number, which we
+    match against the bare E.164 number stored in whatsapp_threads.phone.
     """
     bare = phone.replace("whatsapp:", "").strip()
     sb = get_supabase()

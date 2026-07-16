@@ -1,4 +1,4 @@
-"""Unipile client for WhatsApp send/reply (replaces Twilio).
+"""Unipile client for WhatsApp send/reply (the sole WhatsApp transport).
 
 Unipile connects a real WhatsApp account (via QR) and exposes a unified REST API.
 Business-initiated first messages are freeform (no template), which is exactly

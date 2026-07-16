@@ -33,17 +33,14 @@ class Settings(BaseSettings):
     # Claude Sonnet 5 (resolves to the latest Sonnet). Overridable via env.
     anthropic_model: str = "claude-sonnet-5"
 
-    # --- Unipile (WhatsApp transport) ---------------------------------------
-    # DSN is the per-account host:port from the Unipile dashboard, e.g.
-    # "api8.unipile.com:13851". API key + the connected WhatsApp account id.
+    # --- Unipile (the sole WhatsApp transport) ------------------------------
+    # A real WhatsApp account connected via QR, so business-initiated first
+    # messages are freeform (no template approval). DSN is the per-account
+    # host:port from the Unipile dashboard, e.g. "api8.unipile.com:13851";
+    # plus the API key and the connected WhatsApp account id.
     unipile_dsn: str = ""
     unipile_api_key: str = ""
     unipile_account_id: str = ""
-
-    # --- Twilio (legacy; unused now that WhatsApp goes through Unipile) ------
-    twilio_account_sid: str = ""
-    twilio_auth_token: str = ""
-    twilio_whatsapp_from: str = ""
 
     # --- Supabase ------------------------------------------------------------
     supabase_url: str = ""

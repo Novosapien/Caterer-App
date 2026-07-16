@@ -3,12 +3,14 @@
 Endpoints:
   GET  /health            -> {"status": "ok"}                 (keep-warm)
   POST /notify            -> outbound trigger (shared-secret)  (Next.js caller)
-  POST /webhook/whatsapp  -> Twilio inbound (form From, Body)
+  POST /webhook/whatsapp  -> Unipile inbound (JSON message event)
 
-The /notify contract mirrors caterer-dubai/src/lib/agentClient.ts. DB column
-names mirror caterer-dubai/supabase/migrations/0001_schema.sql. All heavy
-dependencies and credentials are read lazily, so the module imports cleanly
-without them.
+WhatsApp goes through Unipile (a real connected WhatsApp account), so
+business-initiated first messages are freeform (no template approval) and the
+agent can reach opted-in chefs proactively. The /notify contract mirrors
+caterer-dubai/src/lib/agentClient.ts. DB column names mirror
+caterer-dubai/supabase/migrations/0001_schema.sql. All heavy dependencies and
+credentials are read lazily, so the module imports cleanly without them.
 """
 
 from __future__ import annotations
@@ -21,7 +23,6 @@ from typing import List, Optional
 from fastapi import FastAPI, Header, Request
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
-from twilio.twiml.messaging_response import MessagingResponse
 
 from src.agent.context import (
     ConversationContext,
@@ -38,7 +39,11 @@ from src.agent.graph import (
     setup_checkpointer,
     teardown_checkpointer,
 )
-from src.clients.twilio_client import send_whatsapp
+from src.clients.unipile_client import (
+    provider_id_to_e164,
+    reply_in_chat,
+    send_new_whatsapp,
+)
 from src.config import get_settings
 
 logger = logging.getLogger("caterer_agent")
@@ -196,14 +201,14 @@ async def notify(
             )
             continue
 
-        # 2. Build the invite and send via Twilio WhatsApp.
+        # 2. Build the invite and send via Unipile WhatsApp (freeform first message).
         context = _gig_to_context(gig, candidate)
         invite = build_invite_message(context)
         try:
-            send_whatsapp(candidate.phone, invite)
+            send_new_whatsapp(candidate.phone, invite)
             status = "sent"
         except Exception as exc:
-            # Any send failure (not joined / outside 24h window / Twilio error) -> pending.
+            # Any send failure (unreachable number / Unipile error) -> pending.
             logger.warning("notify: send blocked for %s: %s", candidate.phone, exc)
             status = "pending"
 
@@ -227,52 +232,103 @@ async def notify(
 
 
 # ---------------------------------------------------------------------------
-# POST /webhook/whatsapp  (Twilio inbound — form-encoded From/Body)
+# POST /webhook/whatsapp  (Unipile inbound — JSON message event)
 # ---------------------------------------------------------------------------
 
 _UNKNOWN_SENDER_REPLY = "Hi! I can only chat about a gig I've sent you."
 
-
-def _from_to_e164(raw: str) -> str:
-    """Twilio inbound From ("whatsapp:+447883098500") -> E.164 ("+447883098500")."""
-    raw = (raw or "").strip()
-    if raw.startswith("whatsapp:"):
-        raw = raw[len("whatsapp:"):]
-    return raw.strip()
+_OK = JSONResponse(status_code=200, content={"status": "ok"})
 
 
-def _twiml(text: str) -> Response:
-    """Build a TwiML reply. Replying in the webhook response is freeform-allowed
-    inside the 24h WhatsApp session window, so it sidesteps the ContentSid/template
-    requirement that a REST push would hit on this account.
+def _first_str(payload: dict, *keys: str) -> str:
+    """Return the first non-empty string among payload[key] for the given keys."""
+    for key in keys:
+        val = payload.get(key)
+        if isinstance(val, str) and val.strip():
+            return val.strip()
+    return ""
+
+
+def _parse_unipile_message(payload: dict) -> Optional[tuple[str, str, str]]:
+    """Turn a Unipile webhook body into (from_phone_e164, text, chat_id), or None.
+
+    Unipile posts a JSON event for each message. Field names vary by API version,
+    so we read tolerantly. We ignore anything the connected account sent itself
+    (echo of our own outbound) so the agent never replies to its own messages.
     """
-    tw = MessagingResponse()
-    if text:
-        tw.message(text)
-    return Response(content=str(tw), media_type="application/xml")
+    if not isinstance(payload, dict):
+        return None
+
+    # Ignore echoes of our own outbound (Unipile flags the account as the sender).
+    for flag in ("from_me", "is_sender", "is_self"):
+        if payload.get(flag):
+            return None
+
+    # chat_id — the conversation we reply into.
+    chat_id = _first_str(payload, "chat_id", "chat", "conversation_id")
+    if not chat_id:
+        chat = payload.get("chat")
+        if isinstance(chat, dict):
+            chat_id = _first_str(chat, "id", "chat_id")
+
+    # Message text — may be a top-level string or nested under `message`.
+    text = _first_str(payload, "message", "text", "body")
+    if not text:
+        msg = payload.get("message")
+        if isinstance(msg, dict):
+            text = _first_str(msg, "text", "body")
+
+    # Sender provider id ("971...@s.whatsapp.net") -> E.164.
+    provider_id = _first_str(
+        payload, "attendee_provider_id", "provider_id", "from", "sender"
+    )
+    if not provider_id:
+        sender = payload.get("sender")
+        if isinstance(sender, dict):
+            provider_id = _first_str(
+                sender, "attendee_provider_id", "provider_id", "id"
+            )
+    from_phone = provider_id_to_e164(provider_id) if provider_id else ""
+
+    if not from_phone or not chat_id:
+        return None
+    return from_phone, text, chat_id
+
+
+def _send_reply(chat_id: str, text: str) -> None:
+    """Best-effort async reply into a Unipile chat (never raises to the caller)."""
+    if not chat_id or not text:
+        return
+    try:
+        reply_in_chat(chat_id, text)
+    except Exception as exc:
+        logger.warning("webhook: reply send failed for chat %s: %s", chat_id, exc)
 
 
 @app.post("/webhook/whatsapp")
 async def whatsapp_webhook(request: Request) -> Response:
     try:
-        form = await request.form()
+        payload = await request.json()
     except Exception:
-        form = {}
+        payload = {}
 
-    from_phone = _from_to_e164(str(form.get("From", "")))
-    inbound_text = str(form.get("Body", "") or "").strip()
+    parsed = _parse_unipile_message(payload if isinstance(payload, dict) else {})
+    if parsed is None:
+        # Not an actionable inbound (echo, status event, or unparseable) — ack and drop.
+        return _OK
+    from_phone, inbound_text, chat_id = parsed
 
-    # 1. Resolve the thread from the phone.
+    # 1. Resolve the thread from the sender's phone.
     thread: Optional[object] = None
-    if from_phone:
-        try:
-            thread = resolve_active_thread(from_phone)
-        except Exception as exc:
-            logger.exception("webhook: thread resolve failed for %s: %s", from_phone, exc)
+    try:
+        thread = resolve_active_thread(from_phone)
+    except Exception as exc:
+        logger.exception("webhook: thread resolve failed for %s: %s", from_phone, exc)
 
     if thread is None:
-        # Unknown sender: polite fallback in the webhook response (freeform-safe).
-        return _twiml(_UNKNOWN_SENDER_REPLY)
+        # Unknown sender: polite fallback into the same chat.
+        _send_reply(chat_id, _UNKNOWN_SENDER_REPLY)
+        return _OK
 
     thread_key = thread.thread_key  # type: ignore[attr-defined]
     job_id = thread.job_id  # type: ignore[attr-defined]
@@ -298,7 +354,7 @@ async def whatsapp_webhook(request: Request) -> Response:
         logger.exception("webhook: agent turn failed for %s: %s", thread_key, exc)
         reply = "Sorry, I hit a snag just now, could you send that again in a moment?"
 
-    # 4. Log outbound + bump last_activity_at, then reply via TwiML (freeform-safe).
+    # 4. Log outbound + bump last_activity_at, then reply into the Unipile chat.
     try:
         log_message(thread_key=thread_key, direction="out", body=reply)
     except Exception as exc:
@@ -309,4 +365,5 @@ async def whatsapp_webhook(request: Request) -> Response:
     except Exception as exc:
         logger.warning("webhook: touch_thread failed for %s: %s", thread_key, exc)
 
-    return _twiml(reply)
+    _send_reply(chat_id, reply)
+    return _OK

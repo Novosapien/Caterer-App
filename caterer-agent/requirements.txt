@@ -6,13 +6,12 @@ langchain-anthropic
 
 # --- Service ---
 fastapi
-python-multipart          # required by FastAPI to parse the Twilio webhook form fields
 uvicorn[standard]
 pydantic
 pydantic-settings
 
 # --- Integrations ---
-twilio
+requests                  # Unipile WhatsApp REST client
 supabase
 psycopg[binary]
 
