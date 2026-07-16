@@ -30,6 +30,10 @@ export interface CandidateProfile {
   // Explicit consent for proactive WhatsApp gig alerts (migration 0006). May be undefined
   // on rows read before the column exists — treat missing as not opted in.
   whatsapp_opt_in?: boolean;
+  // When the candidate first messaged the WhatsApp assistant (migration 0007). Set, it means
+  // a WhatsApp session is open, so we may proactively message them. Missing/undefined before
+  // the migration (or before they message in) means no proactive send.
+  whatsapp_activated_at?: string | null;
   available_from: string | null;
   location_area: string | null;
   radius_km: number | null;

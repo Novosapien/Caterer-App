@@ -21,9 +21,9 @@ import logging
 from functools import lru_cache
 from typing import Optional
 
-from src.agent.context import ConversationContext
-from src.agent.prompts import build_system_prompt
-from src.agent.tools import build_tools
+from src.agent.context import ConversationContext, ResolvedCandidate
+from src.agent.prompts import build_general_system_prompt, build_system_prompt
+from src.agent.tools import build_general_tools, build_tools
 from src.config import get_settings
 
 logger = logging.getLogger("caterer_agent")
@@ -142,6 +142,23 @@ def _build_agent(job_id: str, candidate_profile_id: str, system_prompt: str):
     )
 
 
+def _build_general_agent(candidate: ResolvedCandidate, system_prompt: str):
+    """Build a react agent for the general (non-gig) assistant.
+
+    Bound to the search tool (candidate captured by closure) + checkpointer, with
+    the system prompt applied at model-call time (not persisted), mirroring
+    _build_agent so general chat history stacks no system messages.
+    """
+    from langgraph.prebuilt import create_react_agent
+
+    return create_react_agent(
+        _get_model(),
+        tools=build_general_tools(candidate),
+        prompt=system_prompt,
+        checkpointer=get_checkpointer(),
+    )
+
+
 def _is_conn_error(exc: BaseException) -> bool:
     """True if the exception (or its cause) is a dropped-Postgres-connection error.
 
@@ -224,8 +241,43 @@ def run_turn(
     reply = _extract_reply_text(result)
     if not reply:
         reply = (
-            "Sorry, I hit a snag just now — could you send that again in a moment?"
+            "Sorry, I hit a snag just now, could you send that again in a moment?"
         )
+    return reply
+
+
+def run_general_turn(
+    *,
+    thread_key: str,
+    candidate: ResolvedCandidate,
+    inbound_text: str,
+) -> str:
+    """Run one general (non-gig) turn and return the assistant's reply text.
+
+    thread_id = thread_key (the candidate's general thread) so the checkpointer
+    restores this candidate's general history. The system prompt is rebuilt from
+    the candidate profile each turn.
+    """
+    system_prompt = build_general_system_prompt(candidate)
+    agent = _build_general_agent(candidate, system_prompt)
+
+    config = {"configurable": {"thread_id": thread_key}}
+    payload = {"messages": [{"role": "user", "content": inbound_text}]}
+
+    try:
+        result = agent.invoke(payload, config=config)
+    except Exception as exc:
+        # Same stale-connection self-heal as run_turn.
+        if _is_conn_error(exc):
+            logger.warning("Checkpointer connection lost (%s); reconnecting and retrying.", exc)
+            reset_checkpointer()
+            agent = _build_general_agent(candidate, system_prompt)
+            result = agent.invoke(payload, config=config)
+        else:
+            raise
+    reply = _extract_reply_text(result)
+    if not reply:
+        reply = "Sorry, I hit a snag just now, could you send that again in a moment?"
     return reply
 
 

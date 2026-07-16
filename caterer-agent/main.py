@@ -26,15 +26,21 @@ from pydantic import BaseModel
 
 from src.agent.context import (
     ConversationContext,
+    ResolvedCandidate,
+    ResolvedThread,
+    ensure_general_thread,
     load_conversation_context,
     log_message,
     make_thread_key,
+    mark_whatsapp_activated,
     resolve_active_thread,
+    resolve_candidate_by_phone,
     touch_thread,
     upsert_thread_active,
 )
 from src.agent.graph import (
     build_invite_message,
+    run_general_turn,
     run_turn,
     setup_checkpointer,
     teardown_checkpointer,
@@ -235,7 +241,11 @@ async def notify(
 # POST /webhook/whatsapp  (Unipile inbound — JSON message event)
 # ---------------------------------------------------------------------------
 
-_UNKNOWN_SENDER_REPLY = "Hi! I can only chat about a gig I've sent you."
+_UNKNOWN_SENDER_REPLY = (
+    "Hi! I'm the Caterer Dubai assistant. I can't find your profile from this "
+    "number. Sign up in the app and add this mobile, then message me and I'll "
+    "help you find shifts."
+)
 
 _OK = JSONResponse(status_code=200, content={"status": "ok"})
 
@@ -305,6 +315,97 @@ def _send_reply(chat_id: str, text: str) -> None:
         logger.warning("webhook: reply send failed for chat %s: %s", chat_id, exc)
 
 
+_SNAG_REPLY = "Sorry, I hit a snag just now, could you send that again in a moment?"
+
+
+def _handle_gig_turn(thread: ResolvedThread, inbound_text: str, chat_id: str) -> Response:
+    """Handle an inbound reply that belongs to a specific gig thread."""
+    thread_key = thread.thread_key
+    job_id = thread.job_id
+    candidate_profile_id = thread.candidate_profile_id
+
+    # They messaged us, so they're activated for proactive sends going forward.
+    try:
+        mark_whatsapp_activated(candidate_profile_id)
+    except Exception as exc:  # pragma: no cover - never fatal
+        logger.warning("webhook: activation stamp failed for %s: %s", candidate_profile_id, exc)
+
+    try:
+        log_message(thread_key=thread_key, direction="in", body=inbound_text)
+    except Exception as exc:
+        logger.warning("webhook: inbound log failed for %s: %s", thread_key, exc)
+
+    try:
+        context = load_conversation_context(job_id, candidate_profile_id)
+        reply = run_turn(
+            thread_key=thread_key,
+            job_id=job_id,
+            candidate_profile_id=candidate_profile_id,
+            context=context,
+            inbound_text=inbound_text,
+        )
+    except Exception as exc:
+        logger.exception("webhook: gig turn failed for %s: %s", thread_key, exc)
+        reply = _SNAG_REPLY
+
+    try:
+        log_message(thread_key=thread_key, direction="out", body=reply)
+    except Exception as exc:
+        logger.warning("webhook: outbound log failed for %s: %s", thread_key, exc)
+    try:
+        touch_thread(thread_key)
+    except Exception as exc:
+        logger.warning("webhook: touch_thread failed for %s: %s", thread_key, exc)
+
+    _send_reply(chat_id, reply)
+    return _OK
+
+
+def _handle_general_turn(
+    candidate: ResolvedCandidate, inbound_text: str, chat_id: str
+) -> Response:
+    """Handle an inbound with no gig on the table: general assistant + job search."""
+    # Open/refresh the general thread and mark the candidate activated.
+    try:
+        thread_key = ensure_general_thread(
+            candidate_profile_id=candidate.candidate_profile_id, phone=candidate.phone
+        )
+    except Exception as exc:
+        logger.exception("webhook: general thread upsert failed for %s: %s", candidate.phone, exc)
+        _send_reply(chat_id, _SNAG_REPLY)
+        return _OK
+
+    try:
+        mark_whatsapp_activated(candidate.candidate_profile_id)
+    except Exception as exc:  # pragma: no cover - never fatal
+        logger.warning("webhook: activation stamp failed for %s: %s", candidate.candidate_profile_id, exc)
+
+    try:
+        log_message(thread_key=thread_key, direction="in", body=inbound_text)
+    except Exception as exc:
+        logger.warning("webhook: inbound log failed for %s: %s", thread_key, exc)
+
+    try:
+        reply = run_general_turn(
+            thread_key=thread_key, candidate=candidate, inbound_text=inbound_text
+        )
+    except Exception as exc:
+        logger.exception("webhook: general turn failed for %s: %s", thread_key, exc)
+        reply = _SNAG_REPLY
+
+    try:
+        log_message(thread_key=thread_key, direction="out", body=reply)
+    except Exception as exc:
+        logger.warning("webhook: outbound log failed for %s: %s", thread_key, exc)
+    try:
+        touch_thread(thread_key)
+    except Exception as exc:
+        logger.warning("webhook: touch_thread failed for %s: %s", thread_key, exc)
+
+    _send_reply(chat_id, reply)
+    return _OK
+
+
 @app.post("/webhook/whatsapp")
 async def whatsapp_webhook(request: Request) -> Response:
     try:
@@ -318,52 +419,27 @@ async def whatsapp_webhook(request: Request) -> Response:
         return _OK
     from_phone, inbound_text, chat_id = parsed
 
-    # 1. Resolve the thread from the sender's phone.
-    thread: Optional[object] = None
+    # Resolve the active thread for this phone.
+    thread: Optional[ResolvedThread] = None
     try:
         thread = resolve_active_thread(from_phone)
     except Exception as exc:
         logger.exception("webhook: thread resolve failed for %s: %s", from_phone, exc)
 
-    if thread is None:
-        # Unknown sender: polite fallback into the same chat.
+    # A thread tied to a specific gig -> gig conversation (accept/decline).
+    if thread is not None and thread.job_id:
+        return _handle_gig_turn(thread, inbound_text, chat_id)
+
+    # Otherwise general: identify the candidate by their phone number.
+    candidate: Optional[ResolvedCandidate] = None
+    try:
+        candidate = resolve_candidate_by_phone(from_phone)
+    except Exception as exc:
+        logger.exception("webhook: candidate resolve failed for %s: %s", from_phone, exc)
+
+    if candidate is None:
+        # Not a registered number: polite fallback into the same chat.
         _send_reply(chat_id, _UNKNOWN_SENDER_REPLY)
         return _OK
 
-    thread_key = thread.thread_key  # type: ignore[attr-defined]
-    job_id = thread.job_id  # type: ignore[attr-defined]
-    candidate_profile_id = thread.candidate_profile_id  # type: ignore[attr-defined]
-
-    # 2. Log the inbound message (mirror for the app/dashboard).
-    try:
-        log_message(thread_key=thread_key, direction="in", body=inbound_text)
-    except Exception as exc:
-        logger.warning("webhook: inbound log failed for %s: %s", thread_key, exc)
-
-    # 3. Load gig + candidate context and run the agent turn.
-    try:
-        context = load_conversation_context(job_id, candidate_profile_id)
-        reply = run_turn(
-            thread_key=thread_key,
-            job_id=job_id,
-            candidate_profile_id=candidate_profile_id,
-            context=context,
-            inbound_text=inbound_text,
-        )
-    except Exception as exc:
-        logger.exception("webhook: agent turn failed for %s: %s", thread_key, exc)
-        reply = "Sorry, I hit a snag just now, could you send that again in a moment?"
-
-    # 4. Log outbound + bump last_activity_at, then reply into the Unipile chat.
-    try:
-        log_message(thread_key=thread_key, direction="out", body=reply)
-    except Exception as exc:
-        logger.warning("webhook: outbound log failed for %s: %s", thread_key, exc)
-
-    try:
-        touch_thread(thread_key)
-    except Exception as exc:
-        logger.warning("webhook: touch_thread failed for %s: %s", thread_key, exc)
-
-    _send_reply(chat_id, reply)
-    return _OK
+    return _handle_general_turn(candidate, inbound_text, chat_id)

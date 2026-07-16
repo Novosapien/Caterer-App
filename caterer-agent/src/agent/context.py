@@ -33,6 +33,16 @@ def make_thread_key(candidate_profile_id: str, job_id: str) -> str:
     return f"{candidate_profile_id}:{job_id}"
 
 
+def make_general_thread_key(candidate_profile_id: str) -> str:
+    """Thread key for a general (non-gig) conversation with a candidate.
+
+    Used when a candidate messages the assistant with no specific gig on the
+    table (e.g. "any jobs going?"). Distinct from any gig thread key so the
+    LangGraph checkpointer keeps general chat history separate.
+    """
+    return f"{candidate_profile_id}:general"
+
+
 # ---------------------------------------------------------------------------
 # Data holders
 # ---------------------------------------------------------------------------
@@ -43,8 +53,24 @@ class ResolvedThread:
     thread_key: str
     phone: str
     candidate_profile_id: str
-    job_id: str
+    job_id: Optional[str]  # None for a general (non-gig) thread
     status: str
+
+
+@dataclass
+class ResolvedCandidate:
+    """A candidate resolved from an inbound phone number (no gig context).
+
+    Carries just enough profile to greet them, search fitting gigs, and route
+    future messages. Populated by resolve_candidate_by_phone.
+    """
+    candidate_profile_id: str
+    name: Optional[str]
+    phone: str
+    specialisms: Optional[list] = None
+    desired_roles: Optional[list] = None
+    interests: Optional[list] = None
+    location_area: Optional[str] = None
 
 
 @dataclass
@@ -146,10 +172,16 @@ def resolve_active_thread(phone: str) -> Optional[ResolvedThread]:
 
 
 def upsert_thread_active(
-    *, thread_key: str, phone: str, candidate_profile_id: str, job_id: str
+    *,
+    thread_key: str,
+    phone: str,
+    candidate_profile_id: str,
+    job_id: Optional[str],
 ) -> None:
     """Upsert the thread row as `active`, and close every OTHER active thread
     for that phone — guaranteeing exactly one active thread per phone.
+
+    job_id is None for a general (non-gig) thread.
     """
     bare = phone.replace("whatsapp:", "").strip()
     sb = get_supabase()
@@ -188,6 +220,89 @@ def touch_thread(thread_key: str) -> None:
         .eq("thread_key", thread_key)
         .execute()
     )
+
+
+# ---------------------------------------------------------------------------
+# General (non-gig) inbound: resolve candidate by phone + activation
+# ---------------------------------------------------------------------------
+
+
+def resolve_candidate_by_phone(phone: str) -> Optional[ResolvedCandidate]:
+    """Find the candidate behind an inbound phone number, or None.
+
+    Used when a candidate messages the assistant with no active gig thread. We
+    match the bare E.164 number against profiles.phone and pull the candidate's
+    role signals so the assistant can search fitting gigs.
+    """
+    bare = phone.replace("whatsapp:", "").strip()
+    if not bare:
+        return None
+    sb = get_supabase()
+
+    def _query():
+        return (
+            sb.table("candidate_profiles")
+            .select(
+                "profile_id, specialisms, desired_roles, interests, location_area, "
+                "profiles!inner(name, phone)"
+            )
+            .eq("profiles.phone", bare)
+            .limit(1)
+            .execute()
+        )
+
+    resp = _with_retry(_query)
+    rows = resp.data or []
+    if not rows:
+        return None
+    row = rows[0]
+    profile = row.get("profiles") or {}
+    if isinstance(profile, list):
+        profile = profile[0] if profile else {}
+    return ResolvedCandidate(
+        candidate_profile_id=row["profile_id"],
+        name=profile.get("name"),
+        phone=bare,
+        specialisms=row.get("specialisms"),
+        desired_roles=row.get("desired_roles"),
+        interests=row.get("interests"),
+        location_area=row.get("location_area"),
+    )
+
+
+def ensure_general_thread(*, candidate_profile_id: str, phone: str) -> str:
+    """Open (or refresh) a general, non-gig thread for this candidate.
+
+    Maintains the "one active thread per phone" invariant like a gig thread, but
+    with job_id NULL. Returns the general thread_key.
+    """
+    thread_key = make_general_thread_key(candidate_profile_id)
+    upsert_thread_active(
+        thread_key=thread_key,
+        phone=phone,
+        candidate_profile_id=candidate_profile_id,
+        job_id=None,
+    )
+    return thread_key
+
+
+def mark_whatsapp_activated(candidate_profile_id: str) -> None:
+    """Stamp whatsapp_activated_at on first inbound (best-effort, idempotent-ish).
+
+    This is what unlocks proactive sends to the candidate (they messaged us
+    first). Tolerant of the column not existing yet (pre-0007 migration) so an
+    inbound turn never fails on it.
+    """
+    sb = get_supabase()
+    try:
+        sb.table("candidate_profiles").update(
+            {"whatsapp_activated_at": _now_iso()}
+        ).eq("profile_id", candidate_profile_id).is_(
+            "whatsapp_activated_at", "null"
+        ).execute()
+    except Exception:
+        # Column absent (migration not applied) or transient error — never fatal.
+        pass
 
 
 # ---------------------------------------------------------------------------

@@ -100,8 +100,18 @@ export async function matchCandidatesForGig(job: Job): Promise<CandidateProfile[
   });
 }
 
-// Of a matched set, those who have explicitly consented to WhatsApp messaging AND have a
-// phone number to reach. This is who the agent service actually messages.
+// Of a matched set, those the agent may PROACTIVELY message on WhatsApp. All three must hold:
+//   1. whatsapp_opt_in — they flipped the green "message me" toggle (consent)
+//   2. whatsapp_activated_at — they have messaged the assistant first, so a WhatsApp session
+//      is open. WhatsApp only lets a business message a user who contacted it first, and cold
+//      messaging strangers is what gets a number banned, so this gate is mandatory.
+//   3. a phone number to reach
+// Fail-closed: a missing whatsapp_activated_at (e.g. before migration 0007) means no send.
 export function whatsappRecipients(matches: CandidateProfile[]): CandidateProfile[] {
-  return matches.filter((c) => c.whatsapp_opt_in === true && Boolean(c.profile?.phone));
+  return matches.filter(
+    (c) =>
+      c.whatsapp_opt_in === true &&
+      Boolean(c.whatsapp_activated_at) &&
+      Boolean(c.profile?.phone),
+  );
 }

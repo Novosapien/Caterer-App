@@ -18,7 +18,7 @@ from typing import Optional
 
 from langchain_core.tools import tool
 
-from src.agent.context import load_gig
+from src.agent.context import ResolvedCandidate, load_gig
 from src.clients.supabase import get_supabase
 
 
@@ -215,3 +215,120 @@ def build_tools(job_id: str, candidate_profile_id: str) -> list:
         return {"ok": True, "status": "declined"}
 
     return [get_gig_details, accept_gig, decline_gig]
+
+
+# ---------------------------------------------------------------------------
+# General (non-gig) mode: search open gigs that fit the candidate
+# ---------------------------------------------------------------------------
+
+# Keyword -> role family. Mirrors caterer-dubai/src/lib/matching.ts so the agent
+# and the app classify roles the same way (a waiter never sees head-chef gigs).
+_FAMILY_KEYWORDS: dict[str, list[str]] = {
+    "kitchen": [
+        "chef", "cook", "commis", "sous", "cdp", "chef de partie", "pastry",
+        "grill", "larder", "kitchen", "culinary", "prep", "demi",
+        "kitchen porter", " kp",
+    ],
+    "front": [
+        "waiter", "waitress", "server", "waiting", "host", "hostess", "runner",
+        "busser", "front of house", "foh", "service staff", "floor",
+    ],
+    "bar": ["bartender", "barback", "mixologist", "bar staff", "bar "],
+    "barista": ["barista", "coffee"],
+    "events": [
+        "events crew", "event staff", "banquet", "catering crew", "steward",
+        "usher", "hospitality crew",
+    ],
+}
+
+
+def _families_from(values: list) -> set:
+    """Classify free-text role/skill strings into the families they imply."""
+    hay = " " + " ".join(str(v) for v in values if v).lower() + " "
+    return {fam for fam, kws in _FAMILY_KEYWORDS.items() if any(k in hay for k in kws)}
+
+
+def _candidate_families(candidate: ResolvedCandidate) -> set:
+    return _families_from(
+        list(candidate.specialisms or [])
+        + list(candidate.desired_roles or [])
+        + list(candidate.interests or [])
+    )
+
+
+def _job_pay_label(row: dict) -> str:
+    pay = row.get("pay_aed")
+    if pay is None:
+        return "pay on ask"
+    amount = int(pay) if float(pay).is_integer() else pay
+    return f"AED {amount} per {row.get('pay_unit') or 'shift'}"
+
+
+def build_general_tools(candidate: ResolvedCandidate) -> list:
+    """Return [search_open_gigs] for the general (non-gig) assistant.
+
+    The candidate is captured by closure so the LLM never supplies ids or role
+    filters — it only decides WHEN to search. Results are pre-filtered to the
+    candidate's role family (and their area, when set) so a waiter is never
+    shown a head-chef gig.
+    """
+    fams = _candidate_families(candidate)
+    area = (candidate.location_area or "").strip()
+
+    @tool
+    def search_open_gigs() -> dict:
+        """List currently open gigs that fit this candidate's line of work.
+
+        Use when the candidate asks what shifts/jobs are going, or to see if
+        anything fits them right now. Takes no arguments. Returns up to 5 open
+        gigs in their role family (and area, if known), soonest first.
+        """
+        sb = get_supabase()
+
+        def _query():
+            return (
+                sb.table("jobs")
+                .select(
+                    "id, title, role_type, venue, location_area, pay_aed, "
+                    "pay_unit, start_at, is_urgent, status"
+                )
+                .eq("status", "open")
+                .order("start_at", desc=False)
+                .limit(40)
+                .execute()
+            )
+
+        try:
+            resp = _with_retry(_query)
+        except Exception:
+            return {"ok": False, "gigs": []}
+
+        rows = resp.data or []
+        out = []
+        for row in rows:
+            gig_fams = _families_from([row.get("role_type"), row.get("title")])
+            # Family gate: if the gig has a derivable family, it must overlap the
+            # candidate's. Gigs with no derivable family are allowed through.
+            if gig_fams and fams and not (gig_fams & fams):
+                continue
+            if gig_fams and not fams:
+                # Unknown candidate family -> don't guess; skip family-specific gigs.
+                continue
+            if area and row.get("location_area") and row["location_area"] != area:
+                continue
+            out.append(
+                {
+                    "role": row.get("role_type") or row.get("title"),
+                    "venue": row.get("venue"),
+                    "area": row.get("location_area"),
+                    "pay": _job_pay_label(row),
+                    "start_at": row.get("start_at"),
+                    "urgent": bool(row.get("is_urgent")),
+                }
+            )
+            if len(out) >= 5:
+                break
+
+        return {"ok": True, "gigs": out, "count": len(out)}
+
+    return [search_open_gigs]

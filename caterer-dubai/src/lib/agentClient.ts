@@ -2,7 +2,7 @@ import "server-only";
 import type { Job, CandidateProfile } from "./types";
 
 // Client for the separate WhatsApp agent service (FastAPI+LangGraph — see agent-spec/).
-// Posts the matched candidate set to /notify; the agent service owns all Twilio I/O.
+// Posts the matched candidate set to /notify; the agent service owns all WhatsApp I/O (Unipile).
 
 export interface NotifyResult {
   candidate_id: string;

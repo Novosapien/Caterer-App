@@ -18,12 +18,13 @@ const HAIRLINE = "rgba(255,255,255,0.10)";
 const MUTED = "rgba(255,255,255,0.60)";
 const WA_GREEN = "#25D366";
 
-// The WhatsApp sandbox number is public. The one-time join code is account-specific
-// (from the Twilio console) — set NEXT_PUBLIC_WHATSAPP_JOIN to wire the one-tap button.
-const WA_NUMBER_DISPLAY = "+1 737 258 3478";
-const WA_NUMBER_E164 = "17372583478";
-const WA_JOIN = process.env.NEXT_PUBLIC_WHATSAPP_JOIN ?? "join twilio-trial";
-const waLink = `https://wa.me/${WA_NUMBER_E164}?text=${encodeURIComponent(WA_JOIN)}`;
+// The assistant's WhatsApp number (the connected Unipile account). WhatsApp only lets a
+// business message a user who messaged first, so the one-tap link opens WhatsApp with a
+// friendly opener pre-filled. Override the number/opener via env if the account changes.
+const WA_NUMBER_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? "+44 7742 427102";
+const WA_NUMBER_E164 = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "447742427102";
+const WA_OPENER = process.env.NEXT_PUBLIC_WHATSAPP_OPENER ?? "Hi! I'd like catering shift alerts.";
+const waLink = `https://wa.me/${WA_NUMBER_E164}?text=${encodeURIComponent(WA_OPENER)}`;
 
 const cardSx = {
   bgcolor: CARD,
@@ -35,7 +36,7 @@ const cardSx = {
 const STEPS: { title: string; body: React.ReactNode; action?: React.ReactNode }[] = [
   {
     title: "Turn on availability + WhatsApp",
-    body: "In your profile, add your mobile number, switch on Available now, and turn on Message me on WhatsApp. That's your consent for the assistant to message you about matching evening shifts in your line of work.",
+    body: "In your profile, add your mobile number, switch on Available now, and turn on Message me on WhatsApp. That's your consent for the assistant to message you about matching shifts in your line of work.",
     action: (
       <Button
         component="a"
@@ -56,16 +57,16 @@ const STEPS: { title: string; body: React.ReactNode; action?: React.ReactNode }[
     ),
   },
   {
-    title: "Connect WhatsApp (one time)",
-    body: "Tap the button below to open WhatsApp with the connect message ready to send. This links your number so we can reach you. You only do this once.",
+    title: "Message us to switch it on",
+    body: "Tap the button below to open WhatsApp with a message ready to send. WhatsApp only lets us message you once you've messaged us first, so this opener is what switches your alerts on. You only do it once.",
   },
   {
     title: "Get matched",
-    body: "When a venue posts an urgent shift that fits your role, area and availability, the Caterer assistant messages you on WhatsApp with the pay, venue, start time and dress code.",
+    body: "When a venue posts a shift that fits your role, area and availability, the Caterer assistant messages you on WhatsApp with the pay, venue, start time and dress code.",
   },
   {
-    title: "Reply to accept",
-    body: 'Ask anything in the chat (pay, timing, dress code). Reply "yes" to lock the shift in or "no" to pass. Accepting books you instantly and shows up in the venue\'s dashboard.',
+    title: "Or just ask, anytime",
+    body: 'Message the assistant whenever you like: "any jobs tonight?" and it will pull up open shifts in your line. When we send you a shift, reply "yes" to lock it in or "no" to pass.',
   },
 ];
 
@@ -107,8 +108,8 @@ export default function WhatsAppGuidePage() {
           </Typography>
         </Stack>
         <Typography sx={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.6, mb: 3 }}>
-          The moment a matching urgent shift goes live, we message you on WhatsApp and you accept right
-          there in the chat. No app to check, no missed shifts. Here is how to switch it on.
+          The moment a shift in your line goes live, we message you on WhatsApp and you accept right
+          there in the chat. You can also just ask us what&rsquo;s going, anytime. Here is how to switch it on.
         </Typography>
 
         {/* Numbered steps */}
@@ -150,9 +151,9 @@ export default function WhatsAppGuidePage() {
 
         {/* Connect card — the actionable step 2 detail */}
         <Box sx={{ ...cardSx, mt: 2, borderColor: "rgba(37,211,102,0.35)" }}>
-          <Typography sx={{ fontWeight: 800, mb: 0.5 }}>Connect your WhatsApp</Typography>
+          <Typography sx={{ fontWeight: 800, mb: 0.5 }}>Message us to switch on alerts</Typography>
           <Typography variant="body2" sx={{ color: MUTED, mb: 2 }}>
-            Send this exact message to our WhatsApp number to link up:
+            Open WhatsApp with this opener ready to send:
           </Typography>
 
           <Stack spacing={1.25}>
@@ -168,13 +169,11 @@ export default function WhatsAppGuidePage() {
                   borderRadius: 2,
                   bgcolor: "rgba(255,255,255,0.05)",
                   border: `1px solid ${HAIRLINE}`,
-                  fontFamily: "monospace",
                   fontSize: "1rem",
                   fontWeight: 700,
-                  letterSpacing: "0.02em",
                 }}
               >
-                {WA_JOIN}
+                {WA_OPENER}
               </Box>
             </Box>
             <Box>
@@ -206,10 +205,10 @@ export default function WhatsAppGuidePage() {
               "&:hover": { bgcolor: "#1EBE5A" },
             }}
           >
-            Open WhatsApp to connect
+            Open WhatsApp to start
           </Button>
           <Typography variant="caption" sx={{ display: "block", color: MUTED, mt: 1.25, textAlign: "center" }}>
-            We are in preview, so this one-time connect is needed. On full launch, alerts arrive automatically.
+            WhatsApp requires you to message first. After that, we can send you alerts for matching shifts, and you can ask us anytime.
           </Typography>
         </Box>
 
@@ -218,7 +217,7 @@ export default function WhatsAppGuidePage() {
           <Typography sx={{ fontWeight: 800, mb: 1.5 }}>Good to know</Typography>
           <Stack spacing={1.5}>
             {[
-              ["Not getting messages?", "Make sure you have connected (step 2) and your profile is set to Available now."],
+              ["Not getting messages?", "Make sure you've messaged us (step 2), turned on Message me on WhatsApp, and set your profile to Available now."],
               ["Stop any time", 'Reply "STOP" in the chat and we will stop messaging you.'],
               ["It is really you applying", "Accepting on WhatsApp creates a real application the venue sees, same as applying in the app."],
             ].map(([q, a], i) => (
