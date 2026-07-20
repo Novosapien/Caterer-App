@@ -54,9 +54,9 @@ export default function GigDateChips({
               color: active ? "#fff" : "#fff",
               background: active ? surfaces.accentGradient : "rgba(255,255,255,0.05)",
               border: `1px solid ${active ? "transparent" : brand.line}`,
-              boxShadow: active ? "0 10px 22px -12px rgba(239,125,0,0.6)" : "none",
+              boxShadow: active ? "0 10px 22px -12px rgba(146,65,153,0.6)" : "none",
               "&:hover": {
-                background: active ? surfaces.accentGradient : "rgba(239,125,0,0.14)",
+                background: active ? surfaces.accentGradient : "rgba(146,65,153,0.14)",
                 borderColor: active ? "transparent" : brand.teal,
               },
             }}

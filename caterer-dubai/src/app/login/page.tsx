@@ -17,8 +17,8 @@ const PAGE_BG = {
   // Match the signup screen: near-black with a warm orange glow from the left.
   backgroundColor: "#08080A",
   backgroundImage: `
-    radial-gradient(56% 46% at -6% 44%, rgba(239,125,0,0.32) 0%, rgba(239,125,0,0.10) 32%, rgba(239,125,0,0) 66%),
-    radial-gradient(40% 26% at 106% 2%, rgba(239,125,0,0.18) 0%, rgba(239,125,0,0) 60%),
+    radial-gradient(56% 46% at -6% 44%, rgba(146,65,153,0.32) 0%, rgba(146,65,153,0.10) 32%, rgba(146,65,153,0) 66%),
+    radial-gradient(40% 26% at 106% 2%, rgba(146,65,153,0.18) 0%, rgba(146,65,153,0) 60%),
     linear-gradient(180deg, #0C0C0E 0%, #08080A 58%, #0A0A0C 100%)
   `,
   backgroundAttachment: "fixed",
@@ -27,7 +27,7 @@ const PAGE_BG = {
 const demoBtnSx = {
   color: "rgba(255,255,255,0.85)",
   borderColor: "rgba(255,255,255,0.16)",
-  "&:hover": { borderColor: brand.teal, bgcolor: "rgba(239,125,0,0.10)" },
+  "&:hover": { borderColor: brand.teal, bgcolor: "rgba(146,65,153,0.10)" },
 };
 
 // Public login. Browsing needs no account; this is for returning users + quick demo access.

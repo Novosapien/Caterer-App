@@ -28,7 +28,7 @@ const BIZ_TYPES: { value: BusinessType; label: string }[] = [
   { value: "eventing", label: "Events / catering" },
 ];
 
-const ORANGE = brand.teal;
+const ACCENT = brand.teal;
 const FIELD_BG = "rgba(255,255,255,0.03)";
 const FIELD_BORDER = "rgba(255,255,255,0.12)";
 
@@ -57,7 +57,7 @@ const inputSx = {
   outline: "none",
   transition: "border-color .15s ease, box-shadow .15s ease",
   "&::placeholder": { color: "rgba(255,255,255,0.4)" },
-  "&:focus": { borderColor: ORANGE, boxShadow: `0 0 0 1px ${ORANGE}` },
+  "&:focus": { borderColor: ACCENT, boxShadow: `0 0 0 1px ${ACCENT}` },
 } as const;
 
 // A field row: rounded icon badge on the left, static label + input on the right.
@@ -100,7 +100,7 @@ function Field({
           sx={{ display: "block", fontSize: "0.95rem", fontWeight: 600, color: "rgba(255,255,255,0.92)" }}
         >
           {label}
-          {required && <Box component="span" sx={{ color: ORANGE, ml: 0.5 }}>*</Box>}
+          {required && <Box component="span" sx={{ color: ACCENT, ml: 0.5 }}>*</Box>}
         </Typography>
         <Box sx={{ mt: 1 }}>{children}</Box>
       </Box>
@@ -137,9 +137,9 @@ function KindTab({
         fontFamily: "inherit",
         fontSize: "1rem",
         fontWeight: 700,
-        color: active ? ORANGE : "rgba(255,255,255,0.7)",
-        bgcolor: active ? "rgba(239,125,0,0.08)" : "rgba(255,255,255,0.02)",
-        border: active ? `1.5px solid ${ORANGE}` : `1px solid ${FIELD_BORDER}`,
+        color: active ? ACCENT : "rgba(255,255,255,0.7)",
+        bgcolor: active ? "rgba(146,65,153,0.08)" : "rgba(255,255,255,0.02)",
+        border: active ? `1.5px solid ${ACCENT}` : `1px solid ${FIELD_BORDER}`,
         transition: "color .15s, background-color .15s, border-color .15s",
         "& svg": { fontSize: "1.35rem" },
       }}
@@ -243,8 +243,8 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
                   "& .MuiSelect-select": { py: 0, display: "flex", alignItems: "center" },
                   "& .MuiOutlinedInput-notchedOutline": { borderColor: FIELD_BORDER },
                   "&:hover .MuiOutlinedInput-notchedOutline": { borderColor: FIELD_BORDER },
-                  "&.Mui-focused": { boxShadow: `0 0 0 1px ${ORANGE}` },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: ORANGE },
+                  "&.Mui-focused": { boxShadow: `0 0 0 1px ${ACCENT}` },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": { borderColor: ACCENT },
                   "& .MuiSelect-icon": { color: "rgba(255,255,255,0.6)" },
                 }}
               >
@@ -323,9 +323,9 @@ export default function AuthForm({ mode }: { mode: "login" | "signup" }) {
             fontFamily: "inherit",
             fontSize: "1.05rem",
             fontWeight: 800,
-            color: "#241100",
-            background: `linear-gradient(180deg, ${brand.tealBright} 0%, ${ORANGE} 58%, ${brand.tealDeep} 100%)`,
-            boxShadow: "0 16px 40px -16px rgba(239,125,0,0.65)",
+            color: "#FFFFFF",
+            background: `linear-gradient(180deg, ${brand.tealBright} 0%, ${ACCENT} 58%, ${brand.tealDeep} 100%)`,
+            boxShadow: "0 16px 40px -16px rgba(146,65,153,0.65)",
             opacity: pending ? 0.7 : 1,
             transition: "opacity .15s, transform .12s",
             "&:active": { transform: pending ? "none" : "scale(0.99)" },

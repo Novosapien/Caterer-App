@@ -22,7 +22,7 @@ const CARD = "#16161A";
 const CARD_BORDER = "rgba(255,255,255,0.09)";
 const MUTED = "rgba(255,255,255,0.58)";
 const HAIRLINE = "rgba(255,255,255,0.10)";
-const ORANGE = brand.teal;
+const ACCENT = brand.teal;
 
 type Tab = "all" | "new" | "read";
 
@@ -42,7 +42,7 @@ function decorate(n: AppNotification): {
         title: "A recruiter viewed your profile",
         body: s(p.message) ?? s(p.body) ?? "Add your CV to stand out.",
         icon: <UploadFileIcon />,
-        fg: ORANGE,
+        fg: ACCENT,
       };
     case "urgent_match":
     case "urgent_gig":
@@ -79,7 +79,7 @@ function decorate(n: AppNotification): {
         title: s(p.title) ?? "New update",
         body: s(p.body) ?? s(p.message),
         icon: <VisibilityIcon />,
-        fg: ORANGE,
+        fg: ACCENT,
       };
   }
 }
@@ -115,7 +115,7 @@ function FilterPill({
         fontWeight: 800,
         color: active ? "#fff" : "rgba(255,255,255,0.72)",
         background: active ? surfaces.accentGradient : "transparent",
-        boxShadow: active ? "0 10px 22px -12px rgba(239,125,0,0.6)" : "none",
+        boxShadow: active ? "0 10px 22px -12px rgba(146,65,153,0.6)" : "none",
         transition: "color 120ms",
       }}
     >
@@ -152,10 +152,10 @@ function NotificationCard({ n }: { n: AppNotification }) {
         p: 2,
         pl: unread ? 2.5 : 2,
         borderRadius: 4,
-        border: `1px solid ${unread ? `${ORANGE}33` : CARD_BORDER}`,
-        bgcolor: unread ? "rgba(239,125,0,0.06)" : CARD,
+        border: `1px solid ${unread ? `${ACCENT}33` : CARD_BORDER}`,
+        bgcolor: unread ? "rgba(146,65,153,0.06)" : CARD,
         transition: "border-color 120ms, background-color 120ms",
-        "&:hover": { borderColor: `${ORANGE}55` },
+        "&:hover": { borderColor: `${ACCENT}55` },
       }}
     >
       {unread && (
@@ -168,8 +168,8 @@ function NotificationCard({ n }: { n: AppNotification }) {
             width: 8,
             height: 8,
             borderRadius: "50%",
-            bgcolor: ORANGE,
-            boxShadow: `0 0 8px ${ORANGE}`,
+            bgcolor: ACCENT,
+            boxShadow: `0 0 8px ${ACCENT}`,
           }}
         />
       )}
@@ -241,9 +241,9 @@ export default function AlertsFeed({ notifications }: { notifications: AppNotifi
             borderRadius: "12px",
             display: "grid",
             placeItems: "center",
-            color: ORANGE,
-            border: `1px solid ${ORANGE}44`,
-            bgcolor: `${ORANGE}12`,
+            color: ACCENT,
+            border: `1px solid ${ACCENT}44`,
+            bgcolor: `${ACCENT}12`,
           }}
         >
           <TuneIcon sx={{ fontSize: "1.2rem" }} />
@@ -295,9 +295,9 @@ export default function AlertsFeed({ notifications }: { notifications: AppNotifi
             borderRadius: "50%",
             display: "grid",
             placeItems: "center",
-            color: ORANGE,
-            border: `1.5px solid ${ORANGE}66`,
-            bgcolor: `${ORANGE}12`,
+            color: ACCENT,
+            border: `1.5px solid ${ACCENT}66`,
+            bgcolor: `${ACCENT}12`,
             "& svg": { fontSize: "1.5rem" },
           }}
         >
@@ -317,11 +317,11 @@ export default function AlertsFeed({ notifications }: { notifications: AppNotifi
           variant="outlined"
           sx={{
             flexShrink: 0,
-            color: ORANGE,
-            borderColor: `${ORANGE}66`,
+            color: ACCENT,
+            borderColor: `${ACCENT}66`,
             fontWeight: 800,
             whiteSpace: "nowrap",
-            "&:hover": { borderColor: ORANGE, bgcolor: `${ORANGE}10` },
+            "&:hover": { borderColor: ACCENT, bgcolor: `${ACCENT}10` },
           }}
         >
           Improve profile

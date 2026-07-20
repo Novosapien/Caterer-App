@@ -33,7 +33,7 @@ export default function CompleteProfileBanner({ sx }: { sx?: object }) {
           width: 120,
           height: 120,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(239,125,0,0.24) 0%, rgba(239,125,0,0) 70%)",
+          background: "radial-gradient(circle, rgba(146,65,153,0.24) 0%, rgba(146,65,153,0) 70%)",
           pointerEvents: "none",
         }}
       />

@@ -37,7 +37,7 @@ export const cardSx = {
 
 const ratingSx = {
   color: brand.teal,
-  "& .MuiRating-iconEmpty": { color: "rgba(239,125,0,0.28)" },
+  "& .MuiRating-iconEmpty": { color: "rgba(146,65,153,0.28)" },
 };
 
 function workPrefLabel(w: WorkPref | null | undefined): string | null {
@@ -212,7 +212,7 @@ function ReviewsContent({ candidate }: { candidate: CandidateProfile }) {
         <Box key={r.id}>
           {i > 0 && <Divider sx={{ mb: 2, borderColor: HAIRLINE }} />}
           <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start" }}>
-            <Avatar sx={{ width: 38, height: 38, bgcolor: "rgba(239,125,0,0.18)", color: brand.tealBright, fontWeight: 800, fontSize: "0.95rem" }}>
+            <Avatar sx={{ width: 38, height: 38, bgcolor: "rgba(146,65,153,0.18)", color: brand.tealBright, fontWeight: 800, fontSize: "0.95rem" }}>
               {(r.author_name?.trim().charAt(0) || "?").toUpperCase()}
             </Avatar>
             <Box sx={{ flex: 1, minWidth: 0 }}>

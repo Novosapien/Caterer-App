@@ -49,7 +49,7 @@ const STEPS: { title: string; body: React.ReactNode; action?: React.ReactNode }[
           color: "#fff",
           borderColor: HAIRLINE,
           borderRadius: 999,
-          "&:hover": { borderColor: brand.teal, bgcolor: "rgba(239,125,0,0.10)" },
+          "&:hover": { borderColor: brand.teal, bgcolor: "rgba(146,65,153,0.10)" },
         }}
       >
         Edit profile
@@ -127,7 +127,7 @@ export default function WhatsAppGuidePage() {
                   height: 30,
                   borderRadius: "50%",
                   flexShrink: 0,
-                  bgcolor: "rgba(239,125,0,0.14)",
+                  bgcolor: "rgba(146,65,153,0.14)",
                   color: brand.tealBright,
                   fontWeight: 800,
                   fontSize: "0.95rem",

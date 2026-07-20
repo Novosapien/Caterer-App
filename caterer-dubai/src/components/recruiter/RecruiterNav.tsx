@@ -66,7 +66,7 @@ export default function RecruiterNav() {
                 sx={{
                   color: l.href === "/post" ? undefined : isActive(l.href) ? brand.teal : "#fff",
                   fontWeight: isActive(l.href) ? 800 : 700,
-                  bgcolor: l.href !== "/post" && isActive(l.href) ? "rgba(239,125,0,0.10)" : undefined,
+                  bgcolor: l.href !== "/post" && isActive(l.href) ? "rgba(146,65,153,0.10)" : undefined,
                 }}
               >
                 {l.label}

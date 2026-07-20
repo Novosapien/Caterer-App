@@ -4,12 +4,16 @@
 //
 // LANGUAGE: premium SaaS, coloured from the real Caterer.com logo — a charcoal tile
 // with ORANGE (the ".com"), PURPLE and YELLOW pictograms. Charcoal is the structural
-// ink/dark surface; orange is the primary accent; purple is the secondary accent;
-// yellow/gold is a tertiary highlight; a distinct red is the URGENT signal.
+// ink/dark surface; the logo PURPLE (#924199) is the primary accent; yellow/gold is a
+// tertiary highlight; a distinct red is the URGENT signal.
 //
 // NOTE: the token NAMES are legacy (navy/teal/electric/flame) but their VALUES now carry
-// the Caterer palette — `navy`=charcoal ink, `teal`=orange (primary), `electric`=purple
+// the Caterer palette — `navy`=charcoal ink, `teal`=purple (primary), `electric`=purple
 // (secondary), `flame`=urgent red. Kept the names so ~all call sites stay valid.
+//
+// The purple scale is built on the logo purple's hue (~295°): the base is used for FILLS
+// (buttons, gradients) with WHITE text on top, and `tealBright` is the on-dark accent for
+// text/icons — the base purple is too dark to read as text on the near-black page.
 export const brand = {
   // --- Charcoal / ink scale (structure) --------------------------------------
   midnight: "#232325", // darkest charcoal — dark panels / hero
@@ -18,11 +22,11 @@ export const brand = {
   navySheen: "#454548", // lifted charcoal for gradient sheens
   ink: "#242426",
 
-  // --- Primary accent: Caterer orange ----------------------------------------
-  teal: "#EF7D00", // PRIMARY accent (Caterer orange) — CTAs, active states
-  tealDeep: "#C25F00", // darker end / hover
-  tealBright: "#FFA23A", // light orange — gradient light-end + highlights
-  tealSoft: "#FDEEDC", // pale orange tint for soft fills
+  // --- Primary accent: Caterer purple (straight off the logo) -----------------
+  teal: "#924199", // PRIMARY accent (logo purple) — CTAs, active states. White text on it.
+  tealDeep: "#703276", // darker end / hover
+  tealBright: "#C273CA", // light purple — gradient light-end + accent text/icons on dark
+  tealSoft: "#F5E9F7", // pale purple tint for soft fills
   // --- Secondary accent: Caterer purple --------------------------------------
   electric: "#8A2A8C", // purple — secondary accent, depth, AI/premium touches
   electricDeep: "#6C2170",
@@ -33,7 +37,7 @@ export const brand = {
   amber: "#F6A623", // Caterer yellow — highlights / warnings
   gold: "#E7A81C",
 
-  // --- Urgent signal (distinct red so it never blurs with brand orange) ------
+  // --- Urgent signal (distinct red so it never blurs with brand purple) ------
   flame: "#EE3B2E",
   flameDeep: "#C42A20",
   flameBright: "#EE3B2E",
@@ -60,15 +64,17 @@ export const brand = {
 };
 
 // Material Design 3 token layer (dark scheme), coloured from the Caterer brand.
-// Brand orange is kept as the vivid `primary` (branded Material You) with an accessible
-// dark on-primary. Surfaces follow the MD3 tonal surface-container model; elevation uses
+// The logo purple is the `primary` (branded Material You) with a white on-primary for
+// contrast. Surfaces follow the MD3 tonal surface-container model; elevation uses
 // MD3's soft ambient shadows. Consumed by theme.ts and MD3-aware components.
 export const md = {
-  // --- Primary (Caterer orange) ---
-  primary: "#EF7D00",
-  onPrimary: "#241100",
-  primaryContainer: "#7A3D00",
-  onPrimaryContainer: "#FFDCC2",
+  // --- Primary (Caterer purple) ---
+  // onPrimary is WHITE: the logo purple is dark (contrast 6.1:1 with white, but only
+  // 3.0:1 with the near-black used for orange), so dark-on-primary would fail AA.
+  primary: "#924199",
+  onPrimary: "#FFFFFF",
+  primaryContainer: "#5E2862",
+  onPrimaryContainer: "#F5D9F7",
   // --- Secondary (Caterer purple) ---
   secondary: "#D48BD6",
   onSecondary: "#40103F",
@@ -116,7 +122,7 @@ export const md = {
 export const surfaces = {
   // Dark: charcoal with a diagonal sheen (app bar, dark panels, hero).
   navyGradient: `linear-gradient(135deg, ${brand.midnight} 0%, #2E2E31 55%, ${brand.navy800} 100%)`,
-  // Primary accent gradient: Caterer orange (CTAs, brand mark).
+  // Primary accent gradient: Caterer purple (CTAs, brand mark).
   accentGradient: `linear-gradient(135deg, ${brand.teal} 0%, ${brand.tealBright} 100%)`,
   // Back-compat alias used by existing call sites.
   tealGradient: `linear-gradient(135deg, ${brand.teal} 0%, ${brand.tealBright} 100%)`,
@@ -126,11 +132,11 @@ export const surfaces = {
   flameGradient: `linear-gradient(135deg, ${brand.flame} 0%, ${brand.flameGlow} 100%)`,
   // Translucent glass panel.
   glass: "rgba(255,255,255,0.72)",
-  // Ambient warm depth for backdrops (orange + purple radial lighting).
-  aurora: `radial-gradient(115% 85% at 8% -10%, rgba(239,125,0,0.14) 0%, rgba(239,125,0,0) 55%), radial-gradient(110% 80% at 100% -8%, rgba(138,42,140,0.12) 0%, rgba(138,42,140,0) 55%)`,
+  // Ambient depth for backdrops (purple radial lighting).
+  aurora: `radial-gradient(115% 85% at 8% -10%, rgba(146,65,153,0.14) 0%, rgba(146,65,153,0) 55%), radial-gradient(110% 80% at 100% -8%, rgba(138,42,140,0.12) 0%, rgba(138,42,140,0) 55%)`,
   // Glow shadows.
-  accentGlowShadow: "0 16px 40px -16px rgba(239,125,0,0.5)",
-  tealGlowShadow: "0 16px 40px -16px rgba(239,125,0,0.5)",
+  accentGlowShadow: "0 16px 40px -16px rgba(146,65,153,0.5)",
+  tealGlowShadow: "0 16px 40px -16px rgba(146,65,153,0.5)",
   flameGlowShadow: "0 14px 34px -14px rgba(238,59,46,0.5)",
   navyGlowShadow: "0 22px 50px -24px rgba(35,35,37,0.5)",
   // Layered card shadows for dark surfaces (depth without a visible halo).

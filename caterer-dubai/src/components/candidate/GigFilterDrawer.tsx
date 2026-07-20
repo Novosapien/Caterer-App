@@ -11,7 +11,7 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import { brand } from "@/theme/brand";
 import type { FilterOptions, GigFilters } from "@/lib/gigFilters";
 
-const ORANGE = brand.teal;
+const ACCENT = brand.teal;
 
 // The categories, in display order. Each maps to a multi-select array on GigFilters.
 const SECTIONS: { key: keyof FilterOptions; label: string }[] = [
@@ -53,9 +53,9 @@ function FilterChip({
         fontFamily: "inherit",
         fontSize: "0.85rem",
         fontWeight: 600,
-        color: selected ? ORANGE : "rgba(255,255,255,0.82)",
-        bgcolor: selected ? "rgba(239,125,0,0.14)" : "rgba(255,255,255,0.05)",
-        border: `1px solid ${selected ? "rgba(239,125,0,0.5)" : "rgba(255,255,255,0.12)"}`,
+        color: selected ? ACCENT : "rgba(255,255,255,0.82)",
+        bgcolor: selected ? "rgba(146,65,153,0.14)" : "rgba(255,255,255,0.05)",
+        border: `1px solid ${selected ? "rgba(146,65,153,0.5)" : "rgba(255,255,255,0.12)"}`,
         transition: "color .12s, background-color .12s, border-color .12s",
         "& svg": { fontSize: "1rem" },
       }}
@@ -120,7 +120,7 @@ export default function GigFilterDrawer({
                     border: "none",
                     bgcolor: "transparent",
                     cursor: "pointer",
-                    color: ORANGE,
+                    color: ACCENT,
                     fontFamily: "inherit",
                     fontWeight: 700,
                     fontSize: "0.85rem",
@@ -189,9 +189,9 @@ export default function GigFilterDrawer({
               fontFamily: "inherit",
               fontSize: "1rem",
               fontWeight: 800,
-              color: "#241100",
-              background: `linear-gradient(180deg, ${brand.tealBright} 0%, ${ORANGE} 60%, ${brand.tealDeep} 100%)`,
-              boxShadow: "0 14px 34px -16px rgba(239,125,0,0.6)",
+              color: "#FFFFFF",
+              background: `linear-gradient(180deg, ${brand.tealBright} 0%, ${ACCENT} 60%, ${brand.tealDeep} 100%)`,
+              boxShadow: "0 14px 34px -16px rgba(146,65,153,0.6)",
             }}
           >
             Show {resultCount} {resultCount === 1 ? "gig" : "gigs"}

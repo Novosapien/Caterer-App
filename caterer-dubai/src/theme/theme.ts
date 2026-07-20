@@ -7,7 +7,7 @@ import { display, body } from "./fonts";
 // Re-exported for existing `import { brand } from "@/theme/theme"` call sites.
 export { brand };
 
-// Material Design 3 theme (dark scheme), branded with Caterer orange as `primary`.
+// Material Design 3 theme (dark scheme), branded with Caterer purple as `primary`.
 // The MD3 token layer lives in brand.ts (`md`). We keep `teal` and `flame` as first-class
 // palette colours so existing <Button color="teal" | "flame"> call sites stay valid.
 declare module "@mui/material/styles" {
@@ -166,12 +166,12 @@ export const theme = createTheme({
             color: t.palette.text.primary,
             "&:hover": {
               borderColor: md.outline,
-              backgroundColor: `rgba(239,125,0,${md.state.hover})`,
+              backgroundColor: `rgba(146,65,153,${md.state.hover})`,
             },
           }),
           // Text: primary label, state layer.
           ...(ownerState.variant === "text" && {
-            "&:hover": { backgroundColor: `rgba(239,125,0,${md.state.hover})` },
+            "&:hover": { backgroundColor: `rgba(146,65,153,${md.state.hover})` },
           }),
         }),
         sizeSmall: { minHeight: 32, paddingInline: 16, paddingBlock: 6 },
