@@ -115,10 +115,10 @@ export default function GigSearch({
               flexShrink: 0,
               borderRadius: "50%",
               color: filtersActive ? "#FFFFFF" : brand.tealBright,
-              bgcolor: filtersActive ? brand.teal : "rgba(146,65,153,0.16)",
+              bgcolor: filtersActive ? brand.teal : "rgba(131,60,159,0.16)",
               border: `1.5px solid ${filtersActive ? brand.teal : "transparent"}`,
               transition: "all .2s ease",
-              "&:hover": { bgcolor: filtersActive ? "#7E3785" : "rgba(146,65,153,0.28)" },
+              "&:hover": { bgcolor: filtersActive ? "#6F2F87" : "rgba(131,60,159,0.28)" },
             }}
           >
             <Badge badgeContent={activeCount} color="error" overlap="circular">

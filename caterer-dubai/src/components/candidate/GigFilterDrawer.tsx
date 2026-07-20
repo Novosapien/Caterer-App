@@ -54,8 +54,8 @@ function FilterChip({
         fontSize: "0.85rem",
         fontWeight: 600,
         color: selected ? ACCENT : "rgba(255,255,255,0.82)",
-        bgcolor: selected ? "rgba(146,65,153,0.14)" : "rgba(255,255,255,0.05)",
-        border: `1px solid ${selected ? "rgba(146,65,153,0.5)" : "rgba(255,255,255,0.12)"}`,
+        bgcolor: selected ? "rgba(131,60,159,0.14)" : "rgba(255,255,255,0.05)",
+        border: `1px solid ${selected ? "rgba(131,60,159,0.5)" : "rgba(255,255,255,0.12)"}`,
         transition: "color .12s, background-color .12s, border-color .12s",
         "& svg": { fontSize: "1rem" },
       }}
@@ -191,7 +191,7 @@ export default function GigFilterDrawer({
               fontWeight: 800,
               color: "#FFFFFF",
               background: `linear-gradient(180deg, ${brand.tealBright} 0%, ${ACCENT} 60%, ${brand.tealDeep} 100%)`,
-              boxShadow: "0 14px 34px -16px rgba(146,65,153,0.6)",
+              boxShadow: "0 14px 34px -16px rgba(131,60,159,0.6)",
             }}
           >
             Show {resultCount} {resultCount === 1 ? "gig" : "gigs"}

@@ -82,7 +82,7 @@ export default function GigCard({ job }: { job: Job }) {
         "&:hover": {
           transform: "translateY(-4px)",
           boxShadow: surfaces.cardShadowHover,
-          borderColor: job.is_urgent ? brand.urgent : "rgba(146,65,153,0.42)",
+          borderColor: job.is_urgent ? brand.urgent : "rgba(131,60,159,0.42)",
         },
         "&:hover .gig-img": { transform: "scale(1.07)" },
         "&:hover .gig-arrow": { bgcolor: brand.teal, color: "#fff", borderColor: brand.teal },

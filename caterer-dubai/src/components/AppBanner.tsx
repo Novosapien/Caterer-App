@@ -21,7 +21,7 @@ export default function AppBanner() {
           color: "#fff",
         }}
       >
-        Get the Caterer.com{" "}
+        Get the catererglobal.com{" "}
         <Box component="span" sx={{ color: brand.teal }}>
           Dubai
         </Box>{" "}
@@ -161,8 +161,9 @@ function PhoneApp() {
           >
             C
           </Box>
+          {/* Mirrors the real logo lockup: "global" carries the brand purple. */}
           <Box sx={{ fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.01em" }}>
-            Caterer<Box component="span" sx={{ color: brand.teal }}>.com</Box>
+            caterer<Box component="span" sx={{ color: brand.tealBright }}>global</Box>.com
           </Box>
         </Stack>
 

@@ -126,10 +126,10 @@ export const theme = createTheme({
               "&:hover": {
                 backgroundColor: md.primary,
                 boxShadow: md.elevation[1],
-                backgroundImage: `linear-gradient(0deg, rgba(36,17,0,${md.state.hover}), rgba(36,17,0,${md.state.hover}))`,
+                backgroundImage: `linear-gradient(0deg, rgba(255,255,255,${md.state.hover}), rgba(255,255,255,${md.state.hover}))`,
               },
               "&:active": {
-                backgroundImage: `linear-gradient(0deg, rgba(36,17,0,${md.state.pressed}), rgba(36,17,0,${md.state.pressed}))`,
+                backgroundImage: `linear-gradient(0deg, rgba(255,255,255,${md.state.pressed}), rgba(255,255,255,${md.state.pressed}))`,
               },
             }),
           ...(ownerState.variant === "contained" &&
@@ -166,12 +166,12 @@ export const theme = createTheme({
             color: t.palette.text.primary,
             "&:hover": {
               borderColor: md.outline,
-              backgroundColor: `rgba(146,65,153,${md.state.hover})`,
+              backgroundColor: `rgba(131,60,159,${md.state.hover})`,
             },
           }),
           // Text: primary label, state layer.
           ...(ownerState.variant === "text" && {
-            "&:hover": { backgroundColor: `rgba(146,65,153,${md.state.hover})` },
+            "&:hover": { backgroundColor: `rgba(131,60,159,${md.state.hover})` },
           }),
         }),
         sizeSmall: { minHeight: 32, paddingInline: 16, paddingBlock: 6 },

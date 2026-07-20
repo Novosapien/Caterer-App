@@ -14,8 +14,8 @@ const PAGE_BG = {
   // ember top-right — the premium look from the reference mock.
   backgroundColor: "#08080A",
   backgroundImage: `
-    radial-gradient(56% 46% at -6% 44%, rgba(146,65,153,0.32) 0%, rgba(146,65,153,0.10) 32%, rgba(146,65,153,0) 66%),
-    radial-gradient(40% 26% at 106% 2%, rgba(146,65,153,0.18) 0%, rgba(146,65,153,0) 60%),
+    radial-gradient(56% 46% at -6% 44%, rgba(131,60,159,0.32) 0%, rgba(131,60,159,0.10) 32%, rgba(131,60,159,0) 66%),
+    radial-gradient(40% 26% at 106% 2%, rgba(131,60,159,0.18) 0%, rgba(131,60,159,0) 60%),
     linear-gradient(180deg, #0C0C0E 0%, #08080A 58%, #0A0A0C 100%)
   `,
   backgroundAttachment: "fixed",

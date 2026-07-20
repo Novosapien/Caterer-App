@@ -115,7 +115,7 @@ function FilterPill({
         fontWeight: 800,
         color: active ? "#fff" : "rgba(255,255,255,0.72)",
         background: active ? surfaces.accentGradient : "transparent",
-        boxShadow: active ? "0 10px 22px -12px rgba(146,65,153,0.6)" : "none",
+        boxShadow: active ? "0 10px 22px -12px rgba(131,60,159,0.6)" : "none",
         transition: "color 120ms",
       }}
     >
@@ -153,7 +153,7 @@ function NotificationCard({ n }: { n: AppNotification }) {
         pl: unread ? 2.5 : 2,
         borderRadius: 4,
         border: `1px solid ${unread ? `${ACCENT}33` : CARD_BORDER}`,
-        bgcolor: unread ? "rgba(146,65,153,0.06)" : CARD,
+        bgcolor: unread ? "rgba(131,60,159,0.06)" : CARD,
         transition: "border-color 120ms, background-color 120ms",
         "&:hover": { borderColor: `${ACCENT}55` },
       }}

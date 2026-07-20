@@ -110,7 +110,7 @@ export default function GigSuggestionList({
             {j.is_urgent && (
               <Typography
                 variant="caption"
-                sx={{ display: "block", color: "#6E2F74", fontWeight: 800, letterSpacing: "0.04em" }}
+                sx={{ display: "block", color: "#5F2873", fontWeight: 800, letterSpacing: "0.04em" }}
               >
                 URGENT
               </Typography>
