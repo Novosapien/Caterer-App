@@ -76,7 +76,7 @@ export default function GigBrowser({
         <Box component="span" sx={{ color: "#fff", fontWeight: 700 }}>
           {gigs.length}
         </Box>{" "}
-        {gigs.length === 1 ? "gig" : "gigs"}
+        {gigs.length === 1 ? "job" : "jobs"}
         {query.trim() ? ` for “${query.trim()}”` : " available"}
       </Typography>
 
@@ -84,11 +84,11 @@ export default function GigBrowser({
         {gigs.length === 0 ? (
           <EmptyState
             icon={<SearchOffIcon fontSize="inherit" />}
-            title="No gigs match"
+            title="No jobs match your filters"
             subtitle={
               anyFilter
                 ? "Try widening your filters: a different role, date or area."
-                : "No open gigs right now. Check back soon."
+                : "No open jobs right now. Even chefs get a night off. Check back soon."
             }
           />
         ) : (

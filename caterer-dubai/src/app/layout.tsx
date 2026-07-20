@@ -6,7 +6,7 @@ import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 export const metadata: Metadata = {
   title: "Caterer · Dubai",
   description:
-    "Dubai's fastest way to fill catering shifts. Chefs, waiters and crew, apply on the go.",
+    "The fastest way to fill catering jobs in Dubai. Chefs, waiters and hospitality staff, apply from your phone.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Caterer" },
 };

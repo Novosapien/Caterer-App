@@ -162,8 +162,8 @@ export async function listApplicationsForJob(jobId: string): Promise<Application
   return (data ?? []) as unknown as Application[];
 }
 
-// A candidate's own applications, newest first, with the gig joined so the profile
-// can show which gigs they've applied to (whether via the app or the WhatsApp agent).
+// A candidate's own applications, newest first, with the job joined so the profile
+// can show which jobs they've applied to (whether via the app or the WhatsApp agent).
 export async function listApplicationsForCandidate(profileId: string): Promise<Application[]> {
   const db = createServiceClient();
   const { data } = await db

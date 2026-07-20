@@ -176,7 +176,7 @@ export default async function Landing() {
               maxWidth: 440,
             }}
           >
-            Chefs, waiters and crew. Hire and get hired in one place.
+            Chefs, waiters and hospitality staff. Hire and get hired in one place.
           </Typography>
         </Box>
 

@@ -27,7 +27,7 @@ async function createProfileAndApply(
 ): Promise<ApplyResult> {
   const name = rawName.trim();
   const phone = rawPhone.trim();
-  if (!jobId) return { ok: false, error: "Missing gig." };
+  if (!jobId) return { ok: false, error: "Missing job." };
   if (!name) return { ok: false, error: "Please enter your name." };
   if (!phone) return { ok: false, error: "Please enter your mobile number." };
 
@@ -134,18 +134,18 @@ export async function verifyPhoneAndApply(input: {
   return createProfileAndApply(input.jobId, input.name, input.phone);
 }
 
-// AI "Rate my CV" (R-ai). Scores the signed-in chef's profile/CV against a specific gig
+// AI "Rate my CV" (R-ai). Scores the signed-in chef's profile/CV against a specific job
 // spec (1-100) with strengths, gaps and concrete recommendations. Read-only: no writes.
 export async function rateCvForJob(
   jobId: string,
 ): Promise<{ ok: boolean; rating?: CvRating; error?: string }> {
   const session = await getSession();
   if (!session || session.role !== "candidate") {
-    return { ok: false, error: "Apply to any gig first to create your profile, then rate your CV." };
+    return { ok: false, error: "Apply to any job first to create your profile, then rate your CV." };
   }
   const [candidate, job] = await Promise.all([getCandidate(session.profileId), getGig(jobId)]);
   if (!candidate) return { ok: false, error: "We couldn't find your profile." };
-  if (!job) return { ok: false, error: "We couldn't find that gig." };
+  if (!job) return { ok: false, error: "We couldn't find that job." };
 
   try {
     const rating = await reviewCvForJob(candidate, job);
@@ -159,7 +159,7 @@ export async function rateCvForJob(
 // One-tap auto-apply (R2 extension). For an already-signed-in chef with a saved profile
 // — skips the phone/OTP step and applies using the existing profile (+ saved CV).
 export async function autoApply(jobId: string): Promise<ApplyResult> {
-  if (!jobId) return { ok: false, error: "Missing gig." };
+  if (!jobId) return { ok: false, error: "Missing job." };
   const session = await getSession();
   if (!session || session.role !== "candidate") {
     return { ok: false, error: "Sign in as a chef first." };
@@ -201,7 +201,7 @@ export async function updateCandidateProfile(input: {
 }): Promise<{ ok: boolean; error?: string }> {
   const session = await getSession();
   if (!session || session.role !== "candidate") {
-    return { ok: false, error: "Please apply to a gig first to create your profile." };
+    return { ok: false, error: "Please apply to a job first to create your profile." };
   }
   const db = createServiceClient();
 
@@ -265,7 +265,7 @@ export async function uploadAvatar(
 ): Promise<{ ok: boolean; url?: string; error?: string }> {
   const session = await getSession();
   if (!session || session.role !== "candidate") {
-    return { ok: false, error: "Apply to a gig first to create your profile." };
+    return { ok: false, error: "Apply to a job first to create your profile." };
   }
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
@@ -309,7 +309,7 @@ export async function uploadCv(
 ): Promise<{ ok: boolean; url?: string; error?: string }> {
   const session = await getSession();
   if (!session || session.role !== "candidate") {
-    return { ok: false, error: "Apply to a gig first to create your profile." };
+    return { ok: false, error: "Apply to a job first to create your profile." };
   }
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
@@ -363,7 +363,7 @@ export async function importProfileFromCv(): Promise<{
 }> {
   const session = await getSession();
   if (!session || session.role !== "candidate") {
-    return { ok: false, error: "Apply to a gig first to create your profile." };
+    return { ok: false, error: "Apply to a job first to create your profile." };
   }
   const candidate = await getCandidate(session.profileId);
   if (!candidate) return { ok: false, error: "We couldn't find your profile." };
@@ -509,7 +509,7 @@ export async function addExperience(input: {
 }): Promise<{ ok: boolean; error?: string }> {
   const session = await getSession();
   if (!session || session.role !== "candidate") {
-    return { ok: false, error: "Apply to a gig first to create your profile." };
+    return { ok: false, error: "Apply to a job first to create your profile." };
   }
   const title = input.title.trim();
   const company = input.company.trim();

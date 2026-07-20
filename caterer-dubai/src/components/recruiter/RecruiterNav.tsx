@@ -21,7 +21,7 @@ import { brand } from "@/theme/brand";
 
 const LINKS = [
   { href: "/recruiter", label: "Dashboard", icon: <DashboardIcon fontSize="small" /> },
-  { href: "/post", label: "Post a gig", icon: <AddCircleIcon fontSize="small" /> },
+  { href: "/post", label: "Post a job", icon: <AddCircleIcon fontSize="small" /> },
   { href: "/packages", label: "Packages", icon: <CardMembershipIcon fontSize="small" /> },
 ];
 

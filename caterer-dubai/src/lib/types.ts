@@ -27,7 +27,7 @@ export interface CandidateProfile {
   interests: string[];
   open_to_urgent: boolean;
   available: boolean;
-  // Explicit consent for proactive WhatsApp gig alerts (migration 0006). May be undefined
+  // Explicit consent for proactive WhatsApp job alerts (migration 0006). May be undefined
   // on rows read before the column exists — treat missing as not opted in.
   whatsapp_opt_in?: boolean;
   // When the candidate first messaged the WhatsApp assistant (migration 0007). Set, it means
@@ -145,8 +145,8 @@ export interface Application {
   candidate?: CandidateProfile;
 }
 
-// Minimal gig shape used by the search type-ahead (passed from server pages to the
-// client search boxes on the landing page and the gig feed).
+// Minimal job shape used by the search type-ahead (passed from server pages to the
+// client search boxes on the landing page and the job feed).
 export interface JobSuggestion {
   id: string;
   title: string;

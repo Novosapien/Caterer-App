@@ -2,8 +2,8 @@ import "server-only";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getOwnedBusinessId } from "@/lib/queries";
 
-// Model A ("one login, multiple hats"): any signed-in user can post a gig, including a
-// chef offering a private gig. If their profile doesn't own a business yet, provision a
+// Model A ("one login, multiple hats"): any signed-in user can post a job, including a
+// chef offering a private job. If their profile doesn't own a business yet, provision a
 // lightweight poster identity on the fly — named after them, typed as events/catering
 // (the closest allowed business type), and seeded with the entry-tier package so they
 // can post straight away. Idempotent: returns the existing business id if one exists,

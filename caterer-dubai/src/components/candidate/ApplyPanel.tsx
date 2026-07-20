@@ -29,7 +29,7 @@ export interface ApplyCandidate {
   hasCv: boolean;
 }
 
-// Inline, collapsible apply panel (R2). Rendered BELOW the gig summary — not a modal or
+// Inline, collapsible apply panel (R2). Rendered BELOW the job summary — not a modal or
 // takeover. Signed-in chefs get one-tap ⚡ auto-apply (using their saved profile + CV);
 // everyone else gets the phone-first "Apply in 20 seconds" flow.
 export default function ApplyPanel({
@@ -99,7 +99,7 @@ export default function ApplyPanel({
             disabled={pending}
             sx={{ py: 1.75 }}
           >
-            {pending ? "Applying…" : "Auto-apply for this gig"}
+            {pending ? "Applying…" : "Auto-apply for this job"}
           </Button>
           <Stack
             direction="row"
@@ -325,7 +325,7 @@ export default function ApplyPanel({
           >
             <ChatBubbleOutlineIcon sx={{ fontSize: "1rem" }} />
             <Typography variant="caption">
-              You&rsquo;ll get gig updates on WhatsApp. You can stop any time.
+              You&rsquo;ll get job updates on WhatsApp. You can stop any time.
             </Typography>
           </Stack>
         </>

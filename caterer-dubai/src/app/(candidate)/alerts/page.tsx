@@ -20,11 +20,11 @@ export default async function AlertsPage() {
         <EmptyState
           icon={<NotificationsNoneIcon fontSize="inherit" />}
           title="No alerts yet"
-          subtitle="Apply to a gig to start getting matched — we'll ping you here and on WhatsApp."
+          subtitle="Apply to a job to start getting matched. We will tell you here and on WhatsApp."
         />
         <Box sx={{ textAlign: "center" }}>
           <Button component="a" href="/jobs" variant="contained">
-            Browse gigs
+            Browse jobs
           </Button>
         </Box>
       </Container>
@@ -46,7 +46,7 @@ export default async function AlertsPage() {
           <EmptyState
             icon={<NotificationsNoneIcon fontSize="inherit" />}
             title="You're all caught up"
-            subtitle="Urgent gig matches and recruiter interest will show up here."
+            subtitle="This is where we tell you about jobs that fit you. It is quiet for now."
           />
         ) : (
           <AlertsFeed notifications={notifications} />

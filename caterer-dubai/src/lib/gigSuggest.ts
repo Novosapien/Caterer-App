@@ -1,6 +1,6 @@
 import type { JobSuggestion } from "./types";
 
-// Rank a gig against the typed query: title-startsWith > title-contains > role > venue/area.
+// Rank a job against the typed query: title-startsWith > title-contains > role > venue/area.
 function score(j: JobSuggestion, q: string): number {
   const t = j.title.toLowerCase();
   if (t.startsWith(q)) return 0;

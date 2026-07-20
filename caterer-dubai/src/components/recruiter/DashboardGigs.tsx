@@ -94,7 +94,7 @@ export default function DashboardGigs({ gigs, jobIds }: { gigs: DashboardGig[]; 
     return (
       <EmptyState
         icon={<WorkOutlineIcon sx={{ fontSize: 40, color: "teal.main" }} />}
-        title="No gigs posted yet"
+        title="No jobs posted yet"
         subtitle="Post your first shift to start receiving applicants."
       />
     );

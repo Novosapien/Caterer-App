@@ -21,11 +21,11 @@ export default async function ProfileEditPage() {
       <Container maxWidth="sm" sx={{ pt: 4 }}>
         <EmptyState
           title="No profile yet"
-          subtitle="Browse gigs and apply to any one — we'll create your profile, then you can edit it here."
+          subtitle="Browse jobs and apply to any one. We will create your profile, then you can edit it here."
         />
         <Box sx={{ textAlign: "center" }}>
           <Button component="a" href="/jobs" variant="contained" size="large">
-            Browse gigs
+            Browse jobs
           </Button>
         </Box>
       </Container>

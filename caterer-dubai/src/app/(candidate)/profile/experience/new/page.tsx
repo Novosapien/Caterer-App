@@ -21,7 +21,7 @@ export default async function AddExperiencePage() {
       <Container maxWidth="sm" sx={{ pt: 4 }}>
         <EmptyState
           title="No profile yet"
-          subtitle="Browse gigs and apply to any one — we'll create your profile, then you can add your experience here."
+          subtitle="Browse jobs and apply to any one. We will create your profile, then you can add your experience here."
         />
       </Container>
     );

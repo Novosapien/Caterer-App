@@ -37,7 +37,7 @@ export default function AppBanner() {
           lineHeight: 1.5,
         }}
       >
-        Browse gigs, apply in taps and get hired across Dubai.
+        Browse jobs, apply in a few taps and get hired across Dubai.
       </Typography>
 
       {/* Phone stage: shorter than the phone, with overflow:hidden, and no margin below the
@@ -82,14 +82,14 @@ export default function AppBanner() {
 }
 
 // The app's welcome screen: brand mark, a warm "find your role" tagline, and a CTA. The
-// whole phone is a link into the gig feed, so it's tappable wherever the bottom edge cuts
-// it (the visible Browse gigs button is the cue). Dark screen, on-brand.
+// whole phone is a link into the job feed, so it's tappable wherever the bottom edge cuts
+// it (the visible Browse jobs button is the cue). Dark screen, on-brand.
 function PhoneApp() {
   return (
     <Box
       component="a"
       href="/jobs"
-      aria-label="Browse gigs"
+      aria-label="Browse jobs"
       sx={{
         display: "block",
         textDecoration: "none",
@@ -185,7 +185,7 @@ function PhoneApp() {
         </Typography>
 
         <Typography sx={{ mt: 1.25, fontSize: "0.72rem", color: "rgba(255,255,255,0.6)", lineHeight: 1.5 }}>
-          Chef, waiter or crew. Gigs across Dubai.
+          Chef, waiter or hospitality staff. Jobs across Dubai.
         </Typography>
 
         {/* App-style CTA cue — the whole phone is the link, so this is a visual button. It
@@ -211,7 +211,7 @@ function PhoneApp() {
             "& svg": { transition: "transform .18s ease" },
           }}
         >
-          Browse gigs
+          Browse jobs
           <ArrowForwardIcon sx={{ fontSize: "0.95rem" }} />
         </Stack>
 

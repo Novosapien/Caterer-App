@@ -9,7 +9,7 @@ import { brand } from "@/theme/brand";
 import { display } from "@/theme/fonts";
 import type { JobSuggestion } from "@/lib/types";
 
-// Candidate gig feed (R1) — anonymous, no login. searchParams is a Promise (Next 16).
+// Candidate job feed (R1) — anonymous, no login. searchParams is a Promise (Next 16).
 export default async function JobsPage({
   searchParams,
 }: {
@@ -49,7 +49,7 @@ export default async function JobsPage({
             sx={{ width: 7, height: 7, borderRadius: "50%", bgcolor: brand.teal, boxShadow: `0 0 12px ${brand.teal}` }}
           />
           <Typography sx={{ color: "rgba(255,255,255,0.6)", fontWeight: 600, fontSize: "0.9rem" }}>
-            {allOpen.length} live {allOpen.length === 1 ? "gig" : "gigs"} across Dubai
+            {allOpen.length} live {allOpen.length === 1 ? "job" : "jobs"} across Dubai
           </Typography>
         </Stack>
 
@@ -66,7 +66,7 @@ export default async function JobsPage({
         >
           Find your next{" "}
           <Box component="span" sx={{ color: brand.teal }}>
-            gig
+            job
           </Box>
         </Typography>
 

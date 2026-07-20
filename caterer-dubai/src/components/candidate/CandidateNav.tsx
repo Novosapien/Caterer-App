@@ -13,7 +13,7 @@ import { md } from "@/theme/brand";
 // Material Design 3 navigation bar for the candidate PWA shell. The active tab shows the
 // MD3 active-indicator pill (styled globally in theme.ts on the selected icon).
 const TABS = [
-  { label: "Gigs", value: "/jobs", icon: <WorkOutlineIcon /> },
+  { label: "Jobs", value: "/jobs", icon: <WorkOutlineIcon /> },
   { label: "Profile", value: "/profile", icon: <PersonOutlineIcon /> },
   { label: "Alerts", value: "/alerts", icon: <NotificationsNoneIcon /> },
 ];
@@ -21,7 +21,7 @@ const TABS = [
 export default function CandidateNav() {
   const pathname = usePathname();
 
-  // Match the most specific tab (e.g. /jobs/[id] -> Gigs).
+  // Match the most specific tab (e.g. /jobs/[id] -> Jobs).
   const active =
     TABS.map((t) => t.value)
       .filter((v) => pathname === v || pathname.startsWith(v + "/"))

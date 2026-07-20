@@ -55,7 +55,7 @@ function jobToSpec(j: Job): string {
 
 const SYSTEM = [
   "You are an expert hospitality and catering recruiter in Dubai.",
-  "You assess how well a chef's/crew member's CV fits a specific gig.",
+  "You assess how well a chef's/crew member's CV fits a specific job.",
   "Be honest, specific and constructive. Judge fit for THIS role only, using the CV and the job spec.",
   "Weigh: relevant role/section experience, seniority match, cuisine/venue fit, certifications,",
   "availability/temp suitability, and location. A pristine CV for the wrong role should not score high.",
@@ -107,7 +107,7 @@ export async function reviewCvForJob(candidate: CandidateProfile, job: Job): Pro
     messages: [
       {
         role: "user",
-        content: `Rate this candidate's fit for the gig below.\n\n=== JOB SPEC ===\n${jobToSpec(
+        content: `Rate this candidate's fit for the job below.\n\n=== JOB SPEC ===\n${jobToSpec(
           job,
         )}\n\n=== CANDIDATE CV ===\n${candidateToCv(candidate)}`,
       },

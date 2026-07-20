@@ -27,7 +27,7 @@ const ACCENT = brand.teal;
 type Tab = "all" | "new" | "read";
 
 // Per-type display treatment (icon + tinted swatch). Orange for profile views to match
-// the app's primary accent; amber for urgent gigs; green for accepted applications.
+// the app's primary accent; amber for urgent jobs; green for accepted applications.
 function decorate(n: AppNotification): {
   title: string;
   body?: string;
@@ -47,22 +47,22 @@ function decorate(n: AppNotification): {
     case "urgent_match":
     case "urgent_gig":
       return {
-        title: s(p.title) ?? "Urgent gig near you",
-        body: s(p.venue) ?? s(p.body) ?? "You're a match — reply on WhatsApp to grab it.",
+        title: s(p.title) ?? "Urgent job near you",
+        body: s(p.venue) ?? s(p.body) ?? "You are a match. Reply on WhatsApp to take it.",
         icon: <BoltIcon />,
         fg: brand.amber,
       };
     case "gig_match":
       return {
         title: s(p.title) ?? "A shift that fits you",
-        body: s(p.venue) ?? s(p.body) ?? "New evening shift in your line — reply on WhatsApp to grab it.",
+        body: s(p.venue) ?? s(p.body) ?? "New evening job for your role. Reply on WhatsApp to take it.",
         icon: <RestaurantIcon />,
         fg: brand.teal,
       };
     case "application_accepted":
     case "gig_won":
       return {
-        title: s(p.title) ?? "You got the gig!",
+        title: s(p.title) ?? "You got the job!",
         body: s(p.body) ?? s(p.message),
         icon: <CheckCircleRoundedIcon />,
         fg: "#34D171",

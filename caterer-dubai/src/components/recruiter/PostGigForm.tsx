@@ -59,7 +59,7 @@ function defaultStart() {
   )}`;
 }
 
-// Controlled post-gig form. Fields are React state, so a failed submit NEVER clears
+// Controlled post-job form. Fields are React state, so a failed submit NEVER clears
 // what was typed (the old version used a form action, which React 19 auto-resets).
 export default function PostGigForm() {
   const router = useRouter();
@@ -111,7 +111,7 @@ export default function PostGigForm() {
     if (!title.trim() || !resolvedRole || !venue.trim() || !area || !payAed.trim() || !startAt) {
       setError(
         roleType === OTHER_ROLE && !customRole.trim()
-          ? "Type the role for your gig."
+          ? "Type the role for your job."
           : "Please fill in all required fields.",
       );
       return;
@@ -149,11 +149,11 @@ export default function PostGigForm() {
   };
 
   const resultMessage = (r: CreateJobResult) => {
-    if (!r.isUrgent) return "Gig posted — it's now live in the candidate feed.";
-    if ((r.matchCount ?? 0) === 0) return "Gig posted. 0 candidates matched — no chefs notified.";
+    if (!r.isUrgent) return "Job posted. It is now live for chefs to see.";
+    if ((r.matchCount ?? 0) === 0) return "Job posted. Nobody matched it yet, so no chefs were messaged.";
     if (r.whatsappPending)
-      return `Gig posted. ${r.matchCount} chef${r.matchCount === 1 ? "" : "s"} matched — WhatsApp pending (agent offline).`;
-    return `Gig posted. Pinged ${r.notifiedCount ?? r.matchCount} available chef${
+      return `Job posted. ${r.matchCount} chef${r.matchCount === 1 ? "" : "s"} matched. WhatsApp messages will send shortly.`;
+    return `Job posted. We messaged ${r.notifiedCount ?? r.matchCount} available chef${
       (r.notifiedCount ?? r.matchCount) === 1 ? "" : "s"
     } on WhatsApp.`;
   };
@@ -162,7 +162,7 @@ export default function PostGigForm() {
     <Box component="form" onSubmit={handleSubmit}>
       <Stack spacing={2.5}>
         <TextField
-          label="Gig title"
+          label="Job title"
           placeholder="Chef de Partie"
           required
           fullWidth
@@ -205,7 +205,7 @@ export default function PostGigForm() {
             autoFocus
             value={customRole}
             onChange={(e) => setCustomRole(e.target.value)}
-            helperText="Type the exact role title for this gig."
+            helperText="Type the exact role title for this job."
           />
         )}
 
@@ -324,7 +324,7 @@ export default function PostGigForm() {
             </Button>
           )}
           <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.75 }}>
-            Shown on the gig card and detail page. You can post without one.
+            Shown on the job card and detail page. You can post without one.
           </Typography>
         </Box>
 
@@ -335,10 +335,10 @@ export default function PostGigForm() {
               <Stack direction="row" spacing={0.75} sx={{ alignItems: "center" }}>
                 <BoltIcon sx={{ color: brand.amber, fontSize: "1.2rem" }} />
                 <Box>
-                  <Typography sx={{ fontWeight: 700 }}>Urgent — start tonight/tomorrow</Typography>
+                  <Typography sx={{ fontWeight: 700 }}>Urgent, starts tonight or tomorrow</Typography>
                   <Typography variant="caption" color="text.secondary">
                     <WhatsAppIcon sx={{ fontSize: "0.9rem", verticalAlign: "-2px", color: "#25D366" }} /> Instantly
-                    pings matched available chefs on WhatsApp
+                    messages matching available chefs on WhatsApp
                   </Typography>
                 </Box>
               </Stack>
@@ -346,13 +346,13 @@ export default function PostGigForm() {
           />
           <FormControlLabel
             control={<Switch checked={isTemp} onChange={(e) => setIsTemp(e.target.checked)} />}
-            label={<Typography sx={{ fontWeight: 700 }}>Temp / one-off shift</Typography>}
+            label={<Typography sx={{ fontWeight: 700 }}>Temporary, a one-off shift</Typography>}
             sx={{ mt: 0.5 }}
           />
         </Paper>
 
         <Button type="submit" variant="contained" size="large" disabled={pending}>
-          {pending ? "Posting…" : isUrgent ? "Publish urgent gig" : "Publish gig"}
+          {pending ? "Posting…" : isUrgent ? "Publish urgent job" : "Publish job"}
         </Button>
       </Stack>
 
@@ -375,7 +375,7 @@ export default function PostGigForm() {
         <Paper sx={{ mt: 2, p: 2, bgcolor: `${brand.amber}14`, border: `1px solid ${brand.amber}66` }}>
           <Typography sx={{ fontWeight: 800, mb: 0.5 }}>Out of job credits</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-            You&apos;ve used all your posts. Buy a package to publish this gig.
+            You&apos;ve used all your posts. Buy a package to publish this job.
           </Typography>
           <Button component={Link} href="/packages" variant="contained" color="warning">
             Buy a package

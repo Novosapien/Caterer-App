@@ -5,7 +5,7 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { surfaces } from "@/theme/brand";
 
-// Premium navy "Stand out. Get more gigs." nudge — shared by the gig feed and profile.
+// Premium navy "Stand out. Get more jobs." nudge — shared by the job feed and profile.
 export default function CompleteProfileBanner({ sx }: { sx?: object }) {
   return (
     <Box
@@ -56,7 +56,7 @@ export default function CompleteProfileBanner({ sx }: { sx?: object }) {
       </Box>
       <Box sx={{ position: "relative", flex: 1, minWidth: 0 }}>
         <Typography sx={{ fontWeight: 800, fontSize: "0.9rem", lineHeight: 1.25 }}>
-          Stand out. Get more gigs.
+          Stand out. Get more jobs.
         </Typography>
         <Typography
           sx={{ color: "rgba(255,255,255,0.65)", fontSize: "0.78rem", lineHeight: 1.35, mt: 0.25 }}

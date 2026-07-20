@@ -7,7 +7,7 @@ import WorkOutlineIcon from "@mui/icons-material/WorkOutlineOutlined";
 import { relativeTime } from "@/lib/format";
 import type { Application, ApplicationStatus } from "@/lib/types";
 
-// Candidate's "keep track of my applications" section on the profile. Lists the gigs
+// Candidate's "keep track of my applications" section on the profile. Lists the jobs
 // they've applied to (from the app or the WhatsApp agent) with a status pill.
 const CARD = "#16161A";
 const CARD_BORDER = "rgba(255,255,255,0.16)";
@@ -82,9 +82,9 @@ export default function AppliedJobs({ applications }: { applications: Applicatio
 
       {apps.length === 0 ? (
         <Typography variant="body2" sx={{ color: MUTED }}>
-          You haven&apos;t applied to any gigs yet.{" "}
+          You haven&apos;t applied to any jobs yet.{" "}
           <Box component="a" href="/jobs" sx={{ color: "#5EE0CE", fontWeight: 700, textDecoration: "none" }}>
-            Browse gigs
+            Browse jobs
           </Box>
         </Typography>
       ) : (

@@ -50,7 +50,7 @@ export default async function ProfilePage() {
           subtitle={
             isRecruiter
               ? "You're signed in as a business account. Log in with a chef account to see the chef profile."
-              : "Log in or create a free account to build your chef profile. You can keep browsing gigs without one."
+              : "Log in or create a free account to build your chef profile. You can keep browsing jobs without one."
           }
         />
         <Stack spacing={1.5} sx={{ alignItems: "center" }}>
@@ -65,7 +65,7 @@ export default async function ProfilePage() {
             </Stack>
           )}
           <Button component="a" href="/jobs" variant="text" color="inherit">
-            Browse gigs
+            Browse jobs
           </Button>
           {!isRecruiter && (
             <form action={loginAsChef}>
@@ -95,18 +95,18 @@ export default async function ProfilePage() {
   const metrics = [
     { n: insights.profileViews, label: "profile views" },
     { n: insights.applications, label: "applications" },
-    { n: insights.gigsWon, label: "gigs won" },
+    { n: insights.gigsWon, label: "jobs won" },
   ];
 
   const shortWp =
     candidate.work_pref === "shift"
-      ? "Temp / shift work"
+      ? "Temporary shift work"
       : candidate.work_pref === "permanent"
         ? "Full-time"
         : candidate.work_pref === "both"
           ? "Shift or full-time"
           : null;
-  const openTo = [candidate.open_to_urgent ? "Urgent gigs" : null, shortWp].filter(Boolean) as string[];
+  const openTo = [candidate.open_to_urgent ? "Urgent jobs" : null, shortWp].filter(Boolean) as string[];
 
   return (
     <Box
@@ -313,7 +313,7 @@ export default async function ProfilePage() {
           </Box>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography sx={{ fontWeight: 800, fontSize: "0.95rem", color: "#fff", lineHeight: 1.2 }}>
-              Get gigs on WhatsApp
+              Get jobs on WhatsApp
             </Typography>
             <Typography variant="caption" sx={{ color: MUTED }}>
               See how alerts work and connect your number

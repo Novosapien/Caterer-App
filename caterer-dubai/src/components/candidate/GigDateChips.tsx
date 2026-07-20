@@ -10,7 +10,7 @@ import { brand, surfaces } from "@/theme/brand";
 // fills bright orange. Controlled by the parent feed so switching filters in-memory —
 // no URL change, no server round-trip.
 const CHIPS: { label: string; value: string; icon: React.ReactNode }[] = [
-  { label: "All Gigs", value: "", icon: <AppsIcon sx={{ fontSize: "1rem" }} /> },
+  { label: "All Jobs", value: "", icon: <AppsIcon sx={{ fontSize: "1rem" }} /> },
   { label: "Today", value: "today", icon: <CalendarTodayIcon sx={{ fontSize: "0.95rem" }} /> },
   { label: "Tomorrow", value: "tomorrow", icon: <CalendarTodayIcon sx={{ fontSize: "0.95rem" }} /> },
   { label: "This Week", value: "week", icon: <CalendarTodayIcon sx={{ fontSize: "0.95rem" }} /> },

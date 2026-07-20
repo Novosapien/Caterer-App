@@ -17,13 +17,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { signOut } from "@/app/actions/auth";
 
 const LINKS = [
-  { href: "/jobs", label: "Gigs", icon: <WorkOutlineIcon fontSize="small" /> },
+  { href: "/jobs", label: "Jobs", icon: <WorkOutlineIcon fontSize="small" /> },
   { href: "/profile", label: "Profile", icon: <PersonOutlineIcon fontSize="small" /> },
   { href: "/alerts", label: "Alerts", icon: <NotificationsNoneIcon fontSize="small" /> },
 ];
 
 // Hamburger menu for the candidate top bar: navigation + log out, replacing the
-// standalone alerts bell and the per-page "Gigs / Log out" toolbar.
+// standalone alerts bell and the per-page "Jobs / Log out" toolbar.
 export default function CandidateMenu() {
   const [anchor, setAnchor] = useState<null | HTMLElement>(null);
   const open = Boolean(anchor);

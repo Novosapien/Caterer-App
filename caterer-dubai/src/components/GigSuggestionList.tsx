@@ -25,7 +25,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
 }
 
 // Shared instant type-ahead dropdown. Rendered inside a position:relative wrapper,
-// absolutely positioned below the search box. Used by the landing search and gig feed.
+// absolutely positioned below the search box. Used by the landing search and job feed.
 export default function GigSuggestionList({
   matches,
   query,

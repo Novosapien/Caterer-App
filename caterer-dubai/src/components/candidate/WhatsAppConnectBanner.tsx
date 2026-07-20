@@ -12,8 +12,8 @@ const waLink = `https://wa.me/${WA_NUMBER_E164}?text=${encodeURIComponent(WA_JOI
 
 const WA_GREEN = "#25D366";
 
-// Tap-to-connect box for the gig feed: opens WhatsApp with the join message pre-filled so any
-// user can switch on gig alerts in one tap. "How it works" links to the full walkthrough.
+// Tap-to-connect box for the job feed: opens WhatsApp with the join message pre-filled so any
+// user can switch on job alerts in one tap. "How it works" links to the full walkthrough.
 export default function WhatsAppConnectBanner({ sx }: { sx?: object }) {
   return (
     <Box
@@ -64,12 +64,12 @@ export default function WhatsAppConnectBanner({ sx }: { sx?: object }) {
       </Box>
       <Box sx={{ position: "relative", flex: 1, minWidth: 0 }}>
         <Typography sx={{ fontWeight: 800, fontSize: "0.9rem", lineHeight: 1.25 }}>
-          Get gigs on WhatsApp
+          Get jobs on WhatsApp
         </Typography>
         <Typography
           sx={{ color: "rgba(255,255,255,0.68)", fontSize: "0.78rem", lineHeight: 1.35, mt: 0.25 }}
         >
-          Connect once, get pinged the moment a matching shift goes live.{" "}
+          Message us once. Then we tell you as soon as a job that fits you appears.{" "}
           <Box
             component="a"
             href="/whatsapp"

@@ -16,7 +16,7 @@ export default async function RecruiterLayout({ children }: { children: React.Re
   const session = await getSession();
 
   // Model A: any signed-in user can enter the posting portal (a chef can post a private
-  // gig too). Only anonymous visitors hit the sign-in wall — no separate business login.
+  // job too). Only anonymous visitors hit the sign-in wall — no separate business login.
   if (!session) {
     return (
       <Box sx={{ minHeight: "100dvh", bgcolor: brand.cream, display: "grid", placeItems: "center", p: 3 }}>
@@ -29,7 +29,7 @@ export default async function RecruiterLayout({ children }: { children: React.Re
             Recruiter portal
           </Typography>
           <Typography color="text.secondary" sx={{ mb: 3 }}>
-            Post shifts, manage applicants and ping available chefs on WhatsApp — all from one dashboard.
+            Post jobs, see who applied and message available chefs on WhatsApp, all in one place.
           </Typography>
           <Stack spacing={1.25}>
             <Button component="a" href="/login" variant="contained" size="large" fullWidth>

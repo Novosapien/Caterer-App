@@ -54,7 +54,7 @@ function StatusTag({
   );
 }
 
-// Every card gets imagery: a graceful catering fallback when a gig has no photo,
+// Every card gets imagery: a graceful catering fallback when a job has no photo,
 // so the feed reads consistently premium rather than half-imaged.
 const FALLBACK_IMG =
   "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=70";
@@ -66,7 +66,7 @@ const PAY_SUFFIX: Record<Job["pay_unit"], string> = {
   year: "/year",
 };
 
-// Premium gig content card — horizontal split: image left, details right. Salary reads
+// Premium job content card — horizontal split: image left, details right. Salary reads
 // first (bold, high-contrast), then role, then calm metadata. Warm accent is reserved
 // for URGENT only. Hover lifts the card, zooms the image, and fills the cyan arrow.
 export default function GigCard({ job }: { job: Job }) {
@@ -84,8 +84,8 @@ export default function GigCard({ job }: { job: Job }) {
           boxShadow: surfaces.cardShadowHover,
           borderColor: job.is_urgent ? brand.urgent : "rgba(131,60,159,0.42)",
         },
-        "&:hover .gig-img": { transform: "scale(1.07)" },
-        "&:hover .gig-arrow": { bgcolor: brand.teal, color: "#fff", borderColor: brand.teal },
+        "&:hover .job-img": { transform: "scale(1.07)" },
+        "&:hover .job-arrow": { bgcolor: brand.teal, color: "#fff", borderColor: brand.teal },
       }}
     >
       <CardActionArea component={Link} href={`/jobs/${job.id}`} sx={{ p: 0 }}>
@@ -101,7 +101,7 @@ export default function GigCard({ job }: { job: Job }) {
             }}
           >
             <Box
-              className="gig-img"
+              className="job-img"
               sx={{
                 position: "absolute",
                 inset: 0,
@@ -111,7 +111,7 @@ export default function GigCard({ job }: { job: Job }) {
                 transition: "transform .6s cubic-bezier(.2,.7,.3,1)",
               }}
             />
-            {/* Urgent gigs get a slim amber spine on the image edge — a quiet,
+            {/* Urgent jobs get a slim amber spine on the image edge — a quiet,
                 premium signal instead of a pill stuck on the photo. */}
             {job.is_urgent && (
               <Box
@@ -132,7 +132,7 @@ export default function GigCard({ job }: { job: Job }) {
             {(job.is_urgent || job.is_temp) && (
               <Stack direction="row" spacing={0.75} sx={{ mb: 1, flexWrap: "wrap", rowGap: 0.75 }}>
                 {job.is_urgent && <StatusTag tone="urgent" icon={<BoltIcon />} label="Urgent" />}
-                {job.is_temp && <StatusTag tone="neutral" label="Temp" />}
+                {job.is_temp && <StatusTag tone="neutral" label="Temporary" />}
               </Stack>
             )}
 
@@ -169,7 +169,7 @@ export default function GigCard({ job }: { job: Job }) {
                 {job.venue}
               </Typography>
               <Box
-                className="gig-arrow"
+                className="job-arrow"
                 sx={{
                   flexShrink: 0,
                   width: 34,

@@ -35,7 +35,7 @@ export default function PackageCard({
     startTransition(async () => {
       const res = await buyPackage(pkg.id);
       if (res.ok) {
-        setToast({ msg: `${pkg.name} activated — posting unlocked.`, ok: true });
+        setToast({ msg: `${pkg.name} is active. You can post jobs now.`, ok: true });
         router.refresh();
       } else {
         setToast({ msg: res.error ?? "Checkout failed.", ok: false });

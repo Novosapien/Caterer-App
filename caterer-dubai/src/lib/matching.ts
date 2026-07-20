@@ -4,12 +4,12 @@ import type { Job, CandidateProfile } from "./types";
 
 // Rules-based matching (spec R9), tightened so proactive alerts only reach the right people.
 //
-// A candidate matches a gig when ALL hold:
+// A candidate matches a job when ALL hold:
 //   1. available
 //   2. role FAMILY overlap (kitchen vs front-of-house vs bar vs barista vs events) — so a
 //      waiter never gets a head-chef ping and a chef never gets a waiter ping
 //   3. same location_area (plain string; radius_km is decorative for v1)
-//   4. eligibility: urgent gig + open_to_urgent, OR evening gig (dinner/night shift)
+//   4. eligibility: urgent job + open_to_urgent, OR evening job (dinner/night shift)
 //
 // WhatsApp consent (whatsapp_opt_in) is applied by the caller on top of this, so in-app
 // alerts and WhatsApp sends can differ (WhatsApp needs the explicit opt-in).
@@ -42,7 +42,7 @@ export function familiesFrom(values: string[]): Set<RoleFamily> {
   return out;
 }
 
-// The gig's family, from its role_type + title.
+// The job's family, from its role_type + title.
 export function gigFamilies(job: Job): Set<RoleFamily> {
   return familiesFrom([job.role_type, job.title]);
 }
@@ -52,7 +52,7 @@ export function candidateFamilies(c: CandidateProfile): Set<RoleFamily> {
   return familiesFrom([...(c.specialisms ?? []), ...(c.desired_roles ?? []), ...(c.interests ?? [])]);
 }
 
-// Role match = at least one shared family. If the gig has no derivable family we can't be
+// Role match = at least one shared family. If the job has no derivable family we can't be
 // sure, so fall back to allowing it; if the candidate has no derivable family we do NOT
 // proactively message them (avoids spamming a blank profile).
 export function rolesMatch(job: Job, c: CandidateProfile): boolean {
@@ -75,16 +75,16 @@ export function isEveningGig(job: Job): boolean {
   return dubaiHour >= 16 || dubaiHour < 5;
 }
 
-// A candidate is eligible for a proactive alert about this gig when the gig is urgent and
-// they take urgent work, or the gig is an evening shift (the opt-in they signed up for).
+// A candidate is eligible for a proactive alert about this job when the job is urgent and
+// they take urgent work, or the job is an evening shift (the opt-in they signed up for).
 function isEligible(job: Job, c: CandidateProfile): boolean {
   if (job.is_urgent && c.open_to_urgent) return true;
   if (isEveningGig(job)) return true;
   return false;
 }
 
-// Candidates who should see an in-app alert for this gig (WhatsApp consent applied by the
-// caller on top). Returns [] for a gig that is neither urgent nor an evening shift.
+// Candidates who should see an in-app alert for this job (WhatsApp consent applied by the
+// caller on top). Returns [] for a job that is neither urgent nor an evening shift.
 export async function matchCandidatesForGig(job: Job): Promise<CandidateProfile[]> {
   const db = createServiceClient();
   const { data } = await db

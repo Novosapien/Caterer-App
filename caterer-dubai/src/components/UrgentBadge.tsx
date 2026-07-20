@@ -2,10 +2,10 @@ import Box from "@mui/material/Box";
 import BoltIcon from "@mui/icons-material/Bolt";
 import { brand } from "@/theme/brand";
 
-// Refined URGENT treatment for hot gigs (spec R10 / "start-tomorrow hot jobs").
+// Refined URGENT treatment for hot jobs (spec R10 / "start-tomorrow hot jobs").
 // A quiet amber-tinted outline tag rather than a loud solid pill — amber = "hot /
 // now" without the alarm of red (red is reserved for errors). Matches the inline
-// status tag used on the gig feed cards.
+// status tag used on the job feed cards.
 export default function UrgentBadge({ size = "small" }: { size?: "small" | "medium" }) {
   const med = size === "medium";
   return (

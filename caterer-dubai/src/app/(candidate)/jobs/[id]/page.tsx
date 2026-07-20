@@ -22,7 +22,7 @@ import { brand } from "@/theme/brand";
 const FALLBACK_IMG =
   "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=70";
 
-// Full gig detail (R1) — no login required to view. params is a Promise (Next 16).
+// Full job detail (R1) — no login required to view. params is a Promise (Next 16).
 export default async function GigDetailPage({
   params,
 }: {
@@ -77,7 +77,7 @@ export default async function GigDetailPage({
             "&:hover": { bgcolor: "rgba(255,255,255,0.78)" },
           }}
         >
-          Gigs
+          Jobs
         </Button>
       </Box>
 
@@ -85,7 +85,7 @@ export default async function GigDetailPage({
         <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", mb: 1 }}>
           {job.is_urgent && <UrgentBadge />}
           {job.is_temp && (
-            <Chip label="Temp" size="small" sx={{ bgcolor: brand.cream, fontWeight: 700 }} />
+            <Chip label="Temporary" size="small" sx={{ bgcolor: brand.cream, fontWeight: 700 }} />
           )}
           <Chip label={job.role_type} size="small" variant="outlined" />
         </Stack>

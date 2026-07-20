@@ -20,7 +20,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
   const [job, applications] = await Promise.all([getGig(id), listApplicationsForJob(id)]);
 
   if (!job) {
-    return <EmptyState title="Gig not found" subtitle="This gig may have been removed." />;
+    return <EmptyState title="Job not found" subtitle="This job may have been removed." />;
   }
 
   const accepted = applications.filter((a) => a.status === "accepted");
@@ -36,7 +36,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
         Dashboard
       </Button>
 
-      {/* Gig header */}
+      {/* Job header */}
       <Paper sx={{ p: { xs: 2.5, md: 3 } }}>
         <Stack direction="row" spacing={1} sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
           <Box>
@@ -52,7 +52,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
         <Stack direction="row" spacing={1} sx={{ mt: 1.5, flexWrap: "wrap", rowGap: 1 }}>
           <Chip label={formatPay(job.pay_aed, job.pay_unit)} sx={{ fontWeight: 700 }} />
           <Chip label={formatStart(job.start_at)} variant="outlined" />
-          {job.is_temp && <Chip label="Temp" variant="outlined" />}
+          {job.is_temp && <Chip label="Temporary" variant="outlined" />}
         </Stack>
       </Paper>
 
@@ -80,7 +80,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
           <EmptyState
             icon={<WhatsAppIcon sx={{ fontSize: 40, color: "#25D366" }} />}
             title="No applicants yet"
-            subtitle="Urgent gigs get WhatsApp acceptances first — check back shortly."
+            subtitle="Chefs can accept on WhatsApp, so this can fill fast. Check back in a moment."
           />
         ) : (
           <Stack spacing={1.5}>
@@ -101,7 +101,7 @@ export default async function ApplicantsPage({ params }: { params: Promise<{ id:
                     textDecoration: "none",
                     color: "inherit",
                     transition: "box-shadow .2s",
-                    // A candidate who locked the gig in over WhatsApp is the headline: green rail + faint tint.
+                    // A candidate who locked the job in over WhatsApp is the headline: green rail + faint tint.
                     ...(acceptedViaWa
                       ? { borderLeft: "4px solid #25D366", bgcolor: "#25D3660d" }
                       : {}),

@@ -57,7 +57,7 @@ export interface CreateJobResult {
   whatsappPending?: boolean; // agent service offline / blocked send
 }
 
-// --- Create (post) a gig ----------------------------------------------------
+// --- Create (post) a job ----------------------------------------------------
 export async function createJob(form: FormData): Promise<CreateJobResult> {
   const session = await getSession();
   if (!session) return { ok: false, error: "Not authorised" };
@@ -95,7 +95,7 @@ export async function createJob(form: FormData): Promise<CreateJobResult> {
   }
 
   const db = createServiceClient();
-  // Only include image_url when an image was actually attached — keeps the gig image
+  // Only include image_url when an image was actually attached — keeps the job image
   // optional and avoids referencing the column at all if it isn't set.
   const payload: Record<string, unknown> = {
     business_id: businessId,
@@ -117,13 +117,13 @@ export async function createJob(form: FormData): Promise<CreateJobResult> {
   const { data: inserted, error } = await db.from("jobs").insert(payload).select("*").single();
 
   if (error || !inserted) {
-    return { ok: false, error: error?.message ?? "Could not post the gig." };
+    return { ok: false, error: error?.message ?? "Could not post the job." };
   }
 
   const job = inserted as unknown as Job;
   const result: CreateJobResult = { ok: true, jobId: job.id, isUrgent };
 
-  // Proactive matching runs for every gig; matchCandidatesForGig self-limits to gigs that
+  // Proactive matching runs for every job; matchCandidatesForGig self-limits to jobs that
   // warrant an alert (urgent, or an evening/dinner shift). Matched chefs get an in-app
   // alert; those who explicitly opted in to WhatsApp (and have a number) also get messaged.
   {
@@ -171,9 +171,9 @@ export async function createJob(form: FormData): Promise<CreateJobResult> {
   return result;
 }
 
-// --- Business/gig image upload ---------------------------------------------
+// --- Business/job image upload ---------------------------------------------
 // Server-side upload via the service-role client to the public `business-images`
-// bucket; returns the public URL for the post form to attach to the gig.
+// bucket; returns the public URL for the post form to attach to the job.
 export async function uploadBusinessImage(
   formData: FormData,
 ): Promise<{ ok: boolean; url?: string; error?: string }> {

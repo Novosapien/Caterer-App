@@ -4,7 +4,7 @@ import Container from "@mui/material/Container";
 import Skeleton from "@mui/material/Skeleton";
 import Card from "@mui/material/Card";
 
-// Shown while the gig feed streams in (Next App Router loading UI). Mirrors the
+// Shown while the job feed streams in (Next App Router loading UI). Mirrors the
 // real layout (tall hero, search, chips, horizontal cards) so /jobs feels instant.
 export default function JobsLoading() {
   return (

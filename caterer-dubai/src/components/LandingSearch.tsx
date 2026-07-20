@@ -13,7 +13,7 @@ import { brand } from "@/theme/brand";
 import type { JobSuggestion } from "@/lib/types";
 
 // Front-and-centre search (TotalJobs / Indeed style) with instant type-ahead: matching
-// gigs drop down as you type. Selecting one opens that gig; submitting routes to the
+// jobs drop down as you type. Selecting one opens that job; submitting routes to the
 // feed with the query prefilled. No login required.
 export default function LandingSearch({ suggestions }: { suggestions: JobSuggestion[] }) {
   const router = useRouter();
@@ -25,8 +25,8 @@ export default function LandingSearch({ suggestions }: { suggestions: JobSuggest
   const matches = useMemo(() => rankGigs(value, suggestions), [value, suggestions]);
   const showDropdown = open && value.trim().length > 0 && matches.length > 0;
 
-  // Searching always lands on the filtered results list (never a single gig), so
-  // "chef de partie" shows every matching gig. Selecting a type-ahead suggestion
+  // Searching always lands on the filtered results list (never a single job), so
+  // "chef de partie" shows every matching job. Selecting a type-ahead suggestion
   // runs the same search with what was typed.
   function goToResults(query: string) {
     setOpen(false);

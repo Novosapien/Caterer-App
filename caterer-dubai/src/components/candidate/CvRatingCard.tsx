@@ -25,7 +25,7 @@ function bandColor(score: number): string {
   return brand.flameBright;
 }
 
-// AI "Rate my CV" — a chef taps this on a gig to see how well their profile/CV fits
+// AI "Rate my CV" — a chef taps this on a job to see how well their profile/CV fits
 // THIS role (1-100), with strengths, gaps and concrete fixes. Powered by Claude.
 export default function CvRatingCard({ jobId }: { jobId: string }) {
   const [rating, setRating] = useState<CvRating | null>(null);
@@ -75,7 +75,7 @@ export default function CvRatingCard({ jobId }: { jobId: string }) {
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography sx={{ fontWeight: 800, lineHeight: 1.15 }}>Rate my CV for this role</Typography>
           <Typography variant="body2" color="text.secondary">
-            AI checks your profile against this gig&rsquo;s spec.
+            AI compares your profile with this job.
           </Typography>
         </Box>
       </Stack>
@@ -100,7 +100,7 @@ export default function CvRatingCard({ jobId }: { jobId: string }) {
           {pending ? (
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <CircularProgress size={18} thickness={5} sx={{ color: "#fff" }} />
-              <span>Reading your CV and the job spec…</span>
+              <span>Reading your CV and the job details…</span>
             </Stack>
           ) : (
             "Rate my CV"

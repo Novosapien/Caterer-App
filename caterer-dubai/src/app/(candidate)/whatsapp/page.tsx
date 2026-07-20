@@ -70,7 +70,7 @@ const STEPS: { title: string; body: React.ReactNode; action?: React.ReactNode }[
   },
 ];
 
-// Candidate-facing walkthrough: how the WhatsApp gig alerts work + one-time connect.
+// Candidate-facing walkthrough: how the WhatsApp job alerts work + one-time connect.
 export default function WhatsAppGuidePage() {
   return (
     <Box sx={{ bgcolor: PAGE, color: "#fff", minHeight: "100dvh" }}>
@@ -104,7 +104,7 @@ export default function WhatsAppGuidePage() {
             <WhatsAppIcon />
           </Box>
           <Typography sx={{ fontWeight: 800, fontSize: { xs: "1.6rem", sm: "1.9rem" }, letterSpacing: "-0.01em" }}>
-            Get gigs on WhatsApp
+            Get jobs on WhatsApp
           </Typography>
         </Stack>
         <Typography sx={{ color: "rgba(255,255,255,0.75)", lineHeight: 1.6, mb: 3 }}>

@@ -340,7 +340,7 @@ def _send_reply(chat_id: str, text: str) -> None:
         logger.warning("webhook: reply send failed for chat %s: %s", chat_id, exc)
 
 
-_SNAG_REPLY = "Sorry, I hit a snag just now, could you send that again in a moment?"
+_SNAG_REPLY = "Sorry, something went wrong. Please send that again in a moment."
 
 
 def _handle_gig_turn(thread: ResolvedThread, inbound_text: str, chat_id: str) -> Response:

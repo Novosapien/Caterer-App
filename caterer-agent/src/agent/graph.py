@@ -241,7 +241,7 @@ def run_turn(
     reply = _extract_reply_text(result)
     if not reply:
         reply = (
-            "Sorry, I hit a snag just now, could you send that again in a moment?"
+            "Sorry, something went wrong. Please send that again in a moment."
         )
     return reply
 
@@ -277,7 +277,7 @@ def run_general_turn(
             raise
     reply = _extract_reply_text(result)
     if not reply:
-        reply = "Sorry, I hit a snag just now, could you send that again in a moment?"
+        reply = "Sorry, something went wrong. Please send that again in a moment."
     return reply
 
 
@@ -296,7 +296,7 @@ def build_invite_message(context: ConversationContext) -> str:
 
     # Lead + closer adapt to urgency: urgent gigs read hot, evening/matched shifts read
     # as a friendly heads-up. (No em dashes in the copy; a middot separates the pay.)
-    lead = "Urgent gig" if urgent else "New shift for you"
+    lead = "Urgent job" if urgent else "New job for you"
     bits = [f"Hi {name}! {lead}: {role} at {venue}"]
     if gig.location_area:
         bits.append(f"({gig.location_area})")
@@ -313,5 +313,5 @@ def build_invite_message(context: ConversationContext) -> str:
         extras.append(f"Dress: {gig.dress_code}.")
     tail = (" " + " ".join(extras)) if extras else ""
 
-    closer = "Can you take it? 🔥" if urgent else "Fancy it? Reply yes or ask me anything."
+    closer = "Can you take it? 🔥" if urgent else "Do you want it? Reply yes, or ask me anything."
     return f"{pitch}.{tail} {closer}"

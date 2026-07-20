@@ -87,7 +87,7 @@ export default function GigSearch({
             onKeyDown={onKeyDown}
             placeholder="Search role, venue or area…"
             sx={{ ml: 1, flex: 1, color: "#1A1A1C", "& input::placeholder": { color: "#8A8A8E", opacity: 1 } }}
-            inputProps={{ "aria-label": "search gigs", role: "combobox", "aria-expanded": showDropdown }}
+            inputProps={{ "aria-label": "search jobs", role: "combobox", "aria-expanded": showDropdown }}
           />
           {value && (
             <IconButton

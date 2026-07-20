@@ -38,7 +38,7 @@ export default async function PackagesPage() {
           Choose your plan
         </Typography>
         <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-          Mock checkout — no card needed. Credits unlock gig posting instantly.
+          Demo checkout, so no card is needed. Credits let you post jobs straight away.
         </Typography>
       </Box>
 

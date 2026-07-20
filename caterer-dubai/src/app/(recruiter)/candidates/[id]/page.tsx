@@ -26,7 +26,7 @@ import { brand } from "@/theme/brand";
 import type { WorkPref } from "@/lib/types";
 
 function workPrefLabel(w: WorkPref | null | undefined): string | null {
-  if (w === "shift") return "Temp / shift work";
+  if (w === "shift") return "Temporary shift work";
   if (w === "permanent") return "Full-time / permanent";
   if (w === "both") return "Shift or full-time";
   return null;

@@ -140,7 +140,7 @@ export default function GigFilterDrawer({
         <Box sx={{ flex: 1, overflowY: "auto", px: 2.5, py: 2 }}>
           {/* Urgent — a prominent toggle at the top */}
           <FilterChip
-            label="Urgent gigs only"
+            label="Urgent jobs only"
             selected={filters.urgentOnly}
             onClick={() => onChange({ ...filters, urgentOnly: !filters.urgentOnly })}
           />
@@ -194,7 +194,7 @@ export default function GigFilterDrawer({
               boxShadow: "0 14px 34px -16px rgba(131,60,159,0.6)",
             }}
           >
-            Show {resultCount} {resultCount === 1 ? "gig" : "gigs"}
+            Show {resultCount} {resultCount === 1 ? "job" : "jobs"}
           </Box>
         </Box>
       </Box>

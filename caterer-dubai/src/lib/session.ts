@@ -4,7 +4,7 @@ import type { Role } from "./types";
 
 // Identity resolution. Real accounts come from Supabase Auth (email + password); the demo
 // cookie is a fallback for the 1-tap personas and guest quick-apply; null = anonymous
-// browsing (the landing, gig feed and gig pages are all public).
+// browsing (the landing, job feed and job pages are all public).
 
 const COOKIE = "caterer_session";
 

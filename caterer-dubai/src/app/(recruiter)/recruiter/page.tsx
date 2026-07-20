@@ -100,7 +100,7 @@ export default async function RecruiterDashboardPage() {
         </Box>
         <Stack direction="row" spacing={1}>
           <Button component="a" href="/post" variant="contained" startIcon={<AddCircleIcon />}>
-            Post a gig
+            Post a job
           </Button>
           <Button component="a" href="/packages" variant="outlined" startIcon={<CardMembershipIcon />}>
             Buy package
@@ -111,7 +111,7 @@ export default async function RecruiterDashboardPage() {
       {/* Stat strip */}
       <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap", rowGap: 1.5 }}>
         <StatCard
-          label="Live gigs"
+          label="Live jobs"
           value={String(jobs.filter((j) => j.status === "open").length)}
           icon={<WorkOutlineIcon />}
         />
@@ -151,14 +151,14 @@ export default async function RecruiterDashboardPage() {
       {urgentCount > 0 && (
         <Chip
           icon={<BoltIcon />}
-          label={`${urgentCount} urgent gig${urgentCount === 1 ? "" : "s"} live — chefs pinged on WhatsApp`}
+          label={`${urgentCount} urgent job${urgentCount === 1 ? "" : "s"} live. We messaged matching chefs on WhatsApp.`}
           sx={{ bgcolor: `${brand.amber}22`, color: brand.navy, fontWeight: 700, alignSelf: "flex-start" }}
         />
       )}
 
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 800, mb: 1.5 }}>
-          Your gigs
+          Your jobs
         </Typography>
         <DashboardGigs gigs={gigs} jobIds={jobIds} />
       </Box>

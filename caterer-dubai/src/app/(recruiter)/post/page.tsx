@@ -15,7 +15,7 @@ export default async function PostGigPage() {
   const session = await getSession();
   const businessId = session ? await getOwnedBusinessId(session.profileId) : null;
   // A signed-in user with no business yet is a first-time poster (e.g. a chef posting a
-  // private gig). Show them the form — a poster identity + starter credits are created on
+  // private job). Show them the form — a poster identity + starter credits are created on
   // submit — rather than the "out of credits" lock. Only lock a real business at 0 credits.
   const isFirstTimePoster = Boolean(session) && !businessId;
   const remaining = businessId ? await getRemainingCredits(businessId) : 0;
@@ -25,7 +25,7 @@ export default async function PostGigPage() {
     <>
       <Box>
         <Typography variant="subtitle2" color="text.secondary">
-          Post a gig
+          Post a job
         </Typography>
         <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", flexWrap: "wrap" }}>
           <Typography variant="h4" sx={{ fontWeight: 800 }}>
@@ -35,7 +35,7 @@ export default async function PostGigPage() {
             size="small"
             label={
               isFirstTimePoster
-                ? "First gig included"
+                ? "First job included"
                 : remaining >= 999
                   ? "Unlimited credits"
                   : `${Math.max(0, remaining)} credit${remaining === 1 ? "" : "s"} left`
@@ -56,7 +56,7 @@ export default async function PostGigPage() {
             Posting is locked
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.5, mb: 2.5 }}>
-            You&apos;re out of job credits. Buy a package to unlock gig posting.
+            You&apos;re out of job credits. Buy a package to unlock job posting.
           </Typography>
           <Button component="a" href="/packages" variant="contained" color="warning" size="large">
             See packages

@@ -38,7 +38,7 @@ export default function SignupPage() {
           Create your <Box component="span" sx={{ color: brand.teal }}>account</Box>
         </Typography>
         <Typography sx={{ color: "rgba(255,255,255,0.6)", textAlign: "center", mt: 1.25, mb: 3.5, px: 2 }}>
-          Free to join. You can browse gigs anytime without an account.
+          Free to join. You can browse jobs anytime without an account.
         </Typography>
 
         <Suspense>

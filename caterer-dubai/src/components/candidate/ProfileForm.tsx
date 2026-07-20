@@ -94,7 +94,7 @@ const LANGUAGE_OPTIONS = [
 ];
 
 const WORK_PREFS: { value: WorkPref; label: string }[] = [
-  { value: "shift", label: "Temp / shift work" },
+  { value: "shift", label: "Temporary shift work" },
   { value: "permanent", label: "Full-time / permanent" },
   { value: "both", label: "Both" },
 ];
@@ -330,7 +330,7 @@ export default function ProfileForm(props: Props) {
             <Box>
               <Typography sx={{ fontWeight: 700 }}>Available now</Typography>
               <Typography variant="caption" color="text.secondary">
-                Turn on availability → get pinged for urgent gigs.
+                Turn on availability and we will message you about urgent jobs.
               </Typography>
             </Box>
           </Stack>
@@ -457,7 +457,7 @@ export default function ProfileForm(props: Props) {
       <Paper elevation={0} sx={{ p: 2, borderRadius: 4, border: `1px solid ${brand.line}` }}>
         <Typography sx={{ fontWeight: 700 }}>Your specialisms</Typography>
         <Typography variant="caption" color="text.secondary">
-          Pick what you do → we only ping you for the right gigs.
+          Pick what you do. We will only message you about jobs that fit.
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 1.5 }}>
           {INTEREST_OPTIONS.map((tag) => (
